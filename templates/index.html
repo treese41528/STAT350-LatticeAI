@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ config.COURSE_NAME }} AI Assistant - Purdue GenAI Studio</title>
+    <!-- KaTeX for LaTeX rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" 
+          integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" 
+          crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" 
+            integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" 
+            crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" 
+            integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" 
+            crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --purdue-gold: #CFB991;
+            --purdue-black: #000000;
+            --purdue-warm-gray: #C4BFC0;
+            --purdue-cool-gray: #6B6158;
+            --purdue-white: #FFFFFF;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: var(--purdue-black);
+            color: var(--purdue-white);
+            padding: 1rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .logo-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--purdue-gold);
+        }
+
+        .logo-badge img {
+            height: 40px;
+            width: auto;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.offline {
+            background: #ef4444;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Main Container */
+        .container {
+            flex: 1;
+            max-width: 900px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            flex: 1;
+            background: var(--purdue-white);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: var(--purdue-gold);
+            color: var(--purdue-black);
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .message.user .message-header {
+            color: var(--purdue-black);
+        }
+
+        .message.assistant .message-header {
+            color: var(--purdue-gold);
+        }
+
+        .message-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: bold;
+        }
+
+        .message.user .message-icon {
+            background: var(--purdue-black);
+            color: var(--purdue-white);
+        }
+
+        .message.assistant .message-icon {
+            background: var(--purdue-gold);
+            color: var(--purdue-black);
+        }
+
+        /* Icon styling */
+        .message-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .message-content {
+            padding-left: 2.5rem;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .message-content pre {
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 0.5rem 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .message-content pre code {
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        .message-content code {
+            background: #f5f5f5;
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.875rem;
+        }
+
+        .message-content blockquote {
+            border-left: 4px solid var(--purdue-gold);
+            margin: 1rem 0;
+            padding-left: 1rem;
+            color: #666;
+        }
+
+        .message-content ul, .message-content ol {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .message-content li {
+            margin: 0.25rem 0;
+        }
+
+        .message-content table {
+            border-collapse: collapse;
+            margin: 1rem 0;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .message-content thead {
+            background: #f5f5f5;
+        }
+
+        .message-content th, .message-content td {
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            text-align: left;
+        }
+
+        .message-content th {
+            background: #f5f5f5;
+            font-weight: 600;
+            color: var(--purdue-black);
+        }
+
+        .message-content tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .message-content h1, .message-content h2, .message-content h3 {
+            margin: 1rem 0 0.5rem 0;
+            font-weight: 600;
+        }
+
+        .message-content h1 {
+            font-size: 1.5rem;
+            color: var(--purdue-black);
+        }
+
+        .message-content h2 {
+            font-size: 1.3rem;
+            color: var(--purdue-black);
+        }
+
+        .message-content h3 {
+            font-size: 1.1rem;
+            color: var(--purdue-cool-gray);
+        }
+
+        .message-content hr {
+            border: none;
+            border-top: 2px solid var(--purdue-gold);
+            margin: 1rem 0;
+        }
+
+        .message-content sup {
+            font-size: 0.75em;
+            color: var(--purdue-gold);
+        }
+
+        .message-content em {
+            font-style: italic;
+            color: #555;
+        }
+
+        .message-content strong {
+            font-weight: 600;
+            color: var(--purdue-black);
+        }
+
+        .message-content a {
+            color: var(--purdue-gold);
+            text-decoration: underline;
+            transition: all 0.2s;
+        }
+
+        .message-content a:hover {
+            color: #b8a47e;
+            text-decoration-thickness: 2px;
+        }
+
+        .typing-indicator {
+            display: inline-flex;
+            gap: 4px;
+            padding: 0.5rem 0;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--purdue-gold);
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        /* Input Area */
+        .chat-input-container {
+            padding: 1.5rem;
+            border-top: 1px solid #e0e0e0;
+            background: #fafafa;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 0.5rem;
+            resize: none;
+            font-family: inherit;
+            font-size: 1rem;
+            min-height: 50px;
+            max-height: 150px;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--purdue-gold);
+            box-shadow: 0 0 0 3px rgba(207, 185, 145, 0.1);
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .btn-send, .btn-attach {
+            padding: 0.75rem 1.5rem;
+            background: var(--purdue-gold);
+            color: var(--purdue-black);
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .btn-attach {
+            padding: 0.75rem;
+            background: transparent;
+            border: 2px solid var(--purdue-gold);
+            position: relative;
+        }
+
+        .btn-send:hover:not(:disabled), .btn-attach:hover:not(:disabled) {
+            background: #b8a47e;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-attach:hover:not(:disabled) {
+            background: var(--purdue-gold);
+        }
+
+        .btn-send:disabled, .btn-attach:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* File Upload */
+        .file-input {
+            display: none;
+        }
+
+        .file-attachments {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-attachment {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .file-attachment .remove {
+            cursor: pointer;
+            color: #ef4444;
+            font-weight: bold;
+        }
+
+        /* LaTeX styling */
+        .latex-display {
+            display: block;
+            margin: 1rem 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .latex-inline {
+            display: inline;
+        }
+
+        .katex-display {
+            margin: 1rem 0;
+        }
+
+        .katex {
+            font-size: 1.1em;
+        }
+
+        .katex-display .katex {
+            font-size: 1.2em;
+        }
+
+        .katex-error {
+            color: #cc0000;
+            background: #ffeeee;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 1rem;
+            color: var(--purdue-cool-gray);
+            font-size: 0.875rem;
+        }
+
+        /* Welcome Message */
+        .welcome-message {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--purdue-cool-gray);
+        }
+
+        .welcome-message h2 {
+            color: var(--purdue-black);
+            margin-bottom: 1rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+                margin: 1rem auto;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .logo {
+                flex-direction: column;
+            }
+
+            .logo h1 {
+                font-size: 1.25rem;
+            }
+
+            .logo-badge img {
+                height: 30px;
+            }
+
+            .message-content {
+                padding-left: 2rem;
+            }
+
+            .chat-input {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+
+            .input-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-send, .btn-attach {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>{{ config.COURSE_NAME }} AI Assistant</h1>
+                <div class="logo-badge">
+                    <span>Powered by</span>
+                    <img src="/static/purdue-genai-studio-logo.png" 
+                         alt="GenAI Studio Purdue"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                    <span style="display:none; color: var(--purdue-gold); font-weight: bold;">Lattice AI</span>
+                </div>
+            </div>
+            <div class="status">
+                <span class="status-indicator {% if not health_status %}offline{% endif %}"></span>
+                <span>{% if health_status %}Connected{% else %}Offline{% endif %}</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="chat-container">
+            <div class="chat-header">
+                {{ config.ASSISTANT_TITLE }}
+            </div>
+            
+            <div id="chat-messages" class="chat-messages">
+                <div class="welcome-message">
+                    <h2>Welcome to {{ config.COURSE_NAME }} AI Assistant!</h2>
+                    <p>{{ config.WELCOME_MESSAGE }}</p>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div id="file-attachments" class="file-attachments"></div>
+                <div class="chat-input-wrapper">
+                    <textarea 
+                        id="chat-input" 
+                        class="chat-input" 
+                        placeholder="{{ config.INPUT_PLACEHOLDER }}"
+                        rows="1"
+                    ></textarea>
+                    <div class="input-actions">
+                        <input type="file" id="file-input" class="file-input" multiple accept=".txt,.pdf,.csv,.xlsx,.json,.py,.cpp,.java,.md">
+                        <button id="attach-button" class="btn-attach" title="Attach files">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                            </svg>
+                        </button>
+                        <button id="send-button" class="btn-send">
+                            Send
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>{{ config.FOOTER_TEXT }}</p>
+    </footer>
+
+    <script>
+        // Initialize KaTeX when loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.katex && window.renderMathInElement) {
+                console.log('KaTeX loaded successfully');
+            }
+        });
+        
+        // Global state
+        let messages = [];
+        let isStreaming = false;
+        let attachedFiles = [];
+
+        // DOM elements
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const sendButton = document.getElementById('send-button');
+        const attachButton = document.getElementById('attach-button');
+        const fileInput = document.getElementById('file-input');
+        const fileAttachments = document.getElementById('file-attachments');
+
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
+        
+        function initializeApp() {
+            // Event listeners
+            sendButton.addEventListener('click', sendMessage);
+            attachButton.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            chatInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Auto-resize textarea
+            chatInput.addEventListener('input', () => {
+                chatInput.style.height = 'auto';
+                chatInput.style.height = chatInput.scrollHeight + 'px';
+            });
+
+            // Focus on input
+            chatInput.focus();
+        }
+
+        // File handling
+        function handleFileSelect(e) {
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                    alert(`File ${file.name} is too large. Maximum size is 10MB.`);
+                    return;
+                }
+                
+                attachedFiles.push(file);
+                displayAttachment(file);
+            });
+            
+            // Clear the input so the same file can be selected again
+            e.target.value = '';
+        }
+
+        function displayAttachment(file) {
+            const attachmentDiv = document.createElement('div');
+            attachmentDiv.className = 'file-attachment';
+            attachmentDiv.innerHTML = `
+                <span>${file.name} (${formatFileSize(file.size)})</span>
+                <span class="remove" data-filename="${file.name}">×</span>
+            `;
+            
+            attachmentDiv.querySelector('.remove').addEventListener('click', (e) => {
+                const filename = e.target.dataset.filename;
+                attachedFiles = attachedFiles.filter(f => f.name !== filename);
+                attachmentDiv.remove();
+            });
+            
+            fileAttachments.appendChild(attachmentDiv);
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+        }
+
+        // Send message function
+        async function sendMessage() {
+            const content = chatInput.value.trim();
+            if ((!content && attachedFiles.length === 0) || isStreaming) {
+                return;
+            }
+
+            // Clear welcome message if it exists
+            const welcomeMessage = document.querySelector('.welcome-message');
+            if (welcomeMessage) {
+                welcomeMessage.remove();
+            }
+
+            // Prepare message with file info
+            let fullContent = content;
+            if (attachedFiles.length > 0) {
+                fullContent += '\n\n[Attached files: ' + attachedFiles.map(f => f.name).join(', ') + ']';
+            }
+
+            // Add user message
+            addMessage('user', fullContent);
+            
+            // Prepare form data for files
+            const formData = new FormData();
+            attachedFiles.forEach(file => {
+                formData.append('files', file);
+            });
+            
+            // Add message data
+            const messageData = {
+                role: 'user',
+                content: content
+            };
+            messages.push(messageData);
+            formData.append('messages', JSON.stringify(messages));
+
+            // Clear input and files
+            chatInput.value = '';
+            chatInput.style.height = 'auto';
+            attachedFiles = [];
+            fileAttachments.innerHTML = '';
+
+            // Disable send button
+            isStreaming = true;
+            sendButton.disabled = true;
+            attachButton.disabled = true;
+
+            // Add assistant message container
+            const assistantMessageId = Date.now();
+            addMessage('assistant', '', assistantMessageId);
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                if (!response.body) {
+                    throw new Error('No response body received');
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let assistantContent = '';
+                let buffer = '';
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    buffer += chunk;
+                    
+                    // Process complete lines
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+                    for (const line of lines) {
+                        if (line.trim() === '') continue;
+                        
+                        if (line.startsWith('data: ')) {
+                            const data = line.slice(6);
+                            
+                            if (data === '[DONE]') continue;
+
+                            try {
+                                const json = JSON.parse(data);
+                                
+                                if (json.error) {
+                                    throw new Error(json.error);
+                                }
+
+                                const content = json.choices?.[0]?.delta?.content;
+                                
+                                if (content !== undefined && content !== null) {
+                                    assistantContent += content;
+                                    updateMessage(assistantMessageId, assistantContent);
+                                }
+                            } catch (e) {
+                                // Skip parse errors for incomplete data
+                            }
+                        }
+                    }
+                }
+
+                // Process any remaining data in buffer
+                if (buffer.trim() && buffer.startsWith('data: ')) {
+                    const data = buffer.slice(6);
+                    if (data && data !== '[DONE]') {
+                        try {
+                            const json = JSON.parse(data);
+                            const content = json.choices?.[0]?.delta?.content;
+                            if (content) {
+                                assistantContent += content;
+                                updateMessage(assistantMessageId, assistantContent);
+                            }
+                        } catch (e) {
+                            // Skip parse errors
+                        }
+                    }
+                }
+
+                // Only add to messages if we got actual content
+                if (assistantContent && assistantContent.trim()) {
+                    messages.push({ role: 'assistant', content: assistantContent });
+                } else {
+                    updateMessage(assistantMessageId, 'No response received. Please try again.');
+                }
+
+            } catch (error) {
+                updateMessage(assistantMessageId, `Error: ${error.message}`);
+            } finally {
+                isStreaming = false;
+                sendButton.disabled = false;
+                attachButton.disabled = false;
+                chatInput.focus();
+            }
+        }
+
+        // Add message to chat
+        function addMessage(role, content, id = Date.now()) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.id = `message-${id}`;
+
+            // Icon handling - use image for AI, text for user
+            let iconContent;
+            if (role === 'user') {
+                iconContent = 'You';
+            } else {
+                // Try to use image, fallback to text
+                iconContent = '<img src="/static/{{ config.LOGO_FILE }}" alt="AI" onerror="this.parentElement.textContent=\'AI\'">';
+            }
+            
+            const formattedContent = content ? formatContent(content) : 
+                '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+
+            messageDiv.innerHTML = `
+                <div class="message-header">
+                    <span class="message-icon">${iconContent}</span>
+                    <span>${role === 'user' ? 'You' : '{{ config.ASSISTANT_NAME }}'}</span>
+                </div>
+                <div class="message-content">
+                    ${formattedContent}
+                </div>
+            `;
+
+            chatMessages.appendChild(messageDiv);
+            
+            // Render LaTeX if content exists
+            if (content) {
+                const contentElement = messageDiv.querySelector('.message-content');
+                renderLatex(contentElement);
+            }
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Update message content
+        function updateMessage(id, content) {
+            const messageElement = document.getElementById(`message-${id}`);
+            if (messageElement) {
+                const contentElement = messageElement.querySelector('.message-content');
+                if (!content) return;
+                contentElement.innerHTML = formatContent(content);
+                // Render LaTeX after updating content
+                renderLatex(contentElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+
+        // Format content with markdown and LaTeX support
+        function formatContent(text) {
+            // Store code blocks and LaTeX to prevent interference
+            const codeBlocks = [];
+            const latexBlocks = [];
+            
+            // Extract and store code blocks first
+            text = text.replace(/```([\s\S]*?)```/g, (match, code) => {
+                codeBlocks.push(`<pre><code>${escapeHtml(code)}</code></pre>`);
+                return `%%CODE_BLOCK_${codeBlocks.length - 1}%%`;
+            });
+            
+            // Extract and store display LaTeX ($$...$$ or \[...\])
+            text = text.replace(/\$\$([\s\S]*?)\$\$/g, (match, latex) => {
+                latexBlocks.push({type: 'display', latex: latex.trim()});
+                return `%%LATEX_BLOCK_${latexBlocks.length - 1}%%`;
+            });
+            
+            text = text.replace(/\\\[([\s\S]*?)\\\]/g, (match, latex) => {
+                latexBlocks.push({type: 'display', latex: latex.trim()});
+                return `%%LATEX_BLOCK_${latexBlocks.length - 1}%%`;
+            });
+            
+            // Extract and store inline LaTeX ($...$ or \(...\))
+            text = text.replace(/\$([^\$\n]+?)\$/g, (match, latex) => {
+                latexBlocks.push({type: 'inline', latex: latex.trim()});
+                return `%%LATEX_BLOCK_${latexBlocks.length - 1}%%`;
+            });
+            
+            text = text.replace(/\\\(([^)]+?)\\\)/g, (match, latex) => {
+                latexBlocks.push({type: 'inline', latex: latex.trim()});
+                return `%%LATEX_BLOCK_${latexBlocks.length - 1}%%`;
+            });
+            
+            // Escape HTML (but not our placeholders)
+            text = escapeHtml(text);
+            
+            // Headers (###, ##, #)
+            text = text.replace(/^###\s+(.+)$/gm, '<h3>$1</h3>');
+            text = text.replace(/^##\s+(.+)$/gm, '<h2>$1</h2>');
+            text = text.replace(/^#\s+(.+)$/gm, '<h1>$1</h1>');
+            
+            // Horizontal rules
+            text = text.replace(/^---+$/gm, '<hr>');
+            
+            // Process lists before converting line breaks
+            const lines = text.split('\n');
+            const processedLines = [];
+            let inList = false;
+            let listItems = [];
+            let listType = null;
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                const unorderedMatch = line.match(/^[\*\-]\s+(.+)$/);
+                const orderedMatch = line.match(/^\d+\.\s+(.+)$/);
+                
+                if (unorderedMatch || orderedMatch) {
+                    const newListType = orderedMatch ? 'ol' : 'ul';
+                    const content = unorderedMatch ? unorderedMatch[1] : orderedMatch[1];
+                    
+                    if (!inList || listType !== newListType) {
+                        // Close previous list if any
+                        if (inList && listItems.length > 0) {
+                            processedLines.push(`<${listType}>${listItems.join('')}</${listType}>`);
+                            listItems = [];
+                        }
+                        inList = true;
+                        listType = newListType;
+                    }
+                    listItems.push(`<li>${content}</li>`);
+                } else {
+                    // Not a list item
+                    if (inList && listItems.length > 0) {
+                        processedLines.push(`<${listType}>${listItems.join('')}</${listType}>`);
+                        listItems = [];
+                        inList = false;
+                        listType = null;
+                    }
+                    processedLines.push(line);
+                }
+            }
+            
+            // Close any remaining list
+            if (inList && listItems.length > 0) {
+                processedLines.push(`<${listType}>${listItems.join('')}</${listType}>`);
+            }
+            
+            text = processedLines.join('\n');
+            
+            // Now convert line breaks
+            text = text.replace(/\n/g, '<br>');
+            
+            // Blockquotes
+            text = text.replace(/^&gt;\s+(.+)$/gm, '<blockquote>$1</blockquote>');
+            text = text.replace(/<\/blockquote><br><blockquote>/g, '<br>');
+            
+            // Inline code (not already in code blocks)
+            text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+            
+            // Bold - be careful not to match * in multiplication
+            text = text.replace(/(?<!\w)\*\*([^\*]+)\*\*(?!\w)/g, '<strong>$1</strong>');
+            text = text.replace(/(?<!\w)__([^_]+)__(?!\w)/g, '<strong>$1</strong>');
+            
+            // Italic - be careful not to match * in multiplication or _ in LaTeX
+            text = text.replace(/(?<!\w)\*([^\*\s][^\*]*[^\*\s])\*(?!\w)/g, '<em>$1</em>');
+            text = text.replace(/(?<!\w)_([^_\s][^_]*[^_\s])_(?!\w)/g, '<em>$1</em>');
+            
+            // URLs
+            text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+            text = text.replace(/(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig, 
+                '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+            
+            // Tables (improved support)
+            const tableLines = text.split('<br>');
+            let inTable = false;
+            let tableRows = [];
+            const processedTableLines = [];
+            
+            for (let i = 0; i < tableLines.length; i++) {
+                const line = tableLines[i];
+                // Check if line contains pipes and looks like a table
+                if (line.includes('|') && 
+                    (line.match(/\|/g) || []).length >= 2) {
+                    
+                    // Extract cells whether or not line starts/ends with |
+                    let cells;
+                    if (line.trim().startsWith('|') && line.trim().endsWith('|')) {
+                        cells = line.split('|').slice(1, -1);
+                    } else {
+                        cells = line.split('|');
+                    }
+                    
+                    // Check if it's a separator row
+                    if (cells.every(cell => /^[\s\-:]+$/.test(cell))) {
+                        if (!inTable && tableRows.length > 0) {
+                            // This separator comes after header
+                            inTable = true;
+                        }
+                        continue; // Skip separator rows
+                    }
+                    
+                    if (!inTable && tableRows.length === 0) {
+                        // First row is header
+                        const headerCells = cells.map(cell => `<th>${cell.trim()}</th>`).join('');
+                        tableRows.push(`<thead><tr>${headerCells}</tr></thead>`);
+                    } else {
+                        // Data row
+                        if (!inTable) {
+                            inTable = true;
+                            tableRows.push('<tbody>');
+                        }
+                        const dataCells = cells.map(cell => `<td>${cell.trim()}</td>`).join('');
+                        tableRows.push(`<tr>${dataCells}</tr>`);
+                    }
+                } else {
+                    // Not a table line
+                    if ((inTable || tableRows.length > 0) && tableRows.length > 0) {
+                        if (inTable) tableRows.push('</tbody>');
+                        processedTableLines.push(`<table>${tableRows.join('')}</table>`);
+                        tableRows = [];
+                        inTable = false;
+                    }
+                    processedTableLines.push(line);
+                }
+            }
+            
+            // Close any remaining table
+            if ((inTable || tableRows.length > 0) && tableRows.length > 0) {
+                if (inTable) tableRows.push('</tbody>');
+                processedTableLines.push(`<table>${tableRows.join('')}</table>`);
+            }
+            
+            text = processedTableLines.join('<br>');
+            
+            // Restore code blocks
+            codeBlocks.forEach((block, index) => {
+                text = text.replace(`%%CODE_BLOCK_${index}%%`, block);
+            });
+            
+            // Restore LaTeX blocks with proper rendering
+            latexBlocks.forEach((block, index) => {
+                const placeholder = `%%LATEX_BLOCK_${index}%%`;
+                if (block.type === 'display') {
+                    text = text.replace(placeholder, 
+                        `<div class="latex-display">\\[${block.latex}\\]</div>`);
+                } else {
+                    text = text.replace(placeholder, 
+                        `<span class="latex-inline">\\(${block.latex}\\)</span>`);
+                }
+            });
+            
+            // Preserve footnote references
+            text = text.replace(/【(\d+)】/g, '<sup>[$1]</sup>');
+            
+            return text;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Render LaTeX in a specific element
+        function renderLatex(element) {
+            if (typeof renderMathInElement !== 'undefined') {
+                renderMathInElement(element, {
+                    delimiters: [
+                        {left: '\\[', right: '\\]', display: true},
+                        {left: '\\(', right: '\\)', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+    </script>
+</body>
+</html>
