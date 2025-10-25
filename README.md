@@ -1,5 +1,7 @@
 # GenAI Studio - STAT 350 Chat Application
 
+![Chat Demo](./static/ChatDemo.png)
+
 A Flask-based AI chat application for Purdue University's STAT 350 course, providing students with an intelligent assistant powered by the Purdue GenAI API with course-specific knowledge.
 
 ## Features
