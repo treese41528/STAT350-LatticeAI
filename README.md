@@ -1,193 +1,231 @@
-# STAT 350 AI Assistant - Purdue GenAI Studio
+# GenAI Studio - STAT 350 Chat Application
 
-A streamlined chat interface for STAT 350 students using Purdue's GenAI Studio platform with the specialized gpt-stat350 model.
-
-![STAT 350 Assistant](https://img.shields.io/badge/STAT%20350-AI%20Assistant-CFB991?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==)
+A Flask-based AI chat application for Purdue University's STAT 350 course, providing students with an intelligent assistant powered by the Purdue GenAI API with course-specific knowledge.
 
 ## Features
 
-- 🚀 **Real-time Streaming**: Smooth streaming responses from the STAT 350 model
-- 🎨 **Purdue-Themed UI**: Clean interface with official Purdue colors
-- 📚 **STAT 350 Focused**: Specialized assistant for probability and statistics
-- 📱 **Responsive Design**: Works on desktop and mobile devices
-- 🔒 **Secure**: API key authentication
-
-## Prerequisites
-
-- Python 3.8+
-- Purdue GenAI Studio API key
-- Access to Purdue GenAI Studio (https://genai.rcac.purdue.edu)
+- ✅ **AI-Powered Chat** - Real-time responses from gpt-stat350 model with STAT 350 knowledge base
+- ✅ **Persistent Conversations** - SQLite database storage with conversation history
+- ✅ **File Upload Support** - Upload and analyze PDFs, CSV, Excel, text files
+- ✅ **Multi-User Support** - Session-based user isolation
+- ✅ **Rich Content** - LaTeX rendering, Markdown support, code highlighting
+- ✅ **Conversation Management** - Create, view, delete, and export conversations
 
 ## Quick Start
 
-### 1. **Clone and Setup**
+### Prerequisites
+
+- Python 3.8+
+- Purdue GenAI API key
+
+### Installation
 
 ```bash
-# Clone the repository
-git clone <repository-url>
-cd stat350-assistant
-
-# Create virtual environment
-python -m venv venv
-
-# Activate virtual environment
-# On Windows:
-venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
-
 # Install dependencies
 pip install -r requirements.txt
+
+# Set your API key
+export GENAI_API_KEY="your-api-key-here"
+
+# Initialize database
+python3 -c "from genaiStudio_app_database import app, db; app.app_context().push(); db.create_all(); print('✅ Database initialized')"
+
+# Run the application
+python3 genaiStudio_app_database.py
 ```
 
-### 2. **Configure API Key**
+The application will be available at **http://localhost:5000**
 
-Create a `.env` file:
-```bash
-cp .env.example .env
-```
+### Production Deployment
 
-Edit `.env` and add your GenAI Studio API key:
-```
-GENAI_API_KEY=your-api-key-here
-```
-
-### 3. **Setup Logo Image**
-
-**Option A: Use the official logo**
-```bash
-mkdir -p static
-# Save the Purdue GenAI Studio logo image to:
-# static/purdue-genai-studio-logo.png
-```
-
-**Option B: Create a placeholder**
-```bash
-pip install Pillow  # If not already installed
-python create_placeholder_logo.py
-```
-
-**Option C: Use text instead** (see IMAGE_SETUP.md)
-
-### 4. **Run the Application**
+For production, use Gunicorn:
 
 ```bash
-python app.py
+gunicorn -w 4 -b 0.0.0.0:5000 --timeout 120 genaiStudio_app_database:application
 ```
 
-Open http://localhost:5000 in your browser
+## Architecture
 
-## Project Structure
+### Backend
+- **Framework**: Flask 3.0 with SQLAlchemy
+- **Database**: SQLite (default) or PostgreSQL
+- **API**: Purdue GenAI API (genai.rcac.purdue.edu)
+- **File Processing**: PyPDF2, pandas for PDF/Excel/CSV
 
-```
-stat350-assistant/
-├── app.py              # Flask application
-├── templates/
-│   └── index.html      # Chat interface
-├── static/
-│   └── purdue-genai-studio-logo.png  # Purdue GenAI Studio logo
-├── requirements.txt    # Python dependencies
-├── .env.example        # Environment template
-├── .env               # Your API key (git-ignored)
-└── README.md          # This file
-```
+### Frontend
+- **Template**: Single-page HTML with embedded JavaScript
+- **Styling**: CSS with Purdue branding colors
+- **Libraries**: KaTeX for LaTeX rendering
 
-## Configuration
+### Database Schema
 
-The application uses these environment variables:
+**Conversations Table**
+- id (UUID), user_id, created_at, updated_at, title
+- Stores conversation metadata
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `GENAI_API_KEY` | Your GenAI Studio API key | Required |
-| `GENAI_BASE_URL` | GenAI Studio base URL | `https://genai.rcac.purdue.edu` |
-| `GENAI_TIMEOUT` | Request timeout in seconds | `30` |
-
-The model is fixed to `gpt-stat350` for STAT 350 course content.
+**Messages Table**
+- id, conversation_id, role (user/assistant), content, created_at
+- Stores individual chat messages
 
 ## Usage
 
-1. **Ask Questions**: Type your STAT 350 questions in the input field
-2. **Send**: Press Enter or click the Send button
-3. **View Responses**: The AI assistant will stream responses in real-time
+### Sending Messages
+1. Type your question in the input field
+2. Press Enter or click Send
+3. View AI response with citations from course materials
 
-### Example Questions
+### Uploading Files
+1. Click the attachment button
+2. Select a file (PDF, TXT, CSV, XLSX, JSON, MD, PY)
+3. Ask questions about the file content
+4. Files are automatically processed and sent to the AI
 
-- "Explain the Central Limit Theorem"
-- "What is the difference between discrete and continuous probability distributions?"
-- "How do I calculate the expected value of a random variable?"
-- "Explain hypothesis testing with an example"
-
-## Deployment
-
-### Development Mode
-
-```bash
-python app.py
-```
-
-### Production Mode with Gunicorn
-
-```bash
-gunicorn -w 4 -b 0.0.0.0:5000 app:app
-```
-
-### Docker Deployment
-
-Create a `Dockerfile`:
-```dockerfile
-FROM python:3.9-slim
-
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-
-EXPOSE 5000
-
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app"]
-```
-
-Build and run:
-```bash
-docker build -t stat350-assistant .
-docker run -p 5000:5000 --env-file .env stat350-assistant
-```
+### Managing Conversations
+- Conversations persist across sessions
+- Refresh the page to see conversation history
+- Each conversation has a unique ID
 
 ## API Endpoints
 
-- `GET /` - Main chat interface
-- `POST /chat` - Send chat messages (streaming)
-- `GET /health` - Health check endpoint
+### Chat
+- `POST /chat` - Send message (JSON or multipart/form-data)
+  - Body: `{conversation_id: null|uuid, message: string, files: optional}`
+  - Returns: `{content: string, conversation_id: uuid}`
+
+### Conversations
+- `GET /conversations` - List all user conversations
+- `GET /conversations/<id>` - Get specific conversation with messages
+- `DELETE /conversations/<id>` - Delete conversation
+- `GET /conversations/<id>/export` - Export as JSON
+
+### Utility
+- `GET /health` - Application health check
+- `GET /stats` - Usage statistics
+- `POST /clear-session` - Clear user session
+
+## Configuration
+
+The application uses default configuration with these key settings:
+
+```python
+genai:
+  base_url: https://genai.rcac.purdue.edu
+  model: gpt-stat350
+  temperature: 0.7
+  max_tokens: 2000
+
+database:
+  type: sqlite
+  sqlite_path: conversations.db
+  conversation_retention_days: 90
+
+file_upload:
+  enabled: true
+  max_size_mb: 10
+  allowed_extensions: [.txt, .pdf, .csv, .xlsx, .json, .py, .md]
+```
+
+To use a custom config, create `config.yaml` in the project root.
+
+## Database Management
+
+```bash
+# Initialize database
+flask --app genaiStudio_app_database init-db
+
+# View statistics
+flask --app genaiStudio_app_database db-stats
+
+# Cleanup old conversations
+flask --app genaiStudio_app_database cleanup-db
+```
 
 ## Troubleshooting
 
-### API Key Issues
-- Ensure your API key is correctly set in the `.env` file
-- Verify you have access to the gpt-stat350 model
+### "No message provided" Error
+- **Fixed**: Improved JSON parsing with defensive error handling
+- Check browser console (F12) for detailed error messages
 
-### Connection Issues
-- Check if you can access https://genai.rcac.purdue.edu
-- Ensure you're on Purdue network or using VPN if required
+### API Connection Issues
+- Verify `GENAI_API_KEY` environment variable is set
+- Check API endpoint: `https://genai.rcac.purdue.edu/api/chat/completions`
+- Ensure model `gpt-stat350` is accessible
 
-### No Response
-- Check the browser console for errors
-- Verify the API health status indicator in the header
+### File Upload Errors
+- Files are limited to 10MB
+- Supported formats: TXT, PDF, CSV, XLSX, JSON, PY, MD
+- Long files are automatically truncated to 50,000 characters
 
-## Security Notes
+### Database Issues
+- Delete `instance/conversations.db` and reinitialize to reset
+- Check write permissions on `instance/` directory
 
-- Never commit your `.env` file with API keys
-- Use environment variables for all sensitive data
-- Consider adding authentication for public deployments
+## Development
+
+### Project Structure
+```
+GenAIStudio API/
+├── genaiStudio_app_database.py  # Main application
+├── deploy_database.sh           # Deployment script
+├── requirements.txt             # Dependencies
+├── templates/
+│   └── index.html              # Frontend template
+├── static/                     # Static assets
+├── instance/
+│   └── conversations.db        # SQLite database
+├── logs/
+│   └── assistant.log           # Application logs
+└── uploads/                    # Temporary file uploads
+```
+
+### Adding Features
+1. Read the code in `genaiStudio_app_database.py`
+2. Database models are defined using SQLAlchemy
+3. Routes use Flask blueprints
+4. Frontend is a single HTML file with embedded JS/CSS
+
+### Logging
+Application logs are stored in `logs/assistant.log`:
+```bash
+tail -f logs/assistant.log
+```
+
+## Security
+
+- **Rate Limiting**: 30 requests/minute, 500 requests/hour per user
+- **Session Management**: Secure session cookies with timeout
+- **File Upload**: Secure filename handling, size limits, extension validation
+- **User Isolation**: Session-based user IDs prevent data leakage
+- **API Key**: Stored as environment variable, never in code
+
+## Performance
+
+- **Database**: SQLite for simplicity, PostgreSQL for production scale
+- **Caching**: Python bytecode caching enabled
+- **File Processing**: Files processed in memory, automatically cleaned up
+- **Conversation Memory**: Last 50 messages per conversation sent to API
+
+## Course Integration
+
+This application is specifically configured for **STAT 350** with:
+- Custom knowledge base containing all course materials
+- Chapter-by-chapter content from course website
+- R code examples and tutorials
+- Worksheet solutions and explanations
+- Exam preparation resources
 
 ## Support
 
-For issues related to:
-- **This application**: Open an issue on GitHub
-- **GenAI Studio**: Contact Purdue RCAC support
-- **STAT 350 Content**: Contact your course instructor
+- Check logs: `logs/assistant.log`
+- Health check: `http://localhost:5000/health`
+- Statistics: `http://localhost:5000/stats`
 
----
+## License
 
-Built for STAT 350 at Purdue University | Boiler Up! 🚂
+Educational use for Purdue University STAT 350.
+
+## Credits
+
+- **Course**: STAT 350, Department of Statistics, Purdue University
+- **AI Model**: GPT-STAT350 via Purdue GenAI API
+- **Framework**: Flask, SQLAlchemy, KaTeX

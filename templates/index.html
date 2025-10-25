@@ -125,7 +125,6 @@
             box-shadow: var(--shadow-lg);
             display: flex;
             flex-direction: column;
-            overflow: hidden;
         }
 
         .chat-header {
@@ -141,6 +140,8 @@
             padding: 1.5rem;
             overflow-y: auto;
             scroll-behavior: smooth;
+            max-height: 600px;
+            min-height: 300px;
         }
 
         .message {
@@ -169,6 +170,10 @@
             color: var(--purdue-gold);
         }
 
+        .message.error .message-header {
+            color: #d32f2f;
+        }
+
         .message-icon {
             width: 32px;
             height: 32px;
@@ -190,6 +195,11 @@
             color: var(--purdue-black);
         }
 
+        .message.error .message-icon {
+            background: #f44336;
+            color: var(--purdue-white);
+        }
+
         /* Icon styling */
         .message-icon img {
             width: 100%;
@@ -201,6 +211,14 @@
             padding-left: 2.5rem;
             line-height: 1.6;
             color: #333;
+        }
+
+        .message.error .message-content {
+            color: #d32f2f;
+            background-color: #fee;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-left: 2.5rem;
         }
 
         .message-content pre {
@@ -324,26 +342,45 @@
             text-decoration-thickness: 2px;
         }
 
+        /* Typing indicator */
         .typing-indicator {
             display: inline-flex;
             gap: 4px;
             padding: 0.5rem 0;
         }
 
-        .typing-dot {
+        .typing-indicator .typing-dots {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .typing-indicator .typing-dots span {
+            display: inline-block;
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: var(--purdue-gold);
+            background-color: #666;
             animation: typing 1.4s infinite;
         }
 
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        .typing-indicator .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
 
         @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-10px); }
+            0%, 60%, 100% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+            30% {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         /* Input Area */
@@ -503,47 +540,375 @@
             margin-bottom: 1rem;
         }
 
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
+        /* Responsive Design - All Devices */
+
+        /* Large Tablets and Small Desktops (1024px - 1200px) */
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 100%;
+                padding: 0 1.5rem;
+            }
+        }
+
+        /* Tablets (768px - 1024px) */
+        @media (max-width: 1024px) {
             .container {
                 padding: 1rem;
-                margin: 1rem auto;
+                margin: 1.5rem auto;
+            }
+
+            .chat-messages {
+                padding: 1.25rem;
+            }
+
+            .header-content {
+                padding: 0 1.5rem;
+            }
+        }
+
+        /* Mobile and Small Tablets (up to 768px) */
+        @media (max-width: 768px) {
+            body {
+                font-size: 15px;
+            }
+
+            .container {
+                padding: 0.5rem;
+                margin: 0.5rem auto;
             }
 
             .header-content {
                 flex-direction: column;
-                gap: 1rem;
+                gap: 0.75rem;
                 text-align: center;
+                padding: 0 1rem;
             }
 
             .logo {
                 flex-direction: column;
+                gap: 0.5rem;
             }
 
             .logo h1 {
                 font-size: 1.25rem;
             }
 
+            .logo-badge {
+                font-size: 0.8rem;
+            }
+
             .logo-badge img {
-                height: 30px;
+                height: 28px;
+            }
+
+            .status {
+                font-size: 0.8rem;
+            }
+
+            .chat-container {
+                border-radius: 0.75rem;
+            }
+
+            .chat-header {
+                padding: 0.875rem 1rem;
+                font-size: 0.95rem;
+            }
+
+            .chat-messages {
+                padding: 1rem;
+                max-height: 500px;
+                min-height: 250px;
+            }
+
+            .message {
+                margin-bottom: 1.25rem;
             }
 
             .message-content {
-                padding-left: 2rem;
+                padding-left: 2.5rem;
+                font-size: 0.95rem;
+            }
+
+            .message-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
             }
 
             .chat-input {
                 font-size: 16px; /* Prevents zoom on iOS */
+                padding: 0.875rem;
+            }
+
+            .chat-input-container {
+                padding: 1rem;
             }
 
             .input-actions {
-                flex-direction: column;
+                flex-direction: row;
                 width: 100%;
+                gap: 0.5rem;
+            }
+
+            .btn-send {
+                flex: 1;
+                padding: 0.875rem 1rem;
+                font-size: 0.95rem;
+            }
+
+            .btn-attach {
+                padding: 0.875rem;
+                flex-shrink: 0;
+            }
+
+            /* Better table handling on mobile */
+            .message-content table {
+                font-size: 0.85rem;
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .message-content th, .message-content td {
+                padding: 0.4rem;
+                min-width: 80px;
+            }
+
+            /* Code blocks */
+            .message-content pre {
+                font-size: 0.8rem;
+                padding: 0.75rem;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Welcome message */
+            .welcome-message {
+                padding: 2rem 1rem;
+            }
+
+            .welcome-message h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* Small Phones (up to 576px) */
+        @media (max-width: 576px) {
+            body {
+                font-size: 14px;
+            }
+
+            .header {
+                padding: 0.75rem 0;
+            }
+
+            .header-content {
+                padding: 0 0.75rem;
+                gap: 0.5rem;
+            }
+
+            .logo h1 {
+                font-size: 1.1rem;
+            }
+
+            .logo-badge {
+                font-size: 0.75rem;
+            }
+
+            .logo-badge img {
+                height: 24px;
+            }
+
+            .container {
+                padding: 0.25rem;
+                margin: 0.25rem auto;
+            }
+
+            .chat-container {
+                border-radius: 0.5rem;
+            }
+
+            .chat-header {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+
+            .chat-messages {
+                padding: 0.75rem;
+                max-height: 400px;
+                min-height: 200px;
+            }
+
+            .message {
+                margin-bottom: 1rem;
+            }
+
+            .message-icon {
+                width: 24px;
+                height: 24px;
+                font-size: 0.75rem;
+            }
+
+            .message-header {
+                font-size: 0.9rem;
+            }
+
+            .message-content {
+                padding-left: 2rem;
+                font-size: 0.9rem;
+            }
+
+            .chat-input-container {
+                padding: 0.75rem;
+            }
+
+            .chat-input {
+                padding: 0.75rem;
+                font-size: 16px;
+                min-height: 44px; /* iOS minimum touch target */
             }
 
             .btn-send, .btn-attach {
-                width: 100%;
+                padding: 0.75rem;
+                font-size: 0.9rem;
+                min-height: 44px; /* iOS minimum touch target */
+            }
+
+            .btn-send svg, .btn-attach svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            .file-attachment {
+                padding: 0.4rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .welcome-message {
+                padding: 1.5rem 0.75rem;
+            }
+
+            .welcome-message h2 {
+                font-size: 1.2rem;
+            }
+
+            .welcome-message p {
+                font-size: 0.9rem;
+            }
+
+            .footer {
+                padding: 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            /* Improve code readability on small screens */
+            .message-content pre {
+                font-size: 0.75rem;
+                padding: 0.5rem;
+            }
+
+            .message-content code {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Very Small Phones (up to 375px) */
+        @media (max-width: 375px) {
+            .logo h1 {
+                font-size: 1rem;
+            }
+
+            .chat-header {
+                font-size: 0.85rem;
+            }
+
+            .message-content {
+                padding-left: 1.75rem;
+            }
+
+            .btn-send span:first-child {
+                display: none; /* Hide "Send" text on very small screens */
+            }
+        }
+
+        /* Landscape Mode Optimizations */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .container {
+                margin: 0.5rem auto;
+            }
+
+            .header {
+                padding: 0.5rem 0;
+            }
+
+            .chat-messages {
+                padding: 0.75rem;
+                max-height: 300px;
+                min-height: 150px;
+            }
+
+            .chat-input-container {
+                padding: 0.75rem;
+            }
+
+            .chat-input {
+                min-height: 40px;
+                max-height: 80px;
+            }
+
+            .welcome-message {
+                padding: 1.5rem 1rem;
+            }
+
+            .message {
+                margin-bottom: 0.75rem;
+            }
+        }
+
+        /* Touch-friendly improvements for all mobile devices */
+        @media (hover: none) and (pointer: coarse) {
+            /* Larger touch targets */
+            .btn-send, .btn-attach {
+                min-height: 44px;
+                min-width: 44px;
+            }
+
+            .file-attachment .remove {
+                padding: 0.25rem;
+                min-width: 24px;
+                min-height: 24px;
+                display: inline-flex;
+                align-items: center;
                 justify-content: center;
+            }
+
+            /* Better scrolling */
+            .chat-messages {
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Prevent text selection on buttons */
+            .btn-send, .btn-attach {
+                -webkit-user-select: none;
+                user-select: none;
+                -webkit-tap-highlight-color: transparent;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .header, .chat-input-container, .footer, .btn-send, .btn-attach {
+                display: none;
+            }
+
+            .chat-container {
+                box-shadow: none;
+                border: 1px solid #000;
+            }
+
+            .message {
+                page-break-inside: avoid;
             }
         }
     </style>
@@ -623,9 +988,9 @@
         
         // Global state
         let messages = [];
-        let isStreaming = false;
+        let isProcessing = false;
         let attachedFiles = [];
-
+        let currentConversationId = null;
         // DOM elements
         const chatMessages = document.getElementById('chat-messages');
         const chatInput = document.getElementById('chat-input');
@@ -704,10 +1069,37 @@
             return (bytes / 1024 / 1024).toFixed(1) + ' MB';
         }
 
-        // Send message function
+        // Add typing indicator
+        function addTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message assistant typing-indicator';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="message-header">
+                    <span class="message-icon">
+                        <img src="/static/{{ config.LOGO_FILE }}" alt="AI" onerror="this.parentElement.textContent='AI'">
+                    </span>
+                    <span>{{ config.ASSISTANT_NAME }}</span>
+                </div>
+                <div class="message-content">
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            // Auto-scroll disabled - users can scroll manually
+            // chatMessages.scrollTop = chatMessages.scrollHeight;
+            return typingDiv;
+        }
+
+        // Send message function (non-streaming)
         async function sendMessage() {
             const content = chatInput.value.trim();
-            if ((!content && attachedFiles.length === 0) || isStreaming) {
+
+            if ((!content && attachedFiles.length === 0) || isProcessing) {
                 return;
             }
 
@@ -725,125 +1117,104 @@
 
             // Add user message
             addMessage('user', fullContent);
-            
-            // Prepare form data for files
-            const formData = new FormData();
-            attachedFiles.forEach(file => {
-                formData.append('files', file);
-            });
-            
-            // Add message data
-            const messageData = {
+
+            // Add message to history
+            messages.push({
                 role: 'user',
                 content: content
-            };
-            messages.push(messageData);
-            formData.append('messages', JSON.stringify(messages));
+            });
 
             // Clear input and files
             chatInput.value = '';
             chatInput.style.height = 'auto';
+            const filesToSend = [...attachedFiles];
             attachedFiles = [];
             fileAttachments.innerHTML = '';
 
-            // Disable send button
-            isStreaming = true;
+            // Disable inputs
+            isProcessing = true;
             sendButton.disabled = true;
             attachButton.disabled = true;
+            chatInput.disabled = true;
 
-            // Add assistant message container
-            const assistantMessageId = Date.now();
-            addMessage('assistant', '', assistantMessageId);
+            // Show typing indicator
+            const typingIndicator = addTypingIndicator();
 
             try {
-                const response = await fetch('/chat', {
-                    method: 'POST',
-                    body: formData
-                });
+                let response;
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                // Prepare the request based on whether files are attached
+                if (filesToSend.length > 0) {
+                    const formData = new FormData();
+                    formData.append('conversation_id', currentConversationId || '');
+                    formData.append('message', content);
+                    // Append files
+                    for (const file of filesToSend) {
+                        formData.append('files', file);
+                    }
+
+                    response = await fetch('/chat', {
+                        method: 'POST',
+                        body: formData
+                    });
+                } else {
+                    const payload = {
+                        conversation_id: currentConversationId,
+                        message: content
+                    };
+
+                    response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload)
+                    });
                 }
                 
-                if (!response.body) {
-                    throw new Error('No response body received');
+                // Remove typing indicator
+                typingIndicator.remove();
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || `HTTP error! status: ${response.status}`);
                 }
-
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let assistantContent = '';
-                let buffer = '';
-
-                while (true) {
-                    const { done, value } = await reader.read();
+                
+                // Get the complete response
+                const data = await response.json();
+                
+                // Add assistant message to chat
+                if (data.content) {
+                    addMessage('assistant', data.content);
                     
-                    if (done) break;
-
-                    const chunk = decoder.decode(value, { stream: true });
-                    buffer += chunk;
-                    
-                    // Process complete lines
-                    const lines = buffer.split('\n');
-                    buffer = lines.pop() || ''; // Keep incomplete line in buffer
-
-                    for (const line of lines) {
-                        if (line.trim() === '') continue;
-                        
-                        if (line.startsWith('data: ')) {
-                            const data = line.slice(6);
-                            
-                            if (data === '[DONE]') continue;
-
-                            try {
-                                const json = JSON.parse(data);
-                                
-                                if (json.error) {
-                                    throw new Error(json.error);
-                                }
-
-                                const content = json.choices?.[0]?.delta?.content;
-                                
-                                if (content !== undefined && content !== null) {
-                                    assistantContent += content;
-                                    updateMessage(assistantMessageId, assistantContent);
-                                }
-                            } catch (e) {
-                                // Skip parse errors for incomplete data
-                            }
-                        }
+                    // Update messages array
+                    messages.push({
+                        role: 'assistant',
+                        content: data.content
+                    });
+                    // Save conversation ID
+                    if (data.conversation_id) {
+                        currentConversationId = data.conversation_id;
                     }
-                }
-
-                // Process any remaining data in buffer
-                if (buffer.trim() && buffer.startsWith('data: ')) {
-                    const data = buffer.slice(6);
-                    if (data && data !== '[DONE]') {
-                        try {
-                            const json = JSON.parse(data);
-                            const content = json.choices?.[0]?.delta?.content;
-                            if (content) {
-                                assistantContent += content;
-                                updateMessage(assistantMessageId, assistantContent);
-                            }
-                        } catch (e) {
-                            // Skip parse errors
-                        }
-                    }
-                }
-
-                // Only add to messages if we got actual content
-                if (assistantContent && assistantContent.trim()) {
-                    messages.push({ role: 'assistant', content: assistantContent });
                 } else {
-                    updateMessage(assistantMessageId, 'No response received. Please try again.');
+                    throw new Error('No content in response');
                 }
-
+                
             } catch (error) {
-                updateMessage(assistantMessageId, `Error: ${error.message}`);
+                // Remove typing indicator if still present
+                if (typingIndicator && typingIndicator.parentNode) {
+                    typingIndicator.remove();
+                }
+                
+                // Show error message
+                console.error('Error:', error);
+                addMessage('error', `Error: ${error.message}`);
             } finally {
-                isStreaming = false;
+                // Re-enable inputs
+                isProcessing = false;
                 sendButton.disabled = false;
                 attachButton.disabled = false;
+                chatInput.disabled = false;
                 chatInput.focus();
             }
         }
@@ -858,18 +1229,19 @@
             let iconContent;
             if (role === 'user') {
                 iconContent = 'You';
+            } else if (role === 'error') {
+                iconContent = '!';
             } else {
                 // Try to use image, fallback to text
                 iconContent = '<img src="/static/{{ config.LOGO_FILE }}" alt="AI" onerror="this.parentElement.textContent=\'AI\'">';
             }
             
-            const formattedContent = content ? formatContent(content) : 
-                '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+            const formattedContent = content ? formatContent(content) : '';
 
             messageDiv.innerHTML = `
                 <div class="message-header">
                     <span class="message-icon">${iconContent}</span>
-                    <span>${role === 'user' ? 'You' : '{{ config.ASSISTANT_NAME }}'}</span>
+                    <span>${role === 'user' ? 'You' : role === 'error' ? 'Error' : '{{ config.ASSISTANT_NAME }}'}</span>
                 </div>
                 <div class="message-content">
                     ${formattedContent}
@@ -877,27 +1249,15 @@
             `;
 
             chatMessages.appendChild(messageDiv);
-            
+
             // Render LaTeX if content exists
-            if (content) {
+            if (content && role !== 'error') {
                 const contentElement = messageDiv.querySelector('.message-content');
                 renderLatex(contentElement);
             }
-            
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
 
-        // Update message content
-        function updateMessage(id, content) {
-            const messageElement = document.getElementById(`message-${id}`);
-            if (messageElement) {
-                const contentElement = messageElement.querySelector('.message-content');
-                if (!content) return;
-                contentElement.innerHTML = formatContent(content);
-                // Render LaTeX after updating content
-                renderLatex(contentElement);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
+            // Auto-scroll disabled - users can scroll manually
+            // chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
         // Format content with markdown and LaTeX support
@@ -905,7 +1265,14 @@
             // Store code blocks and LaTeX to prevent interference
             const codeBlocks = [];
             const latexBlocks = [];
-            
+            const urlBlocks = [];
+
+            // Extract angle-bracket URLs BEFORE escaping HTML (e.g., <https://example.com>)
+            text = text.replace(/<(https?:\/\/[^>]+)>/g, (match, url) => {
+                urlBlocks.push(`<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
+                return `%%URL_BLOCK_${urlBlocks.length - 1}%%`;
+            });
+
             // Extract and store code blocks first
             text = text.replace(/```([\s\S]*?)```/g, (match, code) => {
                 codeBlocks.push(`<pre><code>${escapeHtml(code)}</code></pre>`);
@@ -1084,17 +1451,22 @@
             latexBlocks.forEach((block, index) => {
                 const placeholder = `%%LATEX_BLOCK_${index}%%`;
                 if (block.type === 'display') {
-                    text = text.replace(placeholder, 
+                    text = text.replace(placeholder,
                         `<div class="latex-display">\\[${block.latex}\\]</div>`);
                 } else {
-                    text = text.replace(placeholder, 
+                    text = text.replace(placeholder,
                         `<span class="latex-inline">\\(${block.latex}\\)</span>`);
                 }
             });
-            
+
+            // Restore URL blocks (angle-bracket URLs)
+            urlBlocks.forEach((block, index) => {
+                text = text.replace(`%%URL_BLOCK_${index}%%`, block);
+            });
+
             // Preserve footnote references
             text = text.replace(/【(\d+)】/g, '<sup>[$1]</sup>');
-            
+
             return text;
         }
         
