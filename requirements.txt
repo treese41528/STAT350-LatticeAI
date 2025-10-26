@@ -7,7 +7,6 @@ SQLAlchemy==2.0.23
 
 # Database drivers
 # For SQLite (built-in with Python, no extra package needed)
-
 # For PostgreSQL (uncomment if using PostgreSQL)
 # psycopg2-binary==2.9.9
 
@@ -17,10 +16,23 @@ requests==2.31.0
 # Configuration
 PyYAML==6.0.1
 
-# File processing (optional)
+# PDF Support - Install AT LEAST ONE (or all three for best compatibility):
+# Option 1: PyPDF2 (basic, most common)
 PyPDF2==3.0.1
+
+# Option 2: pdfplumber (better for complex layouts, tables)
+pdfplumber==0.10.3
+
+# Option 3: PyMuPDF (fastest, best quality) - RECOMMENDED
+PyMuPDF==1.23.8
+
+# Excel/CSV support
 pandas==2.1.4
 openpyxl==3.1.2
 
 # Production server
 gunicorn==21.2.0
+
+# Optional: Image processing (if you want to process uploaded images)
+# Pillow==10.1.0
+
