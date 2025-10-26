@@ -34,7 +34,8 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
         }
@@ -115,6 +116,8 @@
             padding: 0 2rem;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+            min-height: 0;
         }
 
         /* Chat Container */
@@ -125,6 +128,8 @@
             box-shadow: var(--shadow-lg);
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+            min-height: 0;
         }
 
         .chat-header {
@@ -140,8 +145,7 @@
             padding: 1.5rem;
             overflow-y: auto;
             scroll-behavior: smooth;
-            max-height: 600px;
-            min-height: 300px;
+            min-height: 0;
         }
 
         .message {
@@ -616,8 +620,6 @@
 
             .chat-messages {
                 padding: 1rem;
-                max-height: 500px;
-                min-height: 250px;
             }
 
             .message {
@@ -736,8 +738,6 @@
 
             .chat-messages {
                 padding: 0.75rem;
-                max-height: 400px;
-                min-height: 200px;
             }
 
             .message {
@@ -844,8 +844,6 @@
 
             .chat-messages {
                 padding: 0.75rem;
-                max-height: 300px;
-                min-height: 150px;
             }
 
             .chat-input-container {
@@ -1090,8 +1088,7 @@
                 </div>
             `;
             chatMessages.appendChild(typingDiv);
-            // Auto-scroll disabled - users can scroll manually
-            // chatMessages.scrollTop = chatMessages.scrollHeight;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
             return typingDiv;
         }
 
@@ -1256,8 +1253,8 @@
                 renderLatex(contentElement);
             }
 
-            // Auto-scroll disabled - users can scroll manually
-            // chatMessages.scrollTop = chatMessages.scrollHeight;
+            // Auto-scroll to show new message
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
         // Format content with markdown and LaTeX support
