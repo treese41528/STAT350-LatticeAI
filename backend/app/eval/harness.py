@@ -1,7 +1,7 @@
 """Retrieval-quality eval harness.
 
-    python -m app.eval run     [--golden data/golden_questions.yaml] [--k 8]
-    python -m app.eval replay  [--since 2026-08-01] [--sample 300]
+    python backend/scripts/eval.py run     [--golden data/golden_questions.yaml] [--k 8]
+    python backend/scripts/eval.py replay  [--since 2026-08-01] [--sample 300]
 
 `run` scores the professor-authored golden set (hit@k, MRR, per-chapter,
 distance distributions) and STORES an eval_runs row — retrieval quality over
@@ -204,7 +204,7 @@ def cmd_replay(args) -> int:
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(prog="python -m app.eval")
+    parser = argparse.ArgumentParser(prog="eval.py")
     sub = parser.add_subparsers(dest="cmd", required=True)
     p_run = sub.add_parser("run", help="score the golden set")
     p_run.add_argument("--golden", default="data/golden_questions.yaml")

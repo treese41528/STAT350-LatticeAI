@@ -40,7 +40,7 @@ buffering, transcript naming, worksheets 14-22) and prints config changes.
 Then calibrate retrieval thresholds properly:
 
 ```bash
-~/venvs/stat350-tutor/bin/python -m app.eval run       # golden set → thresholds
+python backend/scripts/eval.py run       # golden set → thresholds (any python/CWD)
 ```
 
 ## Operations
@@ -49,7 +49,7 @@ Then calibrate retrieval thresholds properly:
   `STAT350_SECRET_KEY`, `ADMIN_TOKEN`, `EXPORT_SALT`.
 - **Run exactly ONE uvicorn worker** (`ops/stat350-tutor.service`) — the SDK
   rate limiter is in-process and the gateway silently drops bursts.
-- Nightly: `python -m app.jobs rollup && python -m app.jobs purge`
+- Nightly: `python backend/scripts/maintenance.py rollup && python backend/scripts/maintenance.py purge`
   (`ops/stat350-tutor-nightly.timer`); backups via `ops/backup.sh` (rehearse
   one restore!).
 - Admin API under `/admin/api/*` (Bearer `ADMIN_TOKEN`); every GET takes
@@ -57,7 +57,7 @@ Then calibrate retrieval thresholds properly:
   `/admin/api/weak-retrievals` (= webbook content-gap backlog),
   `/admin/api/topics`, `/admin/api/feedback?status=open`,
   `/admin/api/messages/{id}/replay`.
-- Semester export: `python -m app.export --from ... --to ... --out exports/x`
+- Semester export: `python backend/scripts/export.py --from ... --to ... --out exports/x`
   (anonymized, R-friendly CSVs + README).
 - Legacy `conversations.db`: scrub IPs before archiving —
   `python scripts/scrub_legacy_db.py path/to/conversations.db`.

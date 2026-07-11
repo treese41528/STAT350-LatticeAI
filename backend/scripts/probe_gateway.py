@@ -279,7 +279,8 @@ def main() -> int:
             print(f"  • {s}")
     else:
         print("  (none — defaults look right)")
-    print("\nNext: python -m app.eval run   # calibrate thresholds properly")
+    print("\nNext: python backend/scripts/eval.py run   "
+          "# calibrate thresholds properly")
     return 0
 
 

@@ -1,7 +1,7 @@
 """Anonymized, R-friendly data export.
 
-    python -m app.export --from 2026-08-01 --to 2026-12-20 --out exports/fall26
-    python -m app.export --out exports/all --include-content   # with warning
+    python backend/scripts/export.py --from 2026-08-01 --to 2026-12-20 --out exports/fall26
+    python backend/scripts/export.py --out exports/all --include-content   # with warning
 
 Pseudonymization: anon_user = HMAC-SHA256(EXPORT_SALT, users.id)[:12] — stable
 across exports (longitudinal analysis works) but not reversible without the
@@ -74,7 +74,7 @@ def _write(path: Path, rows: list[dict]) -> None:
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(prog="python -m app.export")
+    parser = argparse.ArgumentParser(prog="export.py")
     parser.add_argument("--from", dest="frm", default=None)
     parser.add_argument("--to", dest="to", default=None)
     parser.add_argument("--out", required=True)

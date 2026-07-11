@@ -4,7 +4,7 @@
 #
 # STARTER SET (~26) — grow this to 60-100 with real student phrasings; several
 # per chapter plus syllabus/exam/resource types. Run with:
-#   python -m app.eval run
+#   python backend/scripts/eval.py run
 version: "2026-07-11-seed"
 questions:
   - question: "What's the difference between a parameter and a statistic?"

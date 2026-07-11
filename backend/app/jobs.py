@@ -1,8 +1,8 @@
 """Nightly maintenance, run as short-lived processes via systemd timers
 (WAL + busy_timeout make brief cross-process writes safe):
 
-    python -m app.jobs rollup    # yesterday's daily_stats row
-    python -m app.jobs purge     # retention: delete old rows, null old free-text
+    python backend/scripts/maintenance.py rollup    # yesterday's daily_stats row
+    python backend/scripts/maintenance.py purge     # retention: delete old rows, null old free-text
 """
 
 from __future__ import annotations
@@ -130,7 +130,7 @@ def cmd_purge(args) -> int:
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(prog="python -m app.jobs")
+    parser = argparse.ArgumentParser(prog="maintenance.py")
     sub = parser.add_subparsers(dest="cmd", required=True)
     p_roll = sub.add_parser("rollup")
     p_roll.add_argument("--date", default=None, help="YYYY-MM-DD (default: yesterday)")
