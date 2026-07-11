@@ -4,6 +4,7 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import rehypeCitations from "../../lib/rehypeCitations";
+import { normalizeDisplayMath } from "../../lib/streamingMarkdown";
 import { CitationMarker } from "./CitationMarker";
 import { CodeBlock } from "./CodeBlock";
 import { ExternalLink } from "./ExternalLink";
@@ -52,13 +53,15 @@ export const MarkdownBlock = memo(function MarkdownBlock({
     [citationCount],
   );
 
+  const normalized = useMemo(() => normalizeDisplayMath(text), [text]);
+
   return (
     <ReactMarkdown
       remarkPlugins={REMARK_PLUGINS}
       rehypePlugins={rehypePlugins}
       components={COMPONENTS}
     >
-      {text}
+      {normalized}
     </ReactMarkdown>
   );
 });

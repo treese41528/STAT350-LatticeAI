@@ -141,6 +141,20 @@ export function splitStable(md: string): StableSplit {
  * ``` fences or $$ display math. Each block is rendered as an independently
  * memoized <MarkdownBlock>, so during streaming only the last block re-renders.
  */
+/**
+ * remark-math only renders `$$…$$` as *display* math (centered, enlarged) when
+ * the `$$` sit on their own lines; a single-line `$$ x $$` renders inline. The
+ * model emits either style, so normalize a line that is ENTIRELY one `$$…$$`
+ * equation into the block form. Inline `$x$` and already-multiline `$$` blocks
+ * are untouched.
+ */
+export function normalizeDisplayMath(md: string): string {
+  return md.replace(
+    /^([ \t]*)\$\$[ \t]*(\S.*?)[ \t]*\$\$[ \t]*$/gm,
+    (_m, indent, inner) => `${indent}$$\n${inner}\n$$`,
+  );
+}
+
 export function splitBlocks(md: string): string[] {
   if (md === "") return [];
   const lines = md.split("\n");
