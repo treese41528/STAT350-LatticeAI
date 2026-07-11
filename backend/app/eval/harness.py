@@ -86,7 +86,11 @@ def cmd_run(args) -> int:
     miss_lines: list[str] = []
 
     for i, q in enumerate(questions, 1):
-        rr = retrieve(gateway, resolver, q["question"], cfg)
+        # mirror the pipeline: syllabus questions retrieve with a modality bias
+        query = q["question"]
+        if q.get("modality") and q.get("type") == "syllabus":
+            query = f"STAT 350 {q['modality']} section syllabus — {query}"
+        rr = retrieve(gateway, resolver, query, cfg)
         top = rr.top_distance
         if q.get("out_of_scope"):
             oos_total += 1

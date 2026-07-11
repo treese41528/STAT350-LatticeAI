@@ -1,0 +1,184 @@
+# STAT 350 SYLLABUS retrieval + quoting eval.
+#   python backend/scripts/eval.py run --golden data/golden_syllabus.yaml
+#
+# The syllabus is in the knowledge collection (SPRING 2026 Flipped / In-Person /
+# Online, near-identical except grading). These questions test that syllabus
+# questions RETRIEVE syllabus content (expected_sources: *syllabus*) and, for the
+# LLM judge, that the QUOTED answer is correct FOR THE STUDENT'S MODALITY.
+#
+# The `modality` + `expected_answer` fields drive modality-correctness checking:
+# the SAME question has a DIFFERENT correct answer per section (e.g. homework is
+# 24% Flipped/Online but 30% In-Person). The harness applies the pipeline's
+# modality-biased query for questions carrying a `modality`. expected_sources
+# globs are broad (*syllabus*) until the Phase-0 syllabus probe confirms the KB
+# chunk filenames — refine to modality-specific globs then.
+version: 2026-07-11-syllabus
+questions:
+  # ---- MODALITY-DISCRIMINATING (the key test: right answer per section) ----
+  - question: "how much is the homework worth in this class?"
+    modality: flipped
+    expected_answer: "24% (Flipped)"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: medium
+  - question: "how much is the homework worth in this class?"
+    modality: traditional
+    expected_answer: "30% (In-Person)"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: hard
+  - question: "how much is the homework worth in this class?"
+    modality: online
+    expected_answer: "24% (Online)"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: medium
+  - question: "are there in-class quizzes and how much are they worth?"
+    modality: flipped
+    expected_answer: "Yes — in-class quizzes, 6%"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: medium
+  - question: "are there quizzes and how much are they worth?"
+    modality: online
+    expected_answer: "Yes — Brightspace quizzes, 6%"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: medium
+  - question: "are there weekly quizzes worth points in the in-person section?"
+    modality: traditional
+    expected_answer: "No separate quiz category; homework is 30% instead"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: hard
+
+  # ---- COMMON POLICIES (same across SPRING 2026 modalities) ----
+  - question: "how many midterm exams are there and what are they worth?"
+    modality: flipped
+    expected_answer: "Two midterms, 20% each"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: easy
+  - question: "how much is the final exam worth?"
+    modality: online
+    expected_answer: "24%"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: easy
+  - question: "how much of my grade is participation?"
+    modality: flipped
+    expected_answer: "5%"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: easy
+  - question: "what are the letter grade cutoffs? like what do i need for an A?"
+    modality: traditional
+    expected_answer: ">=90 A range, [80,90) B, [70,80) C, [60,70) D, <60 F"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: medium
+  - question: "do you drop any of the lowest quizzes?"
+    modality: flipped
+    expected_answer: "Yes — the two lowest quizzes are dropped"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: medium
+  - question: "i'm going to miss an exam for a university trip, how do make-up exams work?"
+    modality: traditional
+    expected_answer: "Submit Make-Up Exam Form on Brightspace at least one week in advance; emergencies email before 9am the next day"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: hard
+  - question: "what happens if i miss an exam because of an emergency?"
+    modality: online
+    expected_answer: "Email instructor with the Make-Up Exam Form info before 9am the day after the exam"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: hard
+  - question: "can i get an incomplete grade in this course?"
+    modality: flipped
+    expected_answer: "Only in unusual circumstances, with a written request before finals week, approved by the instructor"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: medium
+  - question: "do i have to pay for edfinity and how much is it?"
+    modality: online
+    expected_answer: "Yes — Edfinity is required, $35"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: easy
+  - question: "what software or platform do i need to buy for homework?"
+    modality: flipped
+    expected_answer: "Edfinity (required, $35)"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: medium
+  - question: "am i allowed to use ChatGPT or AI for my homework in this class?"
+    modality: flipped
+    expected_answer: "Permitted with guidelines — e.g. to check reasoning or get hints after attempting problems yourself; not to generate submitted solutions"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: medium
+  - question: "what's the policy on academic integrity and cheating?"
+    modality: traditional
+    expected_answer: "Follows the Purdue Honors Pledge / academic misconduct regulations; collaboration allowed within stated limits"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: medium
+  - question: "is attendance required and is it taken?"
+    modality: flipped
+    expected_answer: "Students expected at every meeting; attendance taken at the start of class; excused absences via ODOS"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: medium
+  - question: "i think a homework grade was entered wrong, how do i ask for a re-grade?"
+    modality: flipped
+    expected_answer: "Submit a re-grade request per the syllabus; grades final before Tuesday of finals week"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: medium
+  - question: "how do i switch to a different section of STAT 350?"
+    modality: traditional
+    expected_answer: "See the Section Change policy in the syllabus"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: medium
+  - question: "when and where is the final exam?"
+    modality: online
+    expected_answer: "Date/Time/Location TBA (per syllabus); defer to official schedule"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: medium
+  - question: "how much is the course evaluation worth toward my grade?"
+    modality: flipped
+    expected_answer: "1%"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: easy
+  - question: "do the grades get curved in this course?"
+    modality: traditional
+    expected_answer: "Not curved except in unusual circumstances; cutoffs may only shift to make grades easier"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: medium
+  - question: "how do computer assignments get graded and when do grades post?"
+    modality: flipped
+    expected_answer: "Hand-graded by TAs, typically by the Sunday after the deadline, then synced to Brightspace"
+    expected_sources: ["*syllabus*"]
+    type: syllabus
+    difficulty: hard
+  # ---- OUT OF SCOPE for the syllabus (should NOT be answered from syllabus) ----
+  - question: "what grade did i get on midterm 1?"
+    modality: flipped
+    out_of_scope: true
+    expected_answer: "The tutor cannot see individual student grades — direct to Brightspace/instructor"
+    expected_sources: []
+    type: out_of_scope
+    difficulty: medium
+  - question: "can you raise my grade to an A? i'm really close"
+    modality: online
+    out_of_scope: true
+    expected_answer: "Not something the tutor decides — direct to the instructor"
+    expected_sources: []
+    type: out_of_scope
+    difficulty: medium

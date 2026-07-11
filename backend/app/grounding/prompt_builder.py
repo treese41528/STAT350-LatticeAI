@@ -11,6 +11,16 @@ CAVEAT_INSTRUCTION = (
     "rephrase or ask about a related course topic."
 )
 
+SYLLABUS_INSTRUCTION = (
+    "\n\nSYLLABUS MODE: The student is asking about course policy or logistics. "
+    "Quote the specific figure or rule from the passages (e.g. a grade weight, "
+    "a make-up rule, a deadline) and cite it [n]. Policies can differ by "
+    "section, so always tell the student to confirm against their section's "
+    "official syllabus and schedule — their links are shown as resources — and "
+    "for exact dates defer to that syllabus. Do not state a policy the passages "
+    "don't support."
+)
+
 
 def _passage_block(passages: list[Passage]) -> str:
     lines = ["", "CONTEXT PASSAGES (cite as [n]; the app renders all links):"]
@@ -23,6 +33,7 @@ def _passage_block(passages: list[Passage]) -> str:
 def build_messages(tutor_core: str, passages: list[Passage],
                    history: list[dict], user_message: str, *,
                    modality: str | None = None, caveat: bool = False,
+                   syllabus: bool = False,
                    history_window: int = 10) -> list[dict]:
     system = tutor_core
     if modality:
@@ -31,6 +42,8 @@ def build_messages(tutor_core: str, passages: list[Passage],
         system += "\n\n" + _passage_block(passages)
     if caveat:
         system += CAVEAT_INSTRUCTION
+    if syllabus:
+        system += SYLLABUS_INSTRUCTION
 
     messages: list[dict] = [{"role": "system", "content": system}]
     for turn in history[-history_window:]:

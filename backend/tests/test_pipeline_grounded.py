@@ -160,6 +160,48 @@ async def test_caveat_tier_flags_done(deps):
     assert dict(events)["done"]["flags"].get("caveat") is True
 
 
+async def test_syllabus_content_quotes_and_biases_by_modality(deps):
+    deps.gateway = FakeGateway(
+        retrieval_payloads={
+            "kb-web": webbook_payload(
+                ("Syllabus_SPRING_2026_Flipped.md",
+                 "Homework (including computer assignments) is 24% of the grade.", 0.82)),
+        },
+        stream_chunks=["Homework is **24%** of your grade [1]. Confirm on your "
+                       "section's official syllabus (linked)."])
+    ctx = TurnContext(deps, user_row_id="u1", conversation_id="c1", history=[],
+                      message="how much is the homework worth?", modality="flipped",
+                      shrink=False, escalation_enabled=True)
+    events = await _collect(run_turn(ctx, seq=0))
+    names = [e for e, _ in events]
+    assert "citations" in names and names[-1] == "done"
+    # retrieval query was biased toward the Flipped syllabus
+    assert any("flipped" in call[0].lower() and "syllabus" in call[0].lower()
+               for call in deps.gateway.retrieval_calls)
+    # the authoritative syllabus + schedule cards are attached
+    resources = dict(events)["resources"]["resources"]
+    kinds = {r["kind"] for r in resources}
+    assert "syllabus" in kinds and "schedule" in kinds
+    assert any("SPRING" in r["url"] and "Flipped" in r["url"]
+               for r in resources if r["kind"] == "syllabus")
+    await deps.recorder.stop()
+    with deps.session_factory() as session:
+        msg = session.scalar(select(m.Message).where(m.Message.role == "assistant"))
+        assert msg.intent == "syllabus_content"
+    await deps.recorder.start()
+
+
+async def test_syllabus_content_asks_modality_when_unknown(deps):
+    deps.gateway = FakeGateway()
+    ctx = TurnContext(deps, user_row_id="u1", conversation_id="c1", history=[],
+                      message="what's the late homework policy?", modality=None,
+                      shrink=False, escalation_enabled=True)
+    events = await _collect(run_turn(ctx, seq=0))
+    text = "".join(d.get("text", "") for e, d in events if e == "token")
+    assert "Which section" in text            # asks modality first
+    assert deps.gateway.retrieval_calls == []  # no retrieval until modality known
+
+
 async def test_overload_reject_path(deps):
     deps.gateway = FakeGateway()
     ctx = _ctx(deps, "explain the CLT")

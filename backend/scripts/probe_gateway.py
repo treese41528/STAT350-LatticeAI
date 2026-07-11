@@ -123,6 +123,42 @@ def main() -> int:
         except Exception as exc:
             print(f"{FAIL} retrieval failed: {exc}")
 
+    # ---- 10: syllabus in the KB (naming + modality separability) ------------
+    h("10. Syllabus content in the knowledge base")
+    try:
+        payload = gw.retrieval_query(
+            "STAT 350 syllabus grading policy homework worth percentage",
+            [gw.kb_ids["webbook"]], k=5)
+        metas = payload.get("metadatas") or []
+        flat = metas[0] if metas and isinstance(metas[0], list) else metas
+        names = [str((mm or {}).get("name") or (mm or {}).get("source") or "")
+                 for mm in flat]
+        syl = [n for n in names if "syllab" in n.lower()]
+        if syl:
+            print(f"{OK} syllabus chunks retrievable. Filenames:")
+            for n in sorted(set(syl)):
+                print(f"     {n}")
+            has_modality = any(re.search(r"flip|person|online|winter|summer", n, re.I)
+                               for n in syl)
+            if has_modality:
+                print(f"{OK} filenames encode modality — you can refine the syllabus "
+                      "golden globs to modality-specific (e.g. *flipped*) and, if "
+                      "needed, post-filter retrieval by modality for exact answers.")
+            else:
+                SUGGESTIONS.append(
+                    "Syllabus chunks don't encode modality in the filename — "
+                    "modality-correct answers rely on the query bias; verify with "
+                    "`eval.py run --golden data/golden_syllabus.yaml`.")
+        else:
+            print(f"{WARN} no syllabus chunk in the top 5 for a grading query "
+                  f"(got: {names}). Syllabus may not be indexed, or is named "
+                  "unexpectedly — the tutor will fall back to linking the PDF.")
+            SUGGESTIONS.append(
+                "Syllabus not clearly retrievable — confirm it's in the "
+                "collection, or the syllabus path stays link-only.")
+    except Exception as exc:
+        print(f"{FAIL} {exc}")
+
     # ---- 3: multi-collection single call row order --------------------------
     h("3. Single call with both collections — row ↔ collection order")
     try:

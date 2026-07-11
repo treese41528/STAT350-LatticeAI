@@ -26,7 +26,18 @@ _SMALLTALK_RE = re.compile(
 
 _SYLLABUS_RE = re.compile(
     r"\b(syllabus|schedule|deadline|due date|office hours?|grading|grade breakdown|"
-    r"late (work|policy)|attendance|when is|what day|exam date|course polic\w+)\b", re.I)
+    r"late\s+(work|policy|homework|assignment|submission)|polic(y|ies)|attendance|"
+    r"when is|what day|exam date|"
+    r"how much (is|are).*(worth|count)|weighted?|make.?up|makeup|"
+    r"drop(ped|s)?\b.{0,20}\b(quiz|quizzes|grade|score|lowest)|"
+    r"lowest\s+(quiz|quizzes|grade|score)|"
+    r"how many (exams|quizzes|midterms)|final exam|participation|edfinity|proctor)\b", re.I)
+
+# Pure "where is it / give me the link" requests -> just return links.
+_SYLLABUS_LOCATE_RE = re.compile(
+    r"\b(where('?s| is| can i find)|link|url|pdf|download|send me|give me|pull up|"
+    r"show me|copy of|get me)\b.{0,30}\b(syllabus|schedule)\b|"
+    r"\b(syllabus|schedule)\b.{0,20}\b(link|url|pdf|page|website)\b", re.I)
 
 _EXAM_RE = re.compile(
     r"\b(what(?:'s| is| will be)? (?:covered )?on (?:the )?(exam\s*[123]|final|midterm\s*[12])|"
@@ -76,7 +87,12 @@ def route(message: str, resolver: CourseMapResolver,
         return Route(intent="exam_info", exam_key=key, sections=sections)
 
     if _SYLLABUS_RE.search(msg):
-        return Route(intent="syllabus_schedule", sections=sections,
+        if _SYLLABUS_LOCATE_RE.search(msg):
+            # pure "where is the syllabus / link to the schedule" -> links only
+            return Route(intent="syllabus_schedule", sections=sections,
+                         needs_modality=modality is None)
+        # a policy/logistics question -> quote from the syllabus (needs modality)
+        return Route(intent="syllabus_content", sections=sections,
                      needs_modality=modality is None)
 
     ws_m = _WORKSHEET_RE.search(msg)

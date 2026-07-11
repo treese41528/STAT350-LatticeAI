@@ -49,6 +49,28 @@ OVERLOAD_MESSAGE = (
     "then try me again in a few minutes."
 )
 
+SYLLABUS_FALLBACK = (
+    "I couldn't find that specific detail in the syllabus text I can search, so "
+    "I don't want to guess on a policy. Your section's official syllabus and "
+    "schedule are linked below — they're the authoritative source. If you tell "
+    "me the exact policy you're after (grading weights, make-up exams, "
+    "deadlines…), I can try again."
+)
+
+
+def _syllabus_cards(deps, modality: str | None) -> list[dict]:
+    if not modality:
+        return []
+    syl = deps.resolver.syllabus_for(modality)
+    if syl is None:
+        return []
+    return [
+        {"kind": "syllabus", "title": f"Syllabus — {syl.label}",
+         "url": syl.syllabus_pdf, "meta": "Official — authoritative"},
+        {"kind": "schedule", "title": f"Schedule — {syl.label}",
+         "url": syl.schedule_url, "meta": None},
+    ]
+
 
 class TurnContext:
     """Everything the pipeline needs for one question."""
@@ -140,6 +162,12 @@ async def run_turn(ctx: TurnContext, seq: int) -> AsyncIterator[tuple[str, dict]
     _persist_user_message(ctx, seq)
 
     r: Route = route(ctx.message, deps.resolver, ctx.modality)
+
+    # A syllabus-content question needs the modality first; once known, it goes
+    # through the grounded path (below) to QUOTE the syllabus, not just link it.
+    if r.intent == "syllabus_content" and r.needs_modality:
+        r = Route(intent="syllabus_schedule", sections=r.sections,
+                  needs_modality=True)
 
     # ---- deterministic branches (no LLM, no queue) ---------------------------
     if r.intent == "smalltalk":
@@ -320,9 +348,19 @@ async def _grounded_answer(ctx: TurnContext, r: Route, seq: int,
     deps = ctx.deps
     cfg = deps.settings.retrieval
 
-    yield "status", {"stage": "retrieving", "label": "Searching course materials…"}
+    syllabus_mode = r.intent == "syllabus_content"
+    syllabus_cards = _syllabus_cards(deps, ctx.modality) if syllabus_mode else []
+
+    if syllabus_mode:
+        yield "status", {"stage": "retrieving", "label": "Checking your syllabus…"}
+    else:
+        yield "status", {"stage": "retrieving", "label": "Searching course materials…"}
     raw_query = ctx.message
     rewritten = build_retrieval_query(ctx.history, ctx.message)
+    if syllabus_mode and ctx.modality:
+        # bias retrieval toward THIS section's syllabus (the collection holds
+        # every modality's near-identical syllabus)
+        rewritten = f"STAT 350 {ctx.modality} section syllabus — {rewritten}"
     rr: RetrievalResult = await run_sync(
         retrieve, deps.gateway, deps.resolver, rewritten, cfg,
         shrink=ctx.shrink, single_call=getattr(cfg, "single_call", False))
@@ -335,15 +373,19 @@ async def _grounded_answer(ctx: TurnContext, r: Route, seq: int,
 
     # ---- weak retrieval → honest refusal, LLM call skipped -------------------
     if rr.tier == "no_evidence":
-        cards = resources_payload(rr.passages, deps.resolver,
-                                  extra_sections=r.sections[:3])
+        cards = syllabus_cards + resources_payload(
+            rr.passages, deps.resolver, extra_sections=r.sections[:3])
         if cards:
             yield "resources", {"resources": cards}
-        yield "refusal", {"reason": "weak_retrieval", "message": REFUSAL_MESSAGE}
+        # for syllabus questions, point them at the authoritative PDF rather
+        # than a bare refusal
+        msg = (SYLLABUS_FALLBACK if syllabus_mode and syllabus_cards
+               else REFUSAL_MESSAGE)
+        yield "refusal", {"reason": "weak_retrieval", "message": msg}
         yield "done", {"messageId": ctx.assistant_msg_id,
-                       "finishReason": "refusal", "finalText": REFUSAL_MESSAGE,
+                       "finishReason": "refusal", "finalText": msg,
                        "flags": {"refusal": True}}
-        _persist_assistant(ctx, seq, content=REFUSAL_MESSAGE,
+        _persist_assistant(ctx, seq, content=msg,
                            answer_kind="refusal", intent=r.intent,
                            finish_reason="refusal",
                            latency_ms=int((time.monotonic() - t_start) * 1000))
@@ -351,15 +393,15 @@ async def _grounded_answer(ctx: TurnContext, r: Route, seq: int,
 
     # ---- citations & resources BEFORE tokens ----------------------------------
     yield "citations", {"citations": citations_payload(rr.passages)}
-    cards = resources_payload(rr.passages, deps.resolver,
-                              extra_sections=r.sections[:2])
+    cards = syllabus_cards + resources_payload(
+        rr.passages, deps.resolver, extra_sections=r.sections[:2])
     if cards:
         yield "resources", {"resources": cards}
     yield "status", {"stage": "thinking", "label": "Writing a grounded answer…"}
 
     messages = build_messages(
         deps.tutor_core, rr.passages, ctx.history, ctx.message,
-        modality=ctx.modality, caveat=rr.tier == "caveat",
+        modality=ctx.modality, caveat=rr.tier == "caveat", syllabus=syllabus_mode,
         history_window=deps.settings.generation.history_window)
 
     gen_cfg = deps.settings.generation

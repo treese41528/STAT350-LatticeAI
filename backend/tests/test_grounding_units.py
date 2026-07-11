@@ -17,13 +17,29 @@ from .conftest import FakeGateway, webbook_payload
 def test_router_intents(resolver):
     assert route("hi there!", resolver).intent == "smalltalk"
     assert route("what's on exam 2?", resolver).intent == "exam_info"
-    assert route("when is the final exam date?", resolver).intent == "syllabus_schedule"
     assert route("give me the link to worksheet 5", resolver).intent == "resource_lookup"
     assert route("where is the CLT video", resolver).intent == "resource_lookup"
     assert route("why do we divide by n-1?", resolver).intent == "concept_question"
     # question words override lookup phrasing
     assert route("can you explain what section 10.2 says about power?",
                  resolver).intent == "concept_question"
+
+
+def test_router_syllabus_link_vs_content(resolver):
+    # pure "where is it / give me the link" -> deterministic link response
+    for q in ["where is the syllabus?", "can you send me the syllabus link",
+              "link to the schedule please", "where can i find the schedule"]:
+        assert route(q, resolver).intent == "syllabus_schedule", q
+    # policy / logistics questions -> quote from the syllabus (content)
+    for q in ["how much is the homework worth?", "what's the late homework policy?",
+              "how many midterms are there?", "when is the final exam date?",
+              "how do make-up exams work?", "are the lowest quizzes dropped?",
+              "what are the office hours?"]:
+        assert route(q, resolver).intent == "syllabus_content", q
+    # content questions still need the modality first
+    assert route("how much are exams worth?", resolver, modality=None).needs_modality
+    assert not route("how much are exams worth?", resolver,
+                     modality="flipped").needs_modality
 
 
 def test_router_exam_key(resolver):
