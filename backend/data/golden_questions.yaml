@@ -11,7 +11,11 @@ questions:
     expected_sources: ["*1-1-intro*", "*7-1-statistics-and-sampling*"]
     chapter: 1
   - question: "How do I read a boxplot and what counts as an outlier?"
-    expected_sources: ["*2-4-exploring-quantitative*", "*2-3-tools-for-numerical*"]
+    # boxplots/outliers span graphical summaries (2.3/2.4) AND the IQR /
+    # five-number-summary / resistance sections in ch 3 — the initial glob was
+    # too narrow (a correct 0.86 retrieval was scored a miss). Confirm on re-run.
+    expected_sources: ["*2-4-exploring-quantitative*", "*2-3-tools-for-numerical*",
+                       "*3-4-measures-of-variability-IQR*", "*3-5-choosing-the-right-measure*"]
     chapter: 2
   - question: "When should I use the median instead of the mean?"
     expected_sources: ["*3-5-choosing-the-right-measure*", "*3-2-measures-of-central-tendency*"]
