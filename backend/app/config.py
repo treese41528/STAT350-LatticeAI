@@ -1,0 +1,141 @@
+"""Configuration: config.yaml (non-secrets) + environment (secrets).
+
+Everything the app reads at runtime hangs off one `Settings` object built by
+`load_settings()`. The YAML file is the single source for tunables; env vars
+carry only secrets and deploy-time overrides (STAT350_CONFIG, STAT350_DB_URL).
+"""
+
+from __future__ import annotations
+
+import os
+from pathlib import Path
+
+import yaml
+from pydantic import BaseModel, Field
+
+BACKEND_DIR = Path(__file__).resolve().parent.parent
+
+
+class CourseCfg(BaseModel):
+    name: str = "STAT 350"
+    term: str = ""
+    welcome: str = ""
+    starter_questions: list[str] = Field(default_factory=list)
+    max_message_chars: int = 4000
+
+
+class GatewayCfg(BaseModel):
+    base_url: str = "https://genai.rcac.purdue.edu"
+    model: str = "gpt-oss:120b"
+    rpm: int = 18
+    timeout_s: int = 120
+    connect_timeout_s: int = 30
+    max_concurrent_llm: int = 4
+
+
+class CollectionsCfg(BaseModel):
+    webbook: str
+    transcripts: str
+
+
+class ThresholdsCfg(BaseModel):
+    strong: float = 0.55
+    weak: float = 0.80
+
+
+class RetrievalCfg(BaseModel):
+    k_webbook: int = 6
+    k_transcripts: int = 4
+    max_passages: int = 8
+    min_transcript_slots: int = 2
+    rewriter: str = "heuristic"
+    thresholds: ThresholdsCfg = ThresholdsCfg()
+
+
+class GenerationCfg(BaseModel):
+    temperature: float = 0.2
+    max_tokens: int = 1600
+    history_window: int = 10
+
+
+class EscalationCfg(BaseModel):
+    enabled: bool = True
+    model: str = ""
+    temperature: float = 0.0
+    max_steps: int = 6
+    max_tool_calls: int = 8
+    max_tokens: int = 24000
+    timeout_s: int = 120
+    per_user_per_hour: int = 3
+
+
+class LimitsCfg(BaseModel):
+    user_per_min: int = 6
+    user_per_day: int = 60
+    burst_per_10min: int = 10
+
+
+class DegradationCfg(BaseModel):
+    disable_escalation_at: int = 5
+    shrink_retrieval_at: int = 12
+    reject_at: int = 25
+
+
+class DbCfg(BaseModel):
+    url: str = "sqlite:///data/tutor.db"
+    retention_days: int = 400
+
+
+class LoggingCfg(BaseModel):
+    dir: str = "logs"
+    chat_traces: bool = True
+    agent_traces: bool = True
+
+
+class AdminCfg(BaseModel):
+    enabled: bool = True
+
+
+class Settings(BaseModel):
+    course: CourseCfg = CourseCfg()
+    gateway: GatewayCfg = GatewayCfg()
+    collections: CollectionsCfg
+    retrieval: RetrievalCfg = RetrievalCfg()
+    generation: GenerationCfg = GenerationCfg()
+    escalation: EscalationCfg = EscalationCfg()
+    limits: LimitsCfg = LimitsCfg()
+    degradation: DegradationCfg = DegradationCfg()
+    db: DbCfg = DbCfg()
+    logging: LoggingCfg = LoggingCfg()
+    admin: AdminCfg = AdminCfg()
+
+    # --- secrets / env-only ---
+    api_key: str | None = None          # GENAI_STUDIO_API_KEY
+    secret_key: str = "dev-secret-change-me"   # STAT350_SECRET_KEY
+    admin_token: str | None = None      # ADMIN_TOKEN
+    export_salt: str = "dev-salt"       # EXPORT_SALT
+
+    @property
+    def backend_dir(self) -> Path:
+        return BACKEND_DIR
+
+    def resolve_path(self, rel: str) -> Path:
+        """Resolve a config-relative path against the backend directory."""
+        p = Path(rel)
+        return p if p.is_absolute() else BACKEND_DIR / p
+
+
+def load_settings(config_file: str | os.PathLike | None = None) -> Settings:
+    path = Path(config_file or os.environ.get("STAT350_CONFIG", BACKEND_DIR / "config.yaml"))
+    raw: dict = {}
+    if path.exists():
+        raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    settings = Settings(**raw)
+
+    settings.api_key = os.environ.get("GENAI_STUDIO_API_KEY") or None
+    settings.secret_key = os.environ.get("STAT350_SECRET_KEY", settings.secret_key)
+    settings.admin_token = os.environ.get("ADMIN_TOKEN") or None
+    settings.export_salt = os.environ.get("EXPORT_SALT", settings.export_salt)
+    if os.environ.get("STAT350_DB_URL"):
+        settings.db.url = os.environ["STAT350_DB_URL"]
+    return settings

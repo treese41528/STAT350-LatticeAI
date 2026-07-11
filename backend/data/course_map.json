@@ -1,0 +1,2197 @@
+{
+  "version": "spring-2026",
+  "site_base": "https://treese41528.github.io/STAT350/",
+  "chapters": {
+    "1": {
+      "number": 1,
+      "title": "Introduction to Statistics",
+      "index_url": "https://treese41528.github.io/STAT350/Website/chapter1/index.html",
+      "sections": {
+        "1.1": {
+          "number": "1.1",
+          "title": "What Is Statistics?",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter1/lectures/1-1-intro.html",
+          "rst_basename": "1-1-intro",
+          "video": {
+            "anchor": "#002",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#002",
+            "title": "What Is Statistics?"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "statistics?"
+          ]
+        },
+        "1.2": {
+          "number": "1.2",
+          "title": "Probability & Statistical Inference: How Are They Associated?",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter1/lectures/1-2-probability-inference.html",
+          "rst_basename": "1-2-probability-inference",
+          "video": {
+            "anchor": "#004",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#004",
+            "title": "Probability & Statistical Inference: How Are They Associated?"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "probability",
+            "statistical",
+            "inference:",
+            "they",
+            "associated?"
+          ]
+        }
+      }
+    },
+    "2": {
+      "number": 2,
+      "title": "Graphical Summaries",
+      "index_url": "https://treese41528.github.io/STAT350/Website/chapter2/index.html",
+      "sections": {
+        "2.1": {
+          "number": "2.1",
+          "title": "Data Set Structure and Variable Types",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter2/lectures/2-1-understanding-the-structure-of-data-set.html",
+          "rst_basename": "2-1-understanding-the-structure-of-data-set",
+          "video": {
+            "anchor": "#005",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#005",
+            "title": "Data Set Structure and Variable Types"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "data",
+            "set",
+            "structure",
+            "variable",
+            "types"
+          ]
+        },
+        "2.2": {
+          "number": "2.2",
+          "title": "Tools for Categorical (Qualitative) Data",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter2/lectures/2-2-tools-for-categorical-qualitative-data.html",
+          "rst_basename": "2-2-tools-for-categorical-qualitative-data",
+          "video": {
+            "anchor": "#006",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#006",
+            "title": "Tools for Categorical (Qualitative) Data"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "tools",
+            "categorical",
+            "qualitative",
+            "data"
+          ]
+        },
+        "2.3": {
+          "number": "2.3",
+          "title": "Tools for Numerical (Quantitative) Data",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter2/lectures/2-3-tools-for-numerical-quantitative-data.html",
+          "rst_basename": "2-3-tools-for-numerical-quantitative-data",
+          "video": {
+            "anchor": "#007",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#007",
+            "title": "Tools for Numerical (Quantitative) Data"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "tools",
+            "numerical",
+            "quantitative",
+            "data"
+          ]
+        },
+        "2.4": {
+          "number": "2.4",
+          "title": "Exploring Quantitative Distributions: Modality, Shape & Outliers",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter2/lectures/2-4-exploring-quantitative-distributions-modality-shape-and-outliers.html",
+          "rst_basename": "2-4-exploring-quantitative-distributions-modality-shape-and-outliers",
+          "video": {
+            "anchor": "#008",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#008",
+            "title": "Exploring Quantitative Distributions: Modality, Shape & Outliers"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "exploring",
+            "quantitative",
+            "distributions:",
+            "modality",
+            "shape",
+            "outliers"
+          ]
+        }
+      }
+    },
+    "3": {
+      "number": 3,
+      "title": "Numerical Summaries",
+      "index_url": "https://treese41528.github.io/STAT350/Website/chapter3/index.html",
+      "sections": {
+        "3.1": {
+          "number": "3.1",
+          "title": "Introduction to Numerical Summaries: Notation and Terminology",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter3/lectures/3-1-intro-numerical-summaries.html",
+          "rst_basename": "3-1-intro-numerical-summaries",
+          "video": {
+            "anchor": "#009",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#009",
+            "title": "Introduction to Numerical Summaries"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "numerical",
+            "summaries:",
+            "notation",
+            "terminology"
+          ]
+        },
+        "3.2": {
+          "number": "3.2",
+          "title": "Measures of Central Tendency",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter3/lectures/3-2-measures-of-central-tendency.html",
+          "rst_basename": "3-2-measures-of-central-tendency",
+          "video": {
+            "anchor": "#010",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#010",
+            "title": "Measures of Central Tendency"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "measures",
+            "central",
+            "tendency"
+          ]
+        },
+        "3.3": {
+          "number": "3.3",
+          "title": "Measures of Variability — Range, Variance, and Standard Deviation",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter3/lectures/3-3-measures-of-variability-range-variance-and-SD.html",
+          "rst_basename": "3-3-measures-of-variability-range-variance-and-SD",
+          "video": {
+            "anchor": "#011",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#011",
+            "title": "Measures of Variability — Range/Variance/SD"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "measures",
+            "variability",
+            "range",
+            "variance",
+            "standard",
+            "deviation"
+          ]
+        },
+        "3.4": {
+          "number": "3.4",
+          "title": "Measures of Variability — Interquartile Range and Five-Number Summary",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter3/lectures/3-4-measures-of-variability-IQR-and-5-number-summary.html",
+          "rst_basename": "3-4-measures-of-variability-IQR-and-5-number-summary",
+          "video": {
+            "anchor": "#012",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#012",
+            "title": "Measures of Variability — IQR/Five-Number Summary"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "measures",
+            "variability",
+            "interquartile",
+            "range",
+            "five",
+            "number",
+            "summary"
+          ]
+        },
+        "3.5": {
+          "number": "3.5",
+          "title": "Choosing the Right Measure & Comparing Measures Across Data Sets",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter3/lectures/3-5-choosing-the-right-measure-resistance-to-extreme-values.html",
+          "rst_basename": "3-5-choosing-the-right-measure-resistance-to-extreme-values",
+          "video": {
+            "anchor": "#013",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#013",
+            "title": "Choosing the Right Measure & Resistance"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "choosing",
+            "right",
+            "measure",
+            "comparing",
+            "measures",
+            "across",
+            "data",
+            "sets"
+          ]
+        }
+      }
+    },
+    "4": {
+      "number": 4,
+      "title": "Probability",
+      "index_url": "https://treese41528.github.io/STAT350/Website/chapter4/index.html",
+      "sections": {
+        "4.1": {
+          "number": "4.1",
+          "title": "Basic Set Theory",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter4/lectures/4-1-basic-set-theory.html",
+          "rst_basename": "4-1-basic-set-theory",
+          "video": {
+            "anchor": "#014",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#014",
+            "title": "Basic Set Theory"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "basic",
+            "set",
+            "theory"
+          ]
+        },
+        "4.2": {
+          "number": "4.2",
+          "title": "Probability",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter4/lectures/4-2-probability.html",
+          "rst_basename": "4-2-probability",
+          "video": {
+            "anchor": "#015",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#015",
+            "title": "Probability"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "probability"
+          ]
+        },
+        "4.3": {
+          "number": "4.3",
+          "title": "Conditional Probability",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter4/lectures/4-3-conditional-probability.html",
+          "rst_basename": "4-3-conditional-probability",
+          "video": {
+            "anchor": "#016",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#016",
+            "title": "Conditional Probability"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "conditional",
+            "probability",
+            "given that"
+          ]
+        },
+        "4.4": {
+          "number": "4.4",
+          "title": "Law of Total Probability and Bayes’ Rule",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter4/lectures/4-4-law-of-total-probability-and-bayes-rule.html",
+          "rst_basename": "4-4-law-of-total-probability-and-bayes-rule",
+          "video": {
+            "anchor": "#017",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#017",
+            "title": "Law of Total Probability & Bayes’ Rule"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "law",
+            "total",
+            "probability",
+            "bayes’",
+            "rule",
+            "bayes",
+            "bayes rule",
+            "total probability"
+          ]
+        },
+        "4.5": {
+          "number": "4.5",
+          "title": "Bayesian Updating: Sequential Learning",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter4/lectures/4-5-bayes-update-rule-example.html",
+          "rst_basename": "4-5-bayes-update-rule-example",
+          "video": {
+            "anchor": "#018",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#018",
+            "title": "Bayesian Updating (Example)"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "bayesian",
+            "updating:",
+            "sequential",
+            "learning"
+          ]
+        },
+        "4.6": {
+          "number": "4.6",
+          "title": "Independence of Events",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter4/lectures/4-6-independence-of-events.html",
+          "rst_basename": "4-6-independence-of-events",
+          "video": {
+            "anchor": "#019",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#019",
+            "title": "Independence of Events"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "independence",
+            "events"
+          ]
+        }
+      }
+    },
+    "5": {
+      "number": 5,
+      "title": "Discrete Distributions",
+      "index_url": "https://treese41528.github.io/STAT350/Website/chapter5/index.html",
+      "sections": {
+        "5.1": {
+          "number": "5.1",
+          "title": "Discrete Random Variables and Probability Mass Distributions",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter5/lectures/5-1-discrete-rvs-and-pmfs.html",
+          "rst_basename": "5-1-discrete-rvs-and-pmfs",
+          "video": {
+            "anchor": "#020",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#020",
+            "title": "Discrete RVs & PMFs"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "discrete",
+            "random",
+            "variables",
+            "probability",
+            "mass",
+            "distributions"
+          ]
+        },
+        "5.2": {
+          "number": "5.2",
+          "title": "Joint Probability Mass Functions",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter5/lectures/5-2-joint-pmfs.html",
+          "rst_basename": "5-2-joint-pmfs",
+          "video": {
+            "anchor": "#021",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#021",
+            "title": "Joint PMFs"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "joint",
+            "probability",
+            "mass",
+            "functions"
+          ]
+        },
+        "5.3": {
+          "number": "5.3",
+          "title": "Expected Value of a Discrete Random Variable",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter5/lectures/5-3-expected-value-of-discrete-rv.html",
+          "rst_basename": "5-3-expected-value-of-discrete-rv",
+          "video": {
+            "anchor": "#022",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#022",
+            "title": "Expected Value (Discrete)"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "expected",
+            "value",
+            "discrete",
+            "random",
+            "variable"
+          ]
+        },
+        "5.4": {
+          "number": "5.4",
+          "title": "Variance of a Discrete Random Variable",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter5/lectures/5-4-variance-of-discrete-rv.html",
+          "rst_basename": "5-4-variance-of-discrete-rv",
+          "video": {
+            "anchor": "#023",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#023",
+            "title": "Variance (Discrete)"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "variance",
+            "discrete",
+            "random",
+            "variable"
+          ]
+        },
+        "5.5": {
+          "number": "5.5",
+          "title": "Covariance of Dependent Random Variables",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter5/lectures/5-5-covariance-of-dependent-rvs.html",
+          "rst_basename": "5-5-covariance-of-dependent-rvs",
+          "video": {
+            "anchor": "#024",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#024",
+            "title": "Covariance of Dependent RVs"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "covariance",
+            "dependent",
+            "random",
+            "variables"
+          ]
+        },
+        "5.6": {
+          "number": "5.6",
+          "title": "The Binomial Distribution",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter5/lectures/5-6-binomial-distribution.html",
+          "rst_basename": "5-6-binomial-distribution",
+          "video": {
+            "anchor": "#025",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#025",
+            "title": "Binomial Distribution"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "binomial",
+            "distribution"
+          ]
+        },
+        "5.7": {
+          "number": "5.7",
+          "title": "Poisson Distribution",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter5/lectures/5-7-poisson-distribution.html",
+          "rst_basename": "5-7-poisson-distribution",
+          "video": {
+            "anchor": "#026",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#026",
+            "title": "Poisson Distribution"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "poisson",
+            "distribution"
+          ]
+        }
+      }
+    },
+    "6": {
+      "number": 6,
+      "title": "Continuous Distributions",
+      "index_url": "https://treese41528.github.io/STAT350/Website/chapter6/index.html",
+      "sections": {
+        "6.1": {
+          "number": "6.1",
+          "title": "Continuous Random Variables and Probability Density Functions",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter6/lectures/6-1-continuous-rvs-and-pdfs.html",
+          "rst_basename": "6-1-continuous-rvs-and-pdfs",
+          "video": {
+            "anchor": "#027",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#027",
+            "title": "Continuous RVs & PDFs"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "continuous",
+            "random",
+            "variables",
+            "probability",
+            "density",
+            "functions"
+          ]
+        },
+        "6.2": {
+          "number": "6.2",
+          "title": "Expected Value and Variance of Continuous Random Variables",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter6/lectures/6-2-expected-value-and-variance-of-cts-rvs.html",
+          "rst_basename": "6-2-expected-value-and-variance-of-cts-rvs",
+          "video": {
+            "anchor": "#028",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#028",
+            "title": "E[X] and Var(X) for Continuous RVs"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "expected",
+            "value",
+            "variance",
+            "continuous",
+            "random",
+            "variables"
+          ]
+        },
+        "6.3": {
+          "number": "6.3",
+          "title": "Cumulative Distribution Functions",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter6/lectures/6-3-cdfs.html",
+          "rst_basename": "6-3-cdfs",
+          "video": {
+            "anchor": "#029",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#029",
+            "title": "CDFs"
+          },
+          "extra_videos": [
+            {
+              "anchor": "#030",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#030",
+              "title": "Example 1"
+            },
+            {
+              "anchor": "#031",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#031",
+              "title": "Example 2"
+            }
+          ],
+          "keywords": [
+            "cumulative",
+            "distribution",
+            "functions"
+          ]
+        },
+        "6.4": {
+          "number": "6.4",
+          "title": "Normal Distribution",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter6/lectures/6-4-normal-distribution.html",
+          "rst_basename": "6-4-normal-distribution",
+          "video": {
+            "anchor": "#032",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#032",
+            "title": "Normal Distribution"
+          },
+          "extra_videos": [
+            {
+              "anchor": "#033",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#033",
+              "title": "Forward (Probabilities)"
+            },
+            {
+              "anchor": "#034",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#034",
+              "title": "Backward (Quantiles)"
+            },
+            {
+              "anchor": "#035",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#035",
+              "title": "Checking Normality of Data"
+            }
+          ],
+          "keywords": [
+            "normal",
+            "distribution",
+            "z score",
+            "z-score",
+            "bell curve"
+          ]
+        },
+        "6.5": {
+          "number": "6.5",
+          "title": "Uniform Distribution",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter6/lectures/6-5-uniform-distribution.html",
+          "rst_basename": "6-5-uniform-distribution",
+          "video": {
+            "anchor": "#036",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#036",
+            "title": "Uniform Distribution"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "uniform",
+            "distribution"
+          ]
+        },
+        "6.6": {
+          "number": "6.6",
+          "title": "Exponential Distribution",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter6/lectures/6-6-exponential-distribution.html",
+          "rst_basename": "6-6-exponential-distribution",
+          "video": {
+            "anchor": "#037",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#037",
+            "title": "Exponential Distribution"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "exponential",
+            "distribution"
+          ]
+        }
+      }
+    },
+    "7": {
+      "number": 7,
+      "title": "Sampling Distributions",
+      "index_url": "https://treese41528.github.io/STAT350/Website/chapter7/index.html",
+      "sections": {
+        "7.1": {
+          "number": "7.1",
+          "title": "Statistics and Sampling Distributions",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter7/lectures/7-1-statistics-and-sampling-distributions.html",
+          "rst_basename": "7-1-statistics-and-sampling-distributions",
+          "video": {
+            "anchor": "#038",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#038",
+            "title": "Statistics & Sampling Distributions"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "statistics",
+            "sampling",
+            "distributions"
+          ]
+        },
+        "7.2": {
+          "number": "7.2",
+          "title": "Sampling Distribution for the Sample Mean",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter7/lectures/7-2-sampling-distribution-for-the-sample-mean.html",
+          "rst_basename": "7-2-sampling-distribution-for-the-sample-mean",
+          "video": {
+            "anchor": "#039",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#039",
+            "title": "Sampling Distribution for Xˉ"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "sampling",
+            "distribution",
+            "sample",
+            "mean"
+          ]
+        },
+        "7.3": {
+          "number": "7.3",
+          "title": "The Central Limit Theorem (CLT)",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter7/lectures/7-3-clt.html",
+          "rst_basename": "7-3-clt",
+          "video": {
+            "anchor": "#040",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#040",
+            "title": "CLT"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "central",
+            "limit",
+            "theorem",
+            "clt",
+            "central limit theorem"
+          ]
+        },
+        "7.4": {
+          "number": "7.4",
+          "title": "Discrete Random Variables and the CLT",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter7/lectures/7-4-discret-rvs-and-clt.html",
+          "rst_basename": "7-4-discret-rvs-and-clt",
+          "video": {
+            "anchor": "#041",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#041",
+            "title": "Discrete RVs & the CLT"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "discrete",
+            "random",
+            "variables",
+            "clt"
+          ]
+        }
+      }
+    },
+    "8": {
+      "number": 8,
+      "title": "Experimental Design",
+      "index_url": "https://treese41528.github.io/STAT350/Website/chapter8/index.html",
+      "sections": {
+        "8.1": {
+          "number": "8.1",
+          "title": "Experimental and Sampling Designs",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter8/lectures/8-1-experimental-and-sampling-designs.html",
+          "rst_basename": "8-1-experimental-and-sampling-designs",
+          "video": {
+            "anchor": "#042",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#042",
+            "title": "Experimental and Sampling Designs"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "experimental",
+            "sampling",
+            "designs"
+          ]
+        },
+        "8.2": {
+          "number": "8.2",
+          "title": "Experimental Design Principles",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter8/lectures/8-2-experimental-design-principles.html",
+          "rst_basename": "8-2-experimental-design-principles",
+          "video": {
+            "anchor": "#043",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#043",
+            "title": "Principles"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "experimental",
+            "design",
+            "principles"
+          ]
+        },
+        "8.3": {
+          "number": "8.3",
+          "title": "Basic Types of Experimental Design",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter8/lectures/8-3-basic-types-of-experimental-design.html",
+          "rst_basename": "8-3-basic-types-of-experimental-design",
+          "video": {
+            "anchor": "#044",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#044",
+            "title": "Basic Types"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "basic",
+            "types",
+            "experimental",
+            "design"
+          ]
+        },
+        "8.4": {
+          "number": "8.4",
+          "title": "Addressing Potential Flaws in Experimental Design",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter8/lectures/8-4-addressing-potential-flaws-in-experimental-design.html",
+          "rst_basename": "8-4-addressing-potential-flaws-in-experimental-design",
+          "video": {
+            "anchor": "#045",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#045",
+            "title": "Issues/Flaws"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "addressing",
+            "potential",
+            "flaws",
+            "experimental",
+            "design"
+          ]
+        },
+        "8.5": {
+          "number": "8.5",
+          "title": "Examples of Experimental Design",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter8/lectures/8-5-examples-of-experimental-design.html",
+          "rst_basename": "8-5-examples-of-experimental-design",
+          "video": {
+            "anchor": "#046",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#046",
+            "title": "Examples"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "examples",
+            "experimental",
+            "design"
+          ]
+        },
+        "8.6": {
+          "number": "8.6",
+          "title": "Sampling Design",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter8/lectures/8-6-sampling-design.html",
+          "rst_basename": "8-6-sampling-design",
+          "video": {
+            "anchor": "#047",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#047",
+            "title": "Sampling Design"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "sampling",
+            "design"
+          ]
+        },
+        "8.7": {
+          "number": "8.7",
+          "title": "Sampling Bias",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter8/lectures/8-7-sampling-bias.html",
+          "rst_basename": "8-7-sampling-bias",
+          "video": {
+            "anchor": "#048",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#048",
+            "title": "Sampling Bias"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "sampling",
+            "bias"
+          ]
+        }
+      }
+    },
+    "9": {
+      "number": 9,
+      "title": "Confidence Intervals and Bounds",
+      "index_url": "https://treese41528.github.io/STAT350/Website/chapter9/index.html",
+      "sections": {
+        "9.1": {
+          "number": "9.1",
+          "title": "Introduction to Statistical Inference",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter9/lectures/9-1-intro-statistical-inference.html",
+          "rst_basename": "9-1-intro-statistical-inference",
+          "video": {
+            "anchor": "#049",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#049",
+            "title": "Introduction to Statistical Inference"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "statistical",
+            "inference"
+          ]
+        },
+        "9.2": {
+          "number": "9.2",
+          "title": "Confidence Intervals for the Population Mean, When σ is Known",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter9/lectures/9-2-ci-sigma-known.html",
+          "rst_basename": "9-2-ci-sigma-known",
+          "video": {
+            "anchor": "#051",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#051",
+            "title": "CI for μ (σ known)"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "confidence",
+            "intervals",
+            "population",
+            "mean",
+            "known",
+            "confidence interval",
+            "ci"
+          ]
+        },
+        "9.3": {
+          "number": "9.3",
+          "title": "Precision of a Confidence Interval and Sample Size Calculation",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter9/lectures/9-3-precision-of-ci-and-sample-size-calculation.html",
+          "rst_basename": "9-3-precision-of-ci-and-sample-size-calculation",
+          "video": {
+            "anchor": "#050",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#050",
+            "title": "Precision & Sample Size"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "precision",
+            "confidence",
+            "interval",
+            "sample",
+            "size",
+            "calculation",
+            "sample size",
+            "margin of error"
+          ]
+        },
+        "9.4": {
+          "number": "9.4",
+          "title": "Confidence Bounds for the Population Mean When σ is Known",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter9/lectures/9-4-cb-sigma-known.html",
+          "rst_basename": "9-4-cb-sigma-known",
+          "video": {
+            "anchor": "#052",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#052",
+            "title": "Confidence Bounds (σ known)"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "confidence",
+            "bounds",
+            "population",
+            "mean",
+            "known"
+          ]
+        },
+        "9.5": {
+          "number": "9.5",
+          "title": "Confidence Intervals and Bounds When σ is Unknown",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter9/lectures/9-5-ci-cb-sigma-unknown.html",
+          "rst_basename": "9-5-ci-cb-sigma-unknown",
+          "video": {
+            "anchor": "#053",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#053",
+            "title": "CI/Bounds (σ unknown)"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "confidence",
+            "intervals",
+            "bounds",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "10": {
+      "number": 10,
+      "title": "Hypothesis Testing",
+      "index_url": "https://treese41528.github.io/STAT350/Website/chapter10/index.html",
+      "sections": {
+        "10.1": {
+          "number": "10.1",
+          "title": "Type I Error, Type II Error, and Power",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter10/lectures/10-1-ht-errors-and-power.html",
+          "rst_basename": "10-1-ht-errors-and-power",
+          "video": {
+            "anchor": "#054",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#054",
+            "title": "Errors & Power (overview)"
+          },
+          "extra_videos": [
+            {
+              "anchor": "#055",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#055",
+              "title": "Type I/II & Power"
+            },
+            {
+              "anchor": "#056",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#056",
+              "title": "Power Calculations"
+            },
+            {
+              "anchor": "#057",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#057",
+              "title": "Sample Size Calculations"
+            }
+          ],
+          "keywords": [
+            "type",
+            "error",
+            "power",
+            "type i",
+            "type ii",
+            "alpha",
+            "beta"
+          ]
+        },
+        "10.2": {
+          "number": "10.2",
+          "title": "Hypothesis Test for the Population Mean When σ is Known",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter10/lectures/10-2-ht-for-mean-sigma-known.html",
+          "rst_basename": "10-2-ht-for-mean-sigma-known",
+          "video": {
+            "anchor": "#058",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#058",
+            "title": "HT for μ (σ known)"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "hypothesis",
+            "test",
+            "population",
+            "mean",
+            "known"
+          ]
+        },
+        "10.3": {
+          "number": "10.3",
+          "title": "Hypothesis Test for the Population Mean When σ Is Unknown",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter10/lectures/10-3-ht-for-mean-sigma-unknown.html",
+          "rst_basename": "10-3-ht-for-mean-sigma-unknown",
+          "video": {
+            "anchor": "#059",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#059",
+            "title": "HT & CI/CB (σ unknown)"
+          },
+          "extra_videos": [
+            {
+              "anchor": "#060",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#060",
+              "title": "Test Statistic (σ unknown)"
+            }
+          ],
+          "keywords": [
+            "hypothesis",
+            "test",
+            "population",
+            "mean",
+            "unknown"
+          ]
+        },
+        "10.4": {
+          "number": "10.4",
+          "title": "P-values, Statistical Significance, and Formal Conclusion",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter10/lectures/10-4-pvalue-significance-conclusion.html",
+          "rst_basename": "10-4-pvalue-significance-conclusion",
+          "video": {
+            "anchor": "#061",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#061",
+            "title": "Tests of Significance & p-values"
+          },
+          "extra_videos": [
+            {
+              "anchor": "#062",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#062",
+              "title": "Practical vs Statistical Significance"
+            }
+          ],
+          "keywords": [
+            "values",
+            "statistical",
+            "significance",
+            "formal",
+            "conclusion",
+            "p-value",
+            "p value"
+          ]
+        }
+      }
+    },
+    "11": {
+      "number": 11,
+      "title": "Two Sample Procedures",
+      "index_url": "https://treese41528.github.io/STAT350/Website/chapter11/index.html",
+      "sections": {
+        "11.1": {
+          "number": "11.1",
+          "title": "Confidence Interval/Bound and Hypothesis Test for Two Samples",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter11/lectures/11-1-ci-ht-two-samples.html",
+          "rst_basename": "11-1-ci-ht-two-samples",
+          "video": {
+            "anchor": "#063",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#063",
+            "title": "CI/CB & HT for Two Samples"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "confidence",
+            "interval",
+            "bound",
+            "hypothesis",
+            "test",
+            "two",
+            "samples"
+          ]
+        },
+        "11.2": {
+          "number": "11.2",
+          "title": "Comparing the Means of Two Independent Populations — Population Variances Are Known",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter11/lectures/11-2-comparing-two-means-independent-sigmas-known.html",
+          "rst_basename": "11-2-comparing-two-means-independent-sigmas-known",
+          "video": {
+            "anchor": "#064",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#064",
+            "title": "Comparing Two Means (Independent, σ known)"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "comparing",
+            "means",
+            "two",
+            "independent",
+            "populations",
+            "population",
+            "variances",
+            "known"
+          ]
+        },
+        "11.3": {
+          "number": "11.3",
+          "title": "Comparing the Means of Two Independent Populations — Pooled Variance Estimator",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter11/lectures/11-3-comparing-two-means-independent-pooled.html",
+          "rst_basename": "11-3-comparing-two-means-independent-pooled",
+          "video": {
+            "anchor": "#065",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#065",
+            "title": "Comparing Two Means (Independent, Pooled)"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "comparing",
+            "means",
+            "two",
+            "independent",
+            "populations",
+            "pooled",
+            "variance",
+            "estimator"
+          ]
+        },
+        "11.4": {
+          "number": "11.4",
+          "title": "Comparing the Means of Two Independent Populations — No Equal Variance Assumption",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter11/lectures/11-4-comparing-two-means-independent-unpooled.html",
+          "rst_basename": "11-4-comparing-two-means-independent-unpooled",
+          "video": {
+            "anchor": "#066",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#066",
+            "title": "Comparing Two Means (Independent, Unequal Var)"
+          },
+          "extra_videos": [
+            {
+              "anchor": "#067",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#067",
+              "title": "Unpooled Only (Welch)"
+            }
+          ],
+          "keywords": [
+            "comparing",
+            "means",
+            "two",
+            "independent",
+            "populations",
+            "equal",
+            "variance",
+            "assumption",
+            "unpooled",
+            "welch"
+          ]
+        },
+        "11.5": {
+          "number": "11.5",
+          "title": "Analyzing the Mean of Paired Differences Between Two Dependent Populations",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter11/lectures/11-5-mean-of-paired-differences-two-dependent-populations.html",
+          "rst_basename": "11-5-mean-of-paired-differences-two-dependent-populations",
+          "video": {
+            "anchor": "#068",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#068",
+            "title": "Paired Samples"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "analyzing",
+            "mean",
+            "paired",
+            "differences",
+            "two",
+            "dependent",
+            "populations",
+            "paired samples",
+            "paired differences"
+          ]
+        }
+      }
+    },
+    "12": {
+      "number": 12,
+      "title": "ANOVA",
+      "index_url": "https://treese41528.github.io/STAT350/Website/chapter12/index.html",
+      "sections": {
+        "12.1": {
+          "number": "12.1",
+          "title": "Introduction to One-Way ANOVA",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter12/lectures/12-1-intro-one-way-anova.html",
+          "rst_basename": "12-1-intro-one-way-anova",
+          "video": {
+            "anchor": "#069",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#069",
+            "title": "One-Way ANOVA"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "one",
+            "way",
+            "anova"
+          ]
+        },
+        "12.2": {
+          "number": "12.2",
+          "title": "Different Sources of Variability in an ANOVA Model",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter12/lectures/12-2-sources-of-variability.html",
+          "rst_basename": "12-2-sources-of-variability",
+          "video": {
+            "anchor": "#070",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#070",
+            "title": "Model & Sources of Variability"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "different",
+            "sources",
+            "variability",
+            "anova",
+            "model"
+          ]
+        },
+        "12.3": {
+          "number": "12.3",
+          "title": "One-Way ANOVA F-Test and Its Relationship to Two-Sample t-Tests",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter12/lectures/12-3-f-test-and-relationship-to-t-test.html",
+          "rst_basename": "12-3-f-test-and-relationship-to-t-test",
+          "video": {
+            "anchor": "#071",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#071",
+            "title": "F-test & Relation to Two-Sample t"
+          },
+          "extra_videos": [
+            {
+              "anchor": "#072",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#072",
+              "title": "ANOVA vs Two-Sample t (Relationship)"
+            }
+          ],
+          "keywords": [
+            "one",
+            "way",
+            "anova",
+            "test",
+            "relationship",
+            "two",
+            "sample",
+            "tests"
+          ]
+        },
+        "12.4": {
+          "number": "12.4",
+          "title": "Multiple Comparison Procedures and Family-Wise Error Rates",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter12/lectures/12-4-multiple-comparison-procedures-family-wise-error-rates.html",
+          "rst_basename": "12-4-multiple-comparison-procedures-family-wise-error-rates",
+          "video": {
+            "anchor": "#073",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#073",
+            "title": "Multiple Comparisons / FWER"
+          },
+          "extra_videos": [],
+          "keywords": [
+            "multiple",
+            "comparison",
+            "procedures",
+            "family",
+            "wise",
+            "error",
+            "rates",
+            "tukey",
+            "multiple comparison",
+            "family-wise"
+          ]
+        }
+      }
+    },
+    "13": {
+      "number": 13,
+      "title": "Simple Linear Regression",
+      "index_url": "https://treese41528.github.io/STAT350/Website/chapter13/index.html",
+      "sections": {
+        "13.1": {
+          "number": "13.1",
+          "title": "Introduction to Linear Regression: Correlation and Scatter Plots",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter13/lectures/13-1-intro-to-lr-correlation-scatter-plots.html",
+          "rst_basename": "13-1-intro-to-lr-correlation-scatter-plots",
+          "video": {
+            "anchor": "#074",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#074",
+            "title": "Correlation & Simple Linear Regression"
+          },
+          "extra_videos": [
+            {
+              "anchor": "#075",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#075",
+              "title": "Scatter Plots"
+            },
+            {
+              "anchor": "#078",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#078",
+              "title": "Pearson r"
+            }
+          ],
+          "keywords": [
+            "linear",
+            "regression:",
+            "correlation",
+            "scatter",
+            "plots",
+            "pearson"
+          ]
+        },
+        "13.2": {
+          "number": "13.2",
+          "title": "Simple Linear Regression",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter13/lectures/13-2-simple-linear-regression.html",
+          "rst_basename": "13-2-simple-linear-regression",
+          "video": {
+            "anchor": "#076",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#076",
+            "title": "SLR Model"
+          },
+          "extra_videos": [
+            {
+              "anchor": "#077",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#077",
+              "title": "SLR ANOVA Table & R2"
+            }
+          ],
+          "keywords": [
+            "simple",
+            "linear",
+            "regression",
+            "least squares",
+            "r-squared"
+          ]
+        },
+        "13.3": {
+          "number": "13.3",
+          "title": "Model Diagnostics and Statistical Inference",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter13/lectures/13-3-diagnostics-inference.html",
+          "rst_basename": "13-3-diagnostics-inference",
+          "video": {
+            "anchor": "#079",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#079",
+            "title": "Diagnostics for Assumptions"
+          },
+          "extra_videos": [
+            {
+              "anchor": "#080",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#080",
+              "title": "Inference — F-test"
+            },
+            {
+              "anchor": "#081",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#081",
+              "title": "Inference — Slope & Intercept"
+            }
+          ],
+          "keywords": [
+            "model",
+            "diagnostics",
+            "statistical",
+            "inference",
+            "slope",
+            "intercept",
+            "f-test"
+          ]
+        },
+        "13.4": {
+          "number": "13.4",
+          "title": "Prediction, Robustness, and Applied Examples",
+          "lecture_url": "https://treese41528.github.io/STAT350/Website/chapter13/lectures/13-4-prediction-robustness.html",
+          "rst_basename": "13-4-prediction-robustness",
+          "video": {
+            "anchor": "#082",
+            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#082",
+            "title": "Prediction & Uncertainty (CIs/PIs)"
+          },
+          "extra_videos": [
+            {
+              "anchor": "#083",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#083",
+              "title": "Robustness to Normality"
+            },
+            {
+              "anchor": "#084",
+              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#084",
+              "title": "Prediction Example — Cetane Number"
+            }
+          ],
+          "keywords": [
+            "prediction",
+            "robustness",
+            "applied",
+            "examples",
+            "prediction interval"
+          ]
+        }
+      }
+    }
+  },
+  "worksheets": {
+    "1": {
+      "number": 1,
+      "title": "Exploring Data with R",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet1.html",
+      "chapters": [
+        2
+      ],
+      "verified": true
+    },
+    "2": {
+      "number": 2,
+      "title": "Set Theory and Probability Fundamentals",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet2.html",
+      "chapters": [
+        4
+      ],
+      "verified": true
+    },
+    "3": {
+      "number": 3,
+      "title": "Conditional Probability and Bayes’ Theorem",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet3.html",
+      "chapters": [
+        4
+      ],
+      "verified": true
+    },
+    "4": {
+      "number": 4,
+      "title": "Independence and Random Variables",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet4.html",
+      "chapters": [
+        4
+      ],
+      "verified": true
+    },
+    "5": {
+      "number": 5,
+      "title": "Expected Value and Variance",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet5.html",
+      "chapters": [
+        5
+      ],
+      "verified": true
+    },
+    "6": {
+      "number": 6,
+      "title": "Named Discrete Distributions",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet6.html",
+      "chapters": [
+        5
+      ],
+      "verified": true
+    },
+    "7": {
+      "number": 7,
+      "title": "Continuous Random Variables",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet7.html",
+      "chapters": [
+        6
+      ],
+      "verified": true
+    },
+    "8": {
+      "number": 8,
+      "title": "Uniform and Exponential Distributions",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet8.html",
+      "chapters": [
+        6
+      ],
+      "verified": true
+    },
+    "9": {
+      "number": 9,
+      "title": "The Normal Distribution",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet9.html",
+      "chapters": [
+        6
+      ],
+      "verified": true
+    },
+    "10": {
+      "number": 10,
+      "title": "Checking Normality and Introduction to Sampling Distributions",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet10.html",
+      "chapters": [
+        7
+      ],
+      "verified": true
+    },
+    "11": {
+      "number": 11,
+      "title": "The Central Limit Theorem",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet11.html",
+      "chapters": [
+        7
+      ],
+      "verified": true
+    },
+    "12": {
+      "number": 12,
+      "title": "Point Estimators and Unbiased Estimation",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet12.html",
+      "chapters": [
+        7
+      ],
+      "verified": true
+    },
+    "13": {
+      "number": 13,
+      "title": "Introduction to Confidence Intervals",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet13.html",
+      "chapters": [
+        9
+      ],
+      "verified": true
+    },
+    "14": {
+      "number": 14,
+      "title": "Worksheet 14",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet14.html",
+      "chapters": [
+        9
+      ],
+      "verified": false
+    },
+    "15": {
+      "number": 15,
+      "title": "Worksheet 15",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet15.html",
+      "chapters": [
+        10
+      ],
+      "verified": false
+    },
+    "16": {
+      "number": 16,
+      "title": "Worksheet 16",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet16.html",
+      "chapters": [
+        10
+      ],
+      "verified": false
+    },
+    "17": {
+      "number": 17,
+      "title": "Worksheet 17",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet17.html",
+      "chapters": [
+        11
+      ],
+      "verified": false
+    },
+    "18": {
+      "number": 18,
+      "title": "Worksheet 18",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet18.html",
+      "chapters": [
+        11
+      ],
+      "verified": false
+    },
+    "19": {
+      "number": 19,
+      "title": "Worksheet 19",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet19.html",
+      "chapters": [
+        12
+      ],
+      "verified": false
+    },
+    "20": {
+      "number": 20,
+      "title": "Worksheet 20",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet20.html",
+      "chapters": [
+        12
+      ],
+      "verified": false
+    },
+    "21": {
+      "number": 21,
+      "title": "Worksheet 21",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet21.html",
+      "chapters": [
+        13
+      ],
+      "verified": false
+    },
+    "22": {
+      "number": 22,
+      "title": "Worksheet 22",
+      "url": "https://treese41528.github.io/STAT350/Website/worksheets/worksheet_materials/worksheet22.html",
+      "chapters": [
+        13
+      ],
+      "verified": false
+    }
+  },
+  "simulations": {
+    "clt": {
+      "key": "clt",
+      "title": "Central Limit Theorem simulation",
+      "url": "https://treese41528.github.io/STAT350/ShinyApps/CLT.html",
+      "when": "CLT intuition or sample-size effects"
+    },
+    "ci": {
+      "key": "ci",
+      "title": "Confidence-interval coverage simulation",
+      "url": "https://treese41528.github.io/STAT350/ShinyApps/CI_Simulator.html",
+      "when": "CI coverage, width, and method comparisons"
+    },
+    "power": {
+      "key": "power",
+      "title": "Statistical power simulation",
+      "url": "https://treese41528.github.io/STAT350/ShinyApps/Power_Simulator.html",
+      "when": "hypothesis-testing trade-offs or design planning"
+    }
+  },
+  "syllabi": {
+    "flipped": {
+      "modality": "flipped",
+      "label": "Flipped",
+      "syllabus_pdf": "https://treese41528.github.io/STAT350/Syllabus_SPRING_2026_Flipped.pdf",
+      "schedule_url": "https://treese41528.github.io/STAT350/StudentSchedule-Flipped.html"
+    },
+    "traditional": {
+      "modality": "traditional",
+      "label": "Traditional Lecture",
+      "syllabus_pdf": "https://treese41528.github.io/STAT350/SyllabusSPRING_2026_In-Person.pdf",
+      "schedule_url": "https://treese41528.github.io/STAT350/StudentSchedule.html"
+    },
+    "indy": {
+      "modality": "indy",
+      "label": "Traditional Lecture (Indianapolis)",
+      "syllabus_pdf": "https://treese41528.github.io/STAT350/SyllabusSPRING_2026_In-Person.pdf",
+      "schedule_url": "https://treese41528.github.io/STAT350/StudentSchedule-Indy.html"
+    },
+    "online": {
+      "modality": "online",
+      "label": "Asynchronous Online",
+      "syllabus_pdf": "https://treese41528.github.io/STAT350/Syllabus_SPRING_2026_Online.pdf",
+      "schedule_url": "https://treese41528.github.io/STAT350/StudentSchedule-Asynchronous.html"
+    },
+    "winter": {
+      "modality": "winter",
+      "label": "Winter Session (Asynchronous Online)",
+      "syllabus_pdf": "https://treese41528.github.io/STAT350/Winter/Syllabus%20Winter%202025.pdf",
+      "schedule_url": "https://treese41528.github.io/STAT350/Winter/StudentSchedule-Asynchronous-Winter.html"
+    }
+  },
+  "exams": {
+    "1": {
+      "key": "1",
+      "label": "Exam 1 (Chapters 1-6)",
+      "chapters": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "topics": [
+        "Ch 1: Introduction to Statistics",
+        "Ch 2: Graphical Summaries (histograms, boxplots, variable types)",
+        "Ch 3: Numerical Summaries (mean, median, variance, SD, IQR, 5-number)",
+        "Ch 4: Probability (set theory, conditional prob, Bayes, independence)",
+        "Ch 5: Discrete Distributions (PMF, expected value, variance, binomial, Poisson)",
+        "Ch 6: Continuous Distributions (PDF, CDF, normal, uniform, exponential)"
+      ]
+    },
+    "2": {
+      "key": "2",
+      "label": "Exam 2 (Chapters 7-11)",
+      "chapters": [
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "topics": [
+        "Ch 7: Sampling Distributions (CLT, sampling distribution of x̄)",
+        "Ch 8: Experimental Design (sampling designs, bias, randomization)",
+        "Ch 9: Confidence Intervals (CI, CB, margin of error, sample size)",
+        "Ch 10: Hypothesis Testing (Type I/II errors, power, z-test, t-test, p-value)",
+        "Ch 11: Two Sample Procedures (pooled, unpooled/Welch, paired)"
+      ]
+    },
+    "final": {
+      "key": "final",
+      "label": "Final Exam (Comprehensive, emphasis on Chapters 12-13)",
+      "chapters": [
+        12,
+        13
+      ],
+      "topics": [
+        "Ch 12: One-Way ANOVA (F-test, SSA, SSE, MSA, MSE, Tukey HSD)",
+        "Ch 13: Simple Linear Regression (correlation, least squares, diagnostics, prediction)"
+      ]
+    }
+  },
+  "catalog_courses": [
+    {
+      "code": "STAT 41600",
+      "title": "Probability",
+      "url": "https://catalog.purdue.edu/preview_course_nopop.php?catoid=15&coid=156945",
+      "topics": [
+        "Probability foundations",
+        "LLN/CLT rigor"
+      ]
+    },
+    {
+      "code": "STAT 41700",
+      "title": "Statistical Theory",
+      "url": "https://catalog.purdue.edu/preview_course_nopop.php?catoid=18&coid=209919",
+      "topics": [
+        "Estimation theory",
+        "MLE",
+        "sufficiency",
+        "UMP/LR tests"
+      ]
+    },
+    {
+      "code": "STAT 51200",
+      "title": "Applied Regression Analysis",
+      "url": "https://catalog.purdue.edu/preview_course_nopop.php?catoid=17&coid=201764",
+      "topics": [
+        "Linear models",
+        "diagnostics",
+        "model selection",
+        "ANOVA/ANCOVA"
+      ]
+    },
+    {
+      "code": "STAT 51400",
+      "title": "Design of Experiments",
+      "url": "https://catalog.purdue.edu/preview_course_nopop.php?catoid=16&coid=167999",
+      "topics": [
+        "Designed experiments: blocking",
+        "factorials",
+        "split-plot",
+        "mixed models"
+      ]
+    },
+    {
+      "code": "STAT 42000",
+      "title": "Introduction to Time Series",
+      "url": "https://catalog.purdue.edu/preview_course_nopop.php?catoid=17&coid=200360",
+      "topics": [
+        "Time-dependent data",
+        "ARMA/ARIMA",
+        "forecasting"
+      ]
+    },
+    {
+      "code": "STAT 51300",
+      "title": "Statistical Quality Control",
+      "url": "https://catalog.purdue.edu/preview_course_nopop.php?catoid=18&coid=211324",
+      "topics": [
+        "Process/industrial statistics",
+        "control charts",
+        "acceptance sampling"
+      ]
+    }
+  ],
+  "hubs": {
+    "home": "https://treese41528.github.io/STAT350/Website/index.html",
+    "intro": "https://treese41528.github.io/STAT350/Website/course-intro.html",
+    "exams": "https://treese41528.github.io/STAT350/Website/exams/exams_index.html",
+    "r_resources": "https://treese41528.github.io/STAT350/Website/R_computerAssignments/r_computer_assignments.html",
+    "worksheets": "https://treese41528.github.io/STAT350/Website/worksheets/worksheets_index.html",
+    "video_home": "https://treese41528.github.io/STAT350/Videos/video_viewer.html",
+    "website_root": "https://treese41528.github.io/STAT350/Website/"
+  },
+  "videos": {
+    "home": {
+      "anchor": "",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html",
+      "title": "Video Home"
+    },
+    "0.intro": {
+      "anchor": "#001",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#001",
+      "title": "Course Intro"
+    },
+    "0.r": {
+      "anchor": "#003",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#003",
+      "title": "Intro to R"
+    },
+    "1.1": {
+      "anchor": "#002",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#002",
+      "title": "What Is Statistics?"
+    },
+    "1.2": {
+      "anchor": "#004",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#004",
+      "title": "Probability & Statistical Inference: How Are They Associated?"
+    },
+    "2.1": {
+      "anchor": "#005",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#005",
+      "title": "Data Set Structure and Variable Types"
+    },
+    "2.2": {
+      "anchor": "#006",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#006",
+      "title": "Tools for Categorical (Qualitative) Data"
+    },
+    "2.3": {
+      "anchor": "#007",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#007",
+      "title": "Tools for Numerical (Quantitative) Data"
+    },
+    "2.4": {
+      "anchor": "#008",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#008",
+      "title": "Exploring Quantitative Distributions: Modality, Shape & Outliers"
+    },
+    "3.1": {
+      "anchor": "#009",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#009",
+      "title": "Introduction to Numerical Summaries"
+    },
+    "3.2": {
+      "anchor": "#010",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#010",
+      "title": "Measures of Central Tendency"
+    },
+    "3.3": {
+      "anchor": "#011",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#011",
+      "title": "Measures of Variability — Range/Variance/SD"
+    },
+    "3.4": {
+      "anchor": "#012",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#012",
+      "title": "Measures of Variability — IQR/Five-Number Summary"
+    },
+    "3.5": {
+      "anchor": "#013",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#013",
+      "title": "Choosing the Right Measure & Resistance"
+    },
+    "4.1": {
+      "anchor": "#014",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#014",
+      "title": "Basic Set Theory"
+    },
+    "4.2": {
+      "anchor": "#015",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#015",
+      "title": "Probability"
+    },
+    "4.3": {
+      "anchor": "#016",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#016",
+      "title": "Conditional Probability"
+    },
+    "4.4": {
+      "anchor": "#017",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#017",
+      "title": "Law of Total Probability & Bayes’ Rule"
+    },
+    "4.5": {
+      "anchor": "#018",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#018",
+      "title": "Bayesian Updating (Example)"
+    },
+    "4.6": {
+      "anchor": "#019",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#019",
+      "title": "Independence of Events"
+    },
+    "5.1": {
+      "anchor": "#020",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#020",
+      "title": "Discrete RVs & PMFs"
+    },
+    "5.2": {
+      "anchor": "#021",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#021",
+      "title": "Joint PMFs"
+    },
+    "5.3": {
+      "anchor": "#022",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#022",
+      "title": "Expected Value (Discrete)"
+    },
+    "5.4": {
+      "anchor": "#023",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#023",
+      "title": "Variance (Discrete)"
+    },
+    "5.5": {
+      "anchor": "#024",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#024",
+      "title": "Covariance of Dependent RVs"
+    },
+    "5.6": {
+      "anchor": "#025",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#025",
+      "title": "Binomial Distribution"
+    },
+    "5.7": {
+      "anchor": "#026",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#026",
+      "title": "Poisson Distribution"
+    },
+    "6.1": {
+      "anchor": "#027",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#027",
+      "title": "Continuous RVs & PDFs"
+    },
+    "6.2": {
+      "anchor": "#028",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#028",
+      "title": "E[X] and Var(X) for Continuous RVs"
+    },
+    "6.3": {
+      "anchor": "#029",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#029",
+      "title": "CDFs"
+    },
+    "6.3.1": {
+      "anchor": "#030",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#030",
+      "title": "Example 1"
+    },
+    "6.3.2": {
+      "anchor": "#031",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#031",
+      "title": "Example 2"
+    },
+    "6.4": {
+      "anchor": "#032",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#032",
+      "title": "Normal Distribution"
+    },
+    "6.4.1": {
+      "anchor": "#033",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#033",
+      "title": "Forward (Probabilities)"
+    },
+    "6.4.2": {
+      "anchor": "#034",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#034",
+      "title": "Backward (Quantiles)"
+    },
+    "6.4.3": {
+      "anchor": "#035",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#035",
+      "title": "Checking Normality of Data"
+    },
+    "6.5": {
+      "anchor": "#036",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#036",
+      "title": "Uniform Distribution"
+    },
+    "6.6": {
+      "anchor": "#037",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#037",
+      "title": "Exponential Distribution"
+    },
+    "7.1": {
+      "anchor": "#038",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#038",
+      "title": "Statistics & Sampling Distributions"
+    },
+    "7.2": {
+      "anchor": "#039",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#039",
+      "title": "Sampling Distribution for Xˉ"
+    },
+    "7.3": {
+      "anchor": "#040",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#040",
+      "title": "CLT"
+    },
+    "7.4": {
+      "anchor": "#041",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#041",
+      "title": "Discrete RVs & the CLT"
+    },
+    "8.1": {
+      "anchor": "#042",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#042",
+      "title": "Experimental and Sampling Designs"
+    },
+    "8.2": {
+      "anchor": "#043",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#043",
+      "title": "Principles"
+    },
+    "8.3": {
+      "anchor": "#044",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#044",
+      "title": "Basic Types"
+    },
+    "8.4": {
+      "anchor": "#045",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#045",
+      "title": "Issues/Flaws"
+    },
+    "8.5": {
+      "anchor": "#046",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#046",
+      "title": "Examples"
+    },
+    "8.6": {
+      "anchor": "#047",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#047",
+      "title": "Sampling Design"
+    },
+    "8.7": {
+      "anchor": "#048",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#048",
+      "title": "Sampling Bias"
+    },
+    "9.1": {
+      "anchor": "#049",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#049",
+      "title": "Introduction to Statistical Inference"
+    },
+    "9.2": {
+      "anchor": "#051",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#051",
+      "title": "CI for μ (σ known)"
+    },
+    "9.3": {
+      "anchor": "#050",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#050",
+      "title": "Precision & Sample Size"
+    },
+    "9.4": {
+      "anchor": "#052",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#052",
+      "title": "Confidence Bounds (σ known)"
+    },
+    "9.5": {
+      "anchor": "#053",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#053",
+      "title": "CI/Bounds (σ unknown)"
+    },
+    "10.1": {
+      "anchor": "#054",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#054",
+      "title": "Errors & Power (overview)"
+    },
+    "10.1.1": {
+      "anchor": "#055",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#055",
+      "title": "Type I/II & Power"
+    },
+    "10.1.2": {
+      "anchor": "#056",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#056",
+      "title": "Power Calculations"
+    },
+    "10.1.3": {
+      "anchor": "#057",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#057",
+      "title": "Sample Size Calculations"
+    },
+    "10.2": {
+      "anchor": "#058",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#058",
+      "title": "HT for μ (σ known)"
+    },
+    "10.3": {
+      "anchor": "#059",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#059",
+      "title": "HT & CI/CB (σ unknown)"
+    },
+    "10.3.1": {
+      "anchor": "#060",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#060",
+      "title": "Test Statistic (σ unknown)"
+    },
+    "10.4": {
+      "anchor": "#061",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#061",
+      "title": "Tests of Significance & p-values"
+    },
+    "10.4.1": {
+      "anchor": "#062",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#062",
+      "title": "Practical vs Statistical Significance"
+    },
+    "11.1": {
+      "anchor": "#063",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#063",
+      "title": "CI/CB & HT for Two Samples"
+    },
+    "11.2": {
+      "anchor": "#064",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#064",
+      "title": "Comparing Two Means (Independent, σ known)"
+    },
+    "11.3": {
+      "anchor": "#065",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#065",
+      "title": "Comparing Two Means (Independent, Pooled)"
+    },
+    "11.4": {
+      "anchor": "#066",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#066",
+      "title": "Comparing Two Means (Independent, Unequal Var)"
+    },
+    "11.5": {
+      "anchor": "#067",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#067",
+      "title": "Unpooled Only (Welch)"
+    },
+    "11.6": {
+      "anchor": "#068",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#068",
+      "title": "Paired Samples"
+    },
+    "12.1": {
+      "anchor": "#069",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#069",
+      "title": "One-Way ANOVA"
+    },
+    "12.2": {
+      "anchor": "#070",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#070",
+      "title": "Model & Sources of Variability"
+    },
+    "12.3": {
+      "anchor": "#071",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#071",
+      "title": "F-test & Relation to Two-Sample t"
+    },
+    "12.4": {
+      "anchor": "#072",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#072",
+      "title": "ANOVA vs Two-Sample t (Relationship)"
+    },
+    "12.5": {
+      "anchor": "#073",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#073",
+      "title": "Multiple Comparisons / FWER"
+    },
+    "13.1": {
+      "anchor": "#074",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#074",
+      "title": "Correlation & Simple Linear Regression"
+    },
+    "13.2": {
+      "anchor": "#075",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#075",
+      "title": "Scatter Plots"
+    },
+    "13.3": {
+      "anchor": "#076",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#076",
+      "title": "SLR Model"
+    },
+    "13.4": {
+      "anchor": "#077",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#077",
+      "title": "SLR ANOVA Table & R2"
+    },
+    "13.5": {
+      "anchor": "#078",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#078",
+      "title": "Pearson r"
+    },
+    "13.6": {
+      "anchor": "#079",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#079",
+      "title": "Diagnostics for Assumptions"
+    },
+    "13.7": {
+      "anchor": "#080",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#080",
+      "title": "Inference — F-test"
+    },
+    "13.8": {
+      "anchor": "#081",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#081",
+      "title": "Inference — Slope & Intercept"
+    },
+    "13.9": {
+      "anchor": "#082",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#082",
+      "title": "Prediction & Uncertainty (CIs/PIs)"
+    },
+    "13.10": {
+      "anchor": "#083",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#083",
+      "title": "Robustness to Normality"
+    },
+    "13.11": {
+      "anchor": "#084",
+      "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#084",
+      "title": "Prediction Example — Cetane Number"
+    }
+  },
+  "allowlist_hosts": [
+    "treese41528.github.io",
+    "catalog.purdue.edu"
+  ]
+}

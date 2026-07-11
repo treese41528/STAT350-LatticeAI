@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.env
+data/tutor.db*
+data/kb_file_index.json
+logs/
+traces/
+exports/
+backups/
+.pytest_cache/
+*.egg-info/

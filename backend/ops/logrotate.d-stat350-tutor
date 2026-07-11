@@ -1,0 +1,10 @@
+# /etc/logrotate.d/stat350-tutor
+/opt/stat350-tutor/backend/traces/*.jsonl {
+    daily
+    rotate 180
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+}

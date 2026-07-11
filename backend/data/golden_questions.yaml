@@ -1,0 +1,93 @@
+# Golden retrieval-eval set. Each question lists glob-ish patterns that should
+# match the SOURCE FILE of a correctly-retrieved chunk (matched against the
+# normalized rst basename, e.g. "4-3-conditional-probability").
+#
+# STARTER SET (~26) — grow this to 60-100 with real student phrasings; several
+# per chapter plus syllabus/exam/resource types. Run with:
+#   python -m app.eval run
+version: "2026-07-11-seed"
+questions:
+  - question: "What's the difference between a parameter and a statistic?"
+    expected_sources: ["*1-1-intro*", "*7-1-statistics-and-sampling*"]
+    chapter: 1
+  - question: "How do I read a boxplot and what counts as an outlier?"
+    expected_sources: ["*2-4-exploring-quantitative*", "*2-3-tools-for-numerical*"]
+    chapter: 2
+  - question: "When should I use the median instead of the mean?"
+    expected_sources: ["*3-5-choosing-the-right-measure*", "*3-2-measures-of-central-tendency*"]
+    chapter: 3
+  - question: "Why do we divide by n-1 when computing sample variance?"
+    expected_sources: ["*3-3-measures-of-variability*"]
+    chapter: 3
+  - question: "How does Bayes' rule work? I don't get the disease testing example"
+    expected_sources: ["*4-4-law-of-total-probability*", "*4-5-bayes-update*"]
+    chapter: 4
+  - question: "What does it mean for two events to be independent?"
+    expected_sources: ["*4-6-independence-of-events*"]
+    chapter: 4
+  - question: "What is conditional probability given that another event happened?"
+    expected_sources: ["*4-3-conditional-probability*"]
+    chapter: 4
+  - question: "How do I know if a random variable is binomial?"
+    expected_sources: ["*5-6-binomial*"]
+    chapter: 5
+  - question: "When do I use the Poisson distribution instead of binomial?"
+    expected_sources: ["*5-7-poisson*"]
+    chapter: 5
+  - question: "How do I find the expected value of a discrete random variable?"
+    expected_sources: ["*5-3-expected-value*"]
+    chapter: 5
+  - question: "How do I compute probabilities with a PDF for a continuous random variable?"
+    expected_sources: ["*6-1-continuous-rvs*", "*6-3-cdfs*"]
+    chapter: 6
+  - question: "How do I standardize a normal random variable to use the z table?"
+    expected_sources: ["*6-4-normal-distribution*"]
+    chapter: 6
+  - question: "What's the memoryless property of the exponential distribution?"
+    expected_sources: ["*6-6-exponential*"]
+    chapter: 6
+  - question: "Can you explain the Central Limit Theorem in plain English?"
+    expected_sources: ["*7-3-clt*", "*7-4-discret*"]
+    chapter: 7
+  - question: "What is the sampling distribution of the sample mean?"
+    expected_sources: ["*7-2-sampling-distribution*"]
+    chapter: 7
+  - question: "What's the difference between an observational study and an experiment?"
+    expected_sources: ["*8-1-experimental-and-sampling*", "*8-2-experimental-design*"]
+    chapter: 8
+  - question: "What kinds of sampling bias should I watch out for?"
+    expected_sources: ["*8-7-sampling-bias*"]
+    chapter: 8
+  - question: "How do I build a 95% confidence interval for the mean when sigma is known?"
+    expected_sources: ["*9-2-ci-sigma-known*"]
+    chapter: 9
+  - question: "How big a sample do I need for a given margin of error?"
+    expected_sources: ["*9-3-precision-of-ci*"]
+    chapter: 9
+  - question: "When do I use a t distribution instead of z for a confidence interval?"
+    expected_sources: ["*9-5-ci-cb-sigma-unknown*"]
+    chapter: 9
+  - question: "What's the difference between Type I and Type II error?"
+    expected_sources: ["*10-1-ht-errors-and-power*"]
+    chapter: 10
+  - question: "How do I interpret a p-value? Is 0.03 significant?"
+    expected_sources: ["*10-4-pvalue-significance*"]
+    chapter: 10
+  - question: "When do I pool the variances in a two-sample t test?"
+    expected_sources: ["*11-3-comparing-two-means-independent-pooled*", "*11-4-comparing-two-means-independent-unpooled*"]
+    chapter: 11
+  - question: "How is a paired t test different from two independent samples?"
+    expected_sources: ["*11-5-mean-of-paired-differences*"]
+    chapter: 11
+  - question: "What does the F test in one-way ANOVA actually test?"
+    expected_sources: ["*12-3-f-test*", "*12-1-intro-one-way-anova*"]
+    chapter: 12
+  - question: "Why do we need Tukey's procedure after ANOVA?"
+    expected_sources: ["*12-4-multiple-comparison*"]
+    chapter: 12
+  - question: "How do I interpret the slope in simple linear regression?"
+    expected_sources: ["*13-2-simple-linear-regression*"]
+    chapter: 13
+  - question: "What is R squared telling me about my regression?"
+    expected_sources: ["*13-2-simple-linear-regression*", "*13-3-diagnostics*"]
+    chapter: 13
