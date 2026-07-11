@@ -1,0 +1,29 @@
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 40px;
+  width: 100%;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.13s ease,
+    color 0.13s ease;
+}
+
+.badge:hover {
+  border-color: var(--gold);
+  color: var(--text);
+}
+
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

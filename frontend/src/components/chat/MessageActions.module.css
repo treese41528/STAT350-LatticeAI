@@ -1,0 +1,13 @@
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.4rem;
+  flex-wrap: wrap;
+  opacity: 0.85;
+}
+
+.actions:hover,
+.actions:focus-within {
+  opacity: 1;
+}

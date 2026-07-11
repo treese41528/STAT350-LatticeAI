@@ -1,0 +1,17 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+
+.header {
+  padding: 0.75rem 0.75rem 0.5rem;
+}
+
+.newChat {
+  width: 100%;
+  justify-content: flex-start;
+}

@@ -1,0 +1,33 @@
+[
+  { "event": "meta", "data": { "conversationId": "conv-100", "messageId": "m-300" } },
+  { "event": "status", "data": { "stage": "planning", "label": "Planning a deeper pass" } },
+  { "event": "status", "data": { "stage": "retrieving", "label": "Searching webbook + transcripts (wide net)" } },
+  { "event": "status", "data": { "stage": "synthesizing", "label": "Synthesizing a longer answer" } },
+  {
+    "event": "citations",
+    "data": {
+      "citations": [
+        {
+          "n": 1,
+          "source": "webbook",
+          "title": "Chapter 8.2 — One-Sample t Procedures",
+          "snippet": "Replacing sigma with S yields Student's t with n-1 degrees of freedom.",
+          "similarity": 0.84,
+          "url": "https://treese41528.github.io/STAT350/Website/chapter8.html"
+        }
+      ]
+    }
+  },
+  { "event": "resources", "data": { "resources": [] } },
+  { "event": "token", "data": { "text": "Why does the t distribution appear? " } },
+  { "event": "token", "data": { "text": "Because $S$ is random too [1]." } },
+  {
+    "event": "done",
+    "data": {
+      "messageId": "m-300",
+      "finishReason": "stop",
+      "finalText": "Why does the t distribution appear? Because $S$ is random too [1].",
+      "flags": { "linted": true }
+    }
+  }
+]

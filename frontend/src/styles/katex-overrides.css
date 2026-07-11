@@ -1,0 +1,29 @@
+/* KaTeX display math: centered, horizontally scrollable when wide. */
+
+.katex-display {
+  margin: 1rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.35rem 0.15rem;
+  text-align: center;
+  -webkit-overflow-scrolling: touch;
+}
+
+.katex-display > .katex {
+  white-space: nowrap;
+}
+
+.katex {
+  font-size: 1.08em;
+}
+
+.katex-display .katex {
+  font-size: 1.16em;
+}
+
+/* KaTeX error fallback (throwOnError: false renders source in color) */
+.katex-error {
+  color: var(--danger) !important;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}

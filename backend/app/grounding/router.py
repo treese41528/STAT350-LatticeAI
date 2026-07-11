@@ -20,7 +20,8 @@ from ..course_map.resolver import CourseMapResolver
 from ..course_map.schema import SectionEntry
 
 _SMALLTALK_RE = re.compile(
-    r"^\s*(hi|hello|hey|yo|thanks?|thank you|ty|good (morning|afternoon|evening)|"
+    r"^\s*((hi|hello|hey|yo)( there| everyone| bot)?|thanks?( a lot| so much)?|"
+    r"thank you|ty|good (morning|afternoon|evening)|"
     r"who are you|what can you do|help)\s*[!.?]*\s*$", re.I)
 
 _SYLLABUS_RE = re.compile(
@@ -81,9 +82,13 @@ def route(message: str, resolver: CourseMapResolver,
     ws_m = _WORKSHEET_RE.search(msg)
     sec_m = _SECTION_REF_RE.search(msg)
     ch_m = _CHAPTER_REF_RE.search(msg)
-    # Pure lookup: mentions a concrete artifact + a lookup verb, and doesn't
-    # read like a conceptual question.
-    if ((ws_m or sec_m or ch_m or _SIM_RE.search(msg))
+    # Pure lookup: mentions a concrete artifact (worksheet/section/chapter/
+    # simulation — or a keyword-matched topic asked for as a video/sim) plus
+    # a lookup verb, and doesn't read like a conceptual question.
+    has_artifact = bool(ws_m or sec_m or ch_m or _SIM_RE.search(msg)
+                        or (sections and (_VIDEO_RE.search(msg)
+                                          or _SIM_RE.search(msg))))
+    if (has_artifact
             and (_RESOURCE_RE.search(msg) or _VIDEO_RE.search(msg) or _SIM_RE.search(msg))
             and not _QUESTION_WORDS_RE.search(msg)):
         return Route(

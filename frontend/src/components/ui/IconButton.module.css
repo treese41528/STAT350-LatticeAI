@@ -1,0 +1,44 @@
+.iconButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--text-muted);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.iconButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.md {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.sm {
+  min-width: 34px;
+  min-height: 34px;
+  border-radius: var(--radius-sm);
+}
+
+.default:hover:not(:disabled) {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.topbar {
+  color: rgba(245, 242, 234, 0.85);
+}
+
+.topbar:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--gold-dust);
+}

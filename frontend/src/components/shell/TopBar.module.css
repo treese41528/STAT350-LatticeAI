@@ -1,0 +1,71 @@
+.bar {
+  grid-area: topbar;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: var(--topbar-h);
+  padding: 0 0.75rem 0 0.5rem;
+  background: var(--topbar-bg);
+  color: var(--topbar-text);
+  border-bottom: 2px solid var(--gold);
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.wordmark {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.course {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--gold);
+  letter-spacing: 0.01em;
+}
+
+.tutor {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(245, 242, 234, 0.92);
+}
+
+.term {
+  font-size: 0.78rem;
+  color: rgba(245, 242, 234, 0.55);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.newChatMobile {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .newChatMobile {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 600px) {
+  .term {
+    display: none;
+  }
+}

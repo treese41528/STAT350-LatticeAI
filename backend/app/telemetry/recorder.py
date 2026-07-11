@@ -27,6 +27,8 @@ logger = logging.getLogger(__name__)
 FLUSH_INTERVAL_S = 0.25
 FLUSH_BATCH = 50
 
+_STOP = object()
+
 
 class Recorder:
     def __init__(self, session_factory: sessionmaker[Session],
@@ -64,30 +66,48 @@ class Recorder:
         self._task = asyncio.create_task(self._run(), name="telemetry-recorder")
 
     async def stop(self) -> None:
+        """Clean shutdown preserving strict FIFO: a sentinel rides the queue
+        behind every already-emitted item, so the single writer drains
+        everything in order before exiting. (Draining the queue from here
+        instead would race the consumer's in-flight batch and could write a
+        child row before its parent.)"""
         if self._task is None:
             return
-        # Drain what's queued, then cancel.
-        await self._flush_pending()
-        self._task.cancel()
+        await self._queue.put(_STOP)
         try:
-            await self._task
-        except asyncio.CancelledError:
-            pass
+            await asyncio.wait_for(self._task, timeout=30)
+        except asyncio.TimeoutError:
+            logger.error("Telemetry writer didn't drain in 30s — cancelling")
+            self._task.cancel()
+            try:
+                await self._task
+            except asyncio.CancelledError:
+                pass
         self._task = None
+        await self._flush_pending()  # stragglers enqueued after the sentinel
 
     async def _run(self) -> None:
-        while True:
-            batch = [await self._queue.get()]
-            deadline = asyncio.get_running_loop().time() + FLUSH_INTERVAL_S
+        loop = asyncio.get_running_loop()
+        stopping = False
+        while not stopping:
+            item = await self._queue.get()
+            if item is _STOP:
+                break
+            batch = [item]
+            deadline = loop.time() + FLUSH_INTERVAL_S
             while len(batch) < FLUSH_BATCH:
-                timeout = deadline - asyncio.get_running_loop().time()
+                timeout = deadline - loop.time()
                 if timeout <= 0:
                     break
                 try:
-                    batch.append(await asyncio.wait_for(self._queue.get(), timeout))
+                    nxt = await asyncio.wait_for(self._queue.get(), timeout)
                 except asyncio.TimeoutError:
                     break
-            await asyncio.get_running_loop().run_in_executor(None, self._write_batch, batch)
+                if nxt is _STOP:
+                    stopping = True
+                    break
+                batch.append(nxt)
+            await loop.run_in_executor(None, self._write_batch, batch)
 
     async def _flush_pending(self) -> None:
         batch = []
@@ -103,8 +123,14 @@ class Recorder:
         if rows or calls:
             try:
                 with self._session_factory() as session:
+                    # flush per row: emission order respects FK dependencies
+                    # (user msg → retrieval → assistant msg → citations), but
+                    # SQLAlchemy won't order INSERTs across mappers that have
+                    # no relationship() — one big flush can insert a child
+                    # before its parent.
                     for row in rows:
                         session.merge(row)
+                        session.flush()
                     for call in calls:
                         call(session)
                     session.commit()

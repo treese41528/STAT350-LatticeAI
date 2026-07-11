@@ -1,0 +1,88 @@
+.wrapper {
+  margin-top: 0.75rem;
+  padding: 0.75rem 0.95rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.doneIcon {
+  color: var(--success);
+}
+
+.timeline {
+  list-style: none;
+  margin: 0.6rem 0 0;
+  padding: 0;
+}
+
+.stage {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.22rem 0 0.22rem 0.15rem;
+}
+
+.stage:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: calc(0.15rem + 8px);
+  top: 1.35rem;
+  bottom: -0.25rem;
+  width: 2px;
+  background: var(--border-strong);
+}
+
+.dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  margin-top: 0.2rem;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  background: var(--surface);
+  color: #14110a;
+  flex-shrink: 0;
+}
+
+.stageDone .dot {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.stageActive .dot {
+  border-color: var(--gold-rush);
+  animation: pulseDot 1.2s ease infinite;
+}
+
+.label {
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.stageActive .label {
+  color: var(--text);
+  font-weight: 600;
+}
+
+@keyframes pulseDot {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(218, 170, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(218, 170, 0, 0);
+  }
+}

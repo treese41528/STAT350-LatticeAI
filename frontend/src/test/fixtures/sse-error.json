@@ -1,0 +1,9 @@
+[
+  { "event": "meta", "data": { "conversationId": "conv-102", "messageId": "m-202" } },
+  { "event": "status", "data": { "stage": "retrieving", "label": "Searching course materials" } },
+  { "event": "token", "data": { "text": "Let's start by identifying " } },
+  {
+    "event": "error",
+    "data": { "code": "upstream_timeout", "message": "The model timed out.", "retryable": true }
+  }
+]

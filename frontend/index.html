@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23000'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='19' font-weight='bold' fill='%23CFB991' text-anchor='middle'%3E%CE%A3%3C/text%3E%3C/svg%3E"
+    />
+    <title>STAT 350 Tutor · Purdue</title>
+    <script>
+      // Theme boot: set data-theme before first paint to avoid a flash.
+      // Reads the zustand-persist blob written by settingsStore ("stat350.settings").
+      (function () {
+        var theme = "system";
+        try {
+          var raw = localStorage.getItem("stat350.settings");
+          if (raw) {
+            var parsed = JSON.parse(raw);
+            if (parsed && parsed.state && parsed.state.theme) theme = parsed.state.theme;
+          }
+        } catch (e) {
+          /* corrupted storage -> fall through to system */
+        }
+        var resolved =
+          theme === "system"
+            ? window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light"
+            : theme;
+        document.documentElement.setAttribute("data-theme", resolved);
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

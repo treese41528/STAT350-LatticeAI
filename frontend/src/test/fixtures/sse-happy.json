@@ -1,0 +1,54 @@
+[
+  { "event": "meta", "data": { "conversationId": "conv-100", "messageId": "m-200", "title": "One-sample t-test help" } },
+  { "event": "queue", "data": { "position": 2, "etaSeconds": 8 } },
+  { "event": "queue", "data": { "position": 1 } },
+  { "event": "status", "data": { "stage": "retrieving", "label": "Searching course materials" } },
+  { "event": "status", "data": { "stage": "ranking", "label": "Ranking the best passages" } },
+  {
+    "event": "citations",
+    "data": {
+      "citations": [
+        {
+          "n": 1,
+          "source": "webbook",
+          "title": "Chapter 8.2 — One-Sample t Procedures",
+          "snippet": "t = (x-bar - mu_0) / (s / sqrt(n)) follows a t distribution with n-1 df.",
+          "similarity": 0.87,
+          "url": "https://treese41528.github.io/STAT350/Website/chapter8.html"
+        },
+        {
+          "n": 2,
+          "source": "transcript",
+          "title": "Lecture 21 — t Tests in Practice",
+          "snippet": "we define critical values through upper tail probabilities...",
+          "similarity": 0.61
+        }
+      ]
+    }
+  },
+  {
+    "event": "resources",
+    "data": {
+      "resources": [
+        {
+          "kind": "lecture",
+          "title": "Chapter 8 — Inference for a Single Mean",
+          "url": "https://treese41528.github.io/STAT350/Website/chapter8.html",
+          "meta": "Webbook chapter"
+        }
+      ]
+    }
+  },
+  { "event": "token", "data": { "text": "The parameter is " } },
+  { "event": "token", "data": { "text": "$\\mu$, the population mean [1]." } },
+  { "event": "token", "data": { "text": " Which plot would you use to check normality? [2]" } },
+  {
+    "event": "done",
+    "data": {
+      "messageId": "m-200",
+      "finishReason": "stop",
+      "finalText": "The parameter is $\\mu$, the population mean [1]. Which plot would you use to check normality? [2] (link-linted)",
+      "flags": { "linted": true }
+    }
+  }
+]

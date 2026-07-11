@@ -1,0 +1,14 @@
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  background: var(--accent-tint);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+}

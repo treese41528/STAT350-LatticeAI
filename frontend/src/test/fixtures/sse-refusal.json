@@ -1,0 +1,15 @@
+[
+  { "event": "meta", "data": { "conversationId": "conv-101", "messageId": "m-201" } },
+  { "event": "status", "data": { "stage": "retrieving", "label": "Searching course materials" } },
+  {
+    "event": "refusal",
+    "data": {
+      "reason": "integrity",
+      "message": "This looks like a graded assessment question, so I can't hand over the answer. Want to work a parallel practice problem instead?"
+    }
+  },
+  {
+    "event": "done",
+    "data": { "messageId": "m-201", "finishReason": "refusal", "flags": { "refusal": true } }
+  }
+]

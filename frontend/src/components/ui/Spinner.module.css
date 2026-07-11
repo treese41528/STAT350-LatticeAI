@@ -1,0 +1,17 @@
+.spinner {
+  display: inline-block;
+  border-radius: 50%;
+  border: 2px solid var(--accent-tint-strong);
+  border-top-color: var(--gold-aged);
+  animation: spin 0.8s linear infinite;
+}
+
+[data-theme="dark"] .spinner {
+  border-top-color: var(--gold);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
