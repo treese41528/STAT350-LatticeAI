@@ -234,11 +234,14 @@ def build(prompt_text: str) -> dict:
         ch = int(cm.group(1))
         for n in re.findall(r"\d+", cm.group(2)):
             n = str(int(n))
-            if n not in worksheets:  # 14-22: pattern URL, unverified
+            if n not in worksheets:
+                # 14-22 come only from the chapter map (no explicit URL in the
+                # prompt); their pattern URLs were confirmed live 2026-07-11
+                # (worksheets 1-22 all return 200), so mark them verified.
                 worksheets[n] = {
                     "number": int(n), "title": f"Worksheet {n}",
                     "url": f"{SITE}Website/worksheets/worksheet_materials/worksheet{n}.html",
-                    "chapters": [], "verified": False,
+                    "chapters": [], "verified": True,
                 }
             worksheets[n]["chapters"].append(ch)
 
