@@ -153,17 +153,26 @@ def cmd_run(args) -> int:
     if oos_scores:
         print("top-score quantiles (out-of-scope):", _quantiles(oos_scores))
     if hit_dists and oos_scores:
-        # data-driven midpoint between the weakest hits and the strongest
-        # out-of-scope score — the ideal separating band.
         hq, oq = _quantiles(hit_dists), _quantiles(oos_scores)
+        overlap = (hq["p10"] <= oq["p90"]) if higher else (hq["p90"] >= oq["p10"])
+        # weak protects in-scope RECALL: sit just below the weakest real hits so
+        # a question that retrieved the right section isn't falsely refused.
+        # strong = median of hits (top half answers with no hedge).
         if higher:
-            strong = round(hq["p10"], 3)          # nearly all hits answer cleanly
-            weak = round((hq["p10"] + oq["p90"]) / 2, 3)  # midway in the gap
+            weak = round(hq["p10"] - 0.05, 3)
+            strong = round(hq["p50"], 3)
         else:
-            strong = round(hq["p90"], 3)
-            weak = round((hq["p90"] + oq["p10"]) / 2, 3)
-        print(f"\nSuggested thresholds (hits vs out-of-scope separation) → "
+            weak = round(hq["p90"] + 0.05, 3)
+            strong = round(hq["p50"], 3)
+        print(f"\nSuggested thresholds (protect in-scope recall) → "
               f"strong: {strong:.3f}  weak: {weak:.3f}")
+        if overlap:
+            print(f"  NOTE: in-scope hits (p10={hq['p10']:.3f}) and out-of-scope "
+                  f"(p90={oq['p90']:.3f}) OVERLAP. A similarity threshold cannot "
+                  "separate stats-adjacent out-of-scope questions — scope-guarding "
+                  "belongs in the system prompt (the model reads the passages), "
+                  "not the threshold. Set weak only to catch genuinely-empty "
+                  "retrieval.")
     elif hit_dists:
         qs = _quantiles(hit_dists)
         strong, weak = (qs["p25"], max(0.0, qs["p10"] - 0.03)) if higher \
