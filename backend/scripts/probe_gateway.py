@@ -14,11 +14,41 @@ tool-probe; everything is paced through the shared limiter.
 from __future__ import annotations
 
 import json
+import os
 import sys
 import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+
+def _ensure_venv() -> None:
+    """Re-exec under the project venv if this interpreter lacks the SDK."""
+    try:
+        import genai_studio  # noqa: F401
+        return
+    except ImportError:
+        pass
+    candidates = [
+        os.environ.get("STAT350_VENV"),
+        str(Path.home() / "venvs" / "stat350-tutor"),
+        "/opt/stat350-tutor/venv",
+    ]
+    for venv in candidates:
+        if not venv:
+            continue
+        python = Path(venv) / "bin" / "python"
+        if python.exists() and str(python) != sys.executable:
+            os.execv(str(python), [str(python), *sys.argv])
+    sys.exit(
+        "This interpreter doesn't have the genai-studio-sdk installed and no "
+        "project venv was found.\nEither run with the venv python, e.g.\n"
+        "    ~/venvs/stat350-tutor/bin/python scripts/probe_gateway.py\n"
+        "or point STAT350_VENV at a venv that has the backend deps installed."
+    )
+
+
+_ensure_venv()
 
 from app.config import load_settings  # noqa: E402
 from app.course_map.resolver import CourseMapResolver, normalize_filename  # noqa: E402
