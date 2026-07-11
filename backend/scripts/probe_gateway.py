@@ -162,21 +162,34 @@ def main() -> int:
             return [x for row in (d if d and isinstance(d[0], list) else [d])
                     for x in row]
         d_on, d_off = flat_d(on), flat_d(off)
-        print(f"on-topic distances : {[round(x, 3) for x in d_on]}")
-        print(f"off-topic distances: {[round(x, 3) for x in d_off]}")
+        print(f"on-topic scores : {[round(x, 3) for x in d_on]}")
+        print(f"off-topic scores: {[round(x, 3) for x in d_off]}")
+        cfg_higher = settings.retrieval.higher_is_better
         if d_on and d_off:
-            lo, hi = min(d_on), min(d_off)
-            if lo < hi:
-                print(f"{OK} lower = better confirmed. Gap: {lo:.3f} vs {hi:.3f}")
-                strong = round(lo + (hi - lo) * 0.35, 3)
-                weak = round(lo + (hi - lo) * 0.75, 3)
+            best_on = max(d_on) if cfg_higher else min(d_on)
+            best_off = max(d_off) if cfg_higher else min(d_off)
+            on_better = (best_on > best_off) if cfg_higher else (best_on < best_off)
+            direction = "higher = better" if cfg_higher else "lower = better"
+            if on_better:
+                print(f"{OK} {direction} confirmed (config matches). "
+                      f"on-topic best {best_on:.3f} vs off-topic best {best_off:.3f}")
+                if cfg_higher:
+                    strong = round(min(d_on) - 0.02, 3)
+                    weak = round(max(d_off) + 0.02, 3)
+                else:
+                    strong = round(best_on + (best_off - best_on) * 0.35, 3)
+                    weak = round(best_on + (best_off - best_on) * 0.75, 3)
                 SUGGESTIONS.append(
-                    f"Seed thresholds: strong≈{strong}, weak≈{weak} — then "
-                    "calibrate properly with `python -m app.eval run`.")
+                    f"Seed thresholds (higher_is_better={cfg_higher}): "
+                    f"strong≈{strong}, weak≈{weak} — calibrate with "
+                    "`python backend/scripts/eval.py run`.")
             else:
-                print(f"{WARN} off-topic scored BETTER than on-topic — "
-                      "distances may be similarities (higher=better). "
-                      "retrieve.py tiering must be flipped!")
+                print(f"{FAIL} on-topic did NOT beat off-topic under "
+                      f"higher_is_better={cfg_higher}. FLIP "
+                      "retrieval.higher_is_better in config.yaml.")
+                SUGGESTIONS.append(
+                    f"Set retrieval.higher_is_better: {str(not cfg_higher).lower()} "
+                    "— on/off-topic ordering contradicts the current setting.")
     except Exception as exc:
         print(f"{FAIL} {exc}")
 
@@ -203,20 +216,33 @@ def main() -> int:
         t0 = time.monotonic()
         first, total = None, 0
         gw.limiter.acquire()
+        # max_tokens generous: gpt-oss:120b is a reasoning model and may spend
+        # a small budget entirely on hidden reasoning, emitting no content.
         for delta in gw.studio.chat_messages(
                 [{"role": "system", "content": pad},
-                 {"role": "user", "content": "Say 'ready' and stop."}],
-                model=settings.gateway.model, stream=True, max_tokens=20):
+                 {"role": "user", "content": "In one sentence, what is a p-value?"}],
+                model=settings.gateway.model, stream=True, max_tokens=200):
             if first is None:
                 first = time.monotonic() - t0
             total += len(delta)
-        print(f"{OK} TTFB {first:.1f}s with ~1k-token prompt "
-              f"(expect more with the real ~3-4k prompt; total {total} chars, "
-              f"{time.monotonic() - t0:.1f}s)")
-        if first and first > 8:
+        elapsed = time.monotonic() - t0
+        if first is None:
+            print(f"{WARN} stream produced NO content in {elapsed:.1f}s / "
+                  f"200 tokens. gpt-oss:120b may be emitting only reasoning "
+                  "tokens the SDK filters — verify the default path returns "
+                  "visible text, or pick a non-reasoning model for it.")
             SUGGESTIONS.append(
-                f"TTFB {first:.0f}s is high — consider trimming max passages "
-                "or testing a smaller model for the default path.")
+                "Default-path model produced no visible tokens in the probe — "
+                "confirm gpt-oss:120b streams content, or set gateway.model to "
+                "a non-reasoning chat model.")
+        else:
+            print(f"{OK} TTFB {first:.1f}s with ~1k-token prompt "
+                  f"(expect more with the real ~3-4k prompt; total {total} "
+                  f"chars, {elapsed:.1f}s)")
+            if first > 8:
+                SUGGESTIONS.append(
+                    f"TTFB {first:.0f}s is high — trim max passages or test a "
+                    "smaller/non-reasoning model for the default path.")
     except Exception as exc:
         print(f"{FAIL} chat failed: {exc}")
     try:

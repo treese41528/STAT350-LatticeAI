@@ -47,6 +47,12 @@ async def _with_pings(source: AsyncIterator[tuple[str, dict]]) -> AsyncIterator[
     finally:
         if next_item is not None and not next_item.done():
             next_item.cancel()
+            # let the cancellation settle before closing the source generator,
+            # so aclose() doesn't race an in-flight __anext__
+            try:
+                await next_item
+            except (asyncio.CancelledError, StopAsyncIteration, Exception):
+                pass
         aclose = getattr(it, "aclose", None)
         if aclose is not None:
             try:

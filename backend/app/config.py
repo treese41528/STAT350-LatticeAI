@@ -39,8 +39,10 @@ class CollectionsCfg(BaseModel):
 
 
 class ThresholdsCfg(BaseModel):
-    strong: float = 0.55
-    weak: float = 0.80
+    # Interpreted per RetrievalCfg.higher_is_better. With higher_is_better
+    # (this gateway): best score >= strong -> answer; best < weak -> refuse.
+    strong: float = 0.75
+    weak: float = 0.66
 
 
 class RetrievalCfg(BaseModel):
@@ -49,6 +51,11 @@ class RetrievalCfg(BaseModel):
     max_passages: int = 8
     min_transcript_slots: int = 2
     rewriter: str = "heuristic"
+    single_call: bool = False
+    # Phase 0 probe #4: this gateway's retrieval "distances" are actually
+    # similarity scores (higher = more relevant). Flip if a re-index switches
+    # to a true-distance metric.
+    higher_is_better: bool = True
     thresholds: ThresholdsCfg = ThresholdsCfg()
 
 

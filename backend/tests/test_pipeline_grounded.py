@@ -68,9 +68,9 @@ async def test_grounded_happy_path(deps):
         retrieval_payloads={
             "kb-web": webbook_payload(
                 ("7-3-clt.rst", "The CLT: for large n the sample mean is "
-                                "approximately normal.", 0.30)),
+                                "approximately normal.", 0.86)),
             "kb-tr": {"documents": [["In lecture: n at least 30 rule of thumb."]],
-                      "distances": [[0.42]],
+                      "distances": [[0.82]],
                       "metadatas": [[{"name": "lecture_7-3_transcript.vtt"}]]},
         },
         stream_chunks=["The CLT says the sampling distribution of the mean "
@@ -123,7 +123,7 @@ async def test_grounded_happy_path(deps):
 
 async def test_weak_retrieval_refuses_without_llm_call(deps):
     deps.gateway = FakeGateway(retrieval_payloads={
-        "kb-web": webbook_payload(("7-3-clt.rst", "irrelevant", 0.97))})
+        "kb-web": webbook_payload(("7-3-clt.rst", "irrelevant", 0.58))})
     ctx = _ctx(deps, "what is the best crypto exchange?")
     events = await _collect(run_turn(ctx, seq=0))
     names = [e for e, _ in events]
@@ -143,7 +143,7 @@ async def test_weak_retrieval_refuses_without_llm_call(deps):
 async def test_gateway_stream_error_yields_retryable_error(deps):
     deps.gateway = FakeGateway(
         retrieval_payloads={"kb-web": webbook_payload(
-            ("7-3-clt.rst", "The CLT text.", 0.3))},
+            ("7-3-clt.rst", "The CLT text.", 0.85))},
         stream_error=ConnectionError("boom"))
     events = await _collect(run_turn(_ctx(deps, "explain the CLT please"), seq=0))
     err = dict(events).get("error")

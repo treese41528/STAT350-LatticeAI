@@ -37,7 +37,7 @@ def _summary(session, convo: m.Conversation) -> dict:
             "messageCount": int(count)}
 
 
-def _message_dict(session, msg: m.Message) -> dict:
+def _message_dict(session, msg: m.Message, higher_is_better: bool = True) -> dict:
     citations = []
     if msg.role == "assistant":
         rows = session.execute(
@@ -54,8 +54,10 @@ def _message_dict(session, msg: m.Message) -> dict:
             if rev is not None:
                 for res in rev.results:
                     if res.get("rank") == cit.marker:
-                        entry["similarity"] = max(
-                            0.0, min(1.0, 1.0 - (res.get("score") or 0.5)))
+                        raw = res.get("score")
+                        raw = 0.5 if raw is None else float(raw)
+                        entry["similarity"] = max(0.0, min(
+                            1.0, raw if higher_is_better else 1.0 - raw))
                         break
             citations.append(entry)
     return {
@@ -96,7 +98,8 @@ async def get_conversation(cid: str, request: Request,
         with deps.session_factory() as session:
             _, convo = _own_conversation(session, deps, identity, cid)
             data = _summary(session, convo)
-            data["messages"] = [_message_dict(session, msg)
+            higher = deps.settings.retrieval.higher_is_better
+            data["messages"] = [_message_dict(session, msg, higher)
                                 for msg in convo.messages]
             session.commit()
             return data

@@ -3,7 +3,7 @@ agent loop."""
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from sqlalchemy import func, select
 
 from ..concurrency import run_sync
@@ -18,7 +18,7 @@ router = APIRouter()
 
 
 @router.post("/api/messages/{message_id}/deeper")
-async def dig_deeper(message_id: str, request: Request,
+async def dig_deeper(message_id: str, request: Request, response: Response,
                      identity: Identity = Depends(require_identity)):
     deps = get_deps(request)
 
@@ -79,7 +79,7 @@ async def dig_deeper(message_id: str, request: Request,
     info = await run_sync(load)
     trigger = "refusal_dig_deeper" if not info["hint"] else "user_dig_deeper"
 
-    return sse_response(run_escalation(
+    stream = sse_response(run_escalation(
         deps,
         question=info["question"],
         context_hint=info["hint"],
@@ -89,3 +89,8 @@ async def dig_deeper(message_id: str, request: Request,
         seq=info["seq"],
         trigger=trigger,
     ))
+    # carry any identity cookie minted by require_identity onto the SSE response
+    for header, value in response.headers.items():
+        if header.lower() == "set-cookie":
+            stream.headers.append("set-cookie", value)
+    return stream

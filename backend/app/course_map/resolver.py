@@ -159,22 +159,42 @@ class CourseMapResolver:
         name = str(meta.get("name") or meta.get("source") or meta.get("title")
                    or meta.get("file") or "")
         base = normalize_filename(name)
+        # Gateway filenames are the repo-relative path with '/' -> '_'
+        # (Phase 0 probe #1), e.g. "chapter7_lectures_7-3-clt" or
+        # "worksheets_worksheet_materials_worksheet11". Candidate basenames:
+        # the whole string and the tail after the last path-join underscore
+        # (lecture basenames themselves use hyphens, never underscores).
+        candidates = [base]
+        if "_" in base:
+            candidates.append(base.rsplit("_", 1)[-1])
 
-        sec = self._by_rst.get(base)
+        # a worksheet source file → its worksheet page
+        wm = re.search(r"worksheet[_]?(\d{1,2})(?:\D|$)", base)
+        if wm and (ws := self.map.worksheets.get(str(int(wm.group(1))))):
+            return ResolvedSource("webbook", f"Worksheet {ws.number}: {ws.title}",
+                                  ws.url, None, None, "exact")
+
+        sec = None
         match = "exact"
+        for cand in candidates:
+            if cand in self._by_rst:
+                sec, match = self._by_rst[cand], "exact"
+                break
         if sec is None and base:
-            m = _SECTION_NUM_RE.match(base)
+            m = _SECTION_NUM_RE.search(base)
             if m and f"{int(m.group(1))}.{int(m.group(2))}" in self._by_number:
                 sec = self._by_number[f"{int(m.group(1))}.{int(m.group(2))}"]
                 match = "number"
         if sec is None and base:
-            close = get_close_matches(base, list(self._by_rst), n=1, cutoff=0.75)
-            if close:
-                sec, match = self._by_rst[close[0]], "fuzzy"
+            for cand in candidates:
+                close = get_close_matches(cand, list(self._by_rst), n=1, cutoff=0.75)
+                if close:
+                    sec, match = self._by_rst[close[0]], "fuzzy"
+                    break
         if sec is None and base:
             titles = {s.title.lower(): s for s in self._by_number.values()}
-            close = get_close_matches(base.replace("-", " "), list(titles),
-                                      n=1, cutoff=0.6)
+            close = get_close_matches(candidates[-1].replace("-", " "),
+                                      list(titles), n=1, cutoff=0.6)
             if close:
                 sec, match = titles[close[0]], "title"
 
@@ -267,7 +287,7 @@ class CourseMapResolver:
         url = url.rstrip(").,;")
         if url in self._all_urls:
             return True
-        m = re.match(r"https?://([^/]+)/", url + "/")
+        m = re.match(r"https?://([^/]+)/", url + "/", re.IGNORECASE)
         return bool(m and m.group(1).lower() in
                     {h.lower() for h in self.map.allowlist_hosts})
 

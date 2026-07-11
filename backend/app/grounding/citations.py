@@ -13,7 +13,9 @@ from ..course_map.resolver import CourseMapResolver
 from .retrieve import Passage
 
 _MARKER_RE = re.compile(r"\[(\d{1,2})\]")
-_URL_RE = re.compile(r"https?://[^\s)\]>\"']+")
+# case-insensitive: HTTP://… / Https://… must be caught too, else the frontend
+# (which matches schemes case-insensitively) renders it as a live link.
+_URL_RE = re.compile(r"https?://[^\s)\]>\"']+", re.IGNORECASE)
 _BEYOND_RE = re.compile(r">>>\s*BEYOND STAT 350 SCOPE.*?<<<", re.S)
 _CATALOG_CODE_RE = re.compile(r"\bSTAT\s*(41600|41700|51200|51400|42000|51300)\b")
 

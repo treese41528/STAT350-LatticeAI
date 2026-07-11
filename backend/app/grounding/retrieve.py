@@ -25,16 +25,10 @@ class Passage:
     n: int                      # 1-based citation number, assigned after merge
     collection: str             # webbook | transcript
     text: str
-    distance: float | None
+    distance: float | None      # raw gateway score (see RetrievalCfg.higher_is_better)
     meta: dict
     resolved: ResolvedSource | None = None
-
-    @property
-    def similarity(self) -> float:
-        """0..1 for the UI meter (approximate; distances aren't calibrated)."""
-        if self.distance is None:
-            return 0.5
-        return max(0.0, min(1.0, 1.0 - float(self.distance)))
+    similarity: float = 0.5     # 0..1 for the UI meter, set during retrieve()
 
 
 @dataclass
@@ -126,7 +120,12 @@ def retrieve(gateway: Gateway, resolver: CourseMapResolver, query: str,
     except Exception as exc:
         error = f"{type(exc).__name__}: {exc}"
 
-    # dedupe, sort by distance (None sorts last), cap with transcript floor
+    higher = cfg.higher_is_better
+
+    def clears_weak(score: float) -> bool:
+        return score >= cfg.thresholds.weak if higher else score <= cfg.thresholds.weak
+
+    # dedupe, sort best-first (None last), cap with transcript floor
     seen: set[str] = set()
     unique: list[Passage] = []
     for p in passages:
@@ -134,7 +133,10 @@ def retrieve(gateway: Gateway, resolver: CourseMapResolver, query: str,
         if key not in seen:
             seen.add(key)
             unique.append(p)
-    unique.sort(key=lambda p: (p.distance is None, p.distance))
+    # best-first: descending score when higher_is_better, else ascending
+    unique.sort(key=lambda p: (p.distance is None,
+                               -p.distance if (higher and p.distance is not None)
+                               else (p.distance if p.distance is not None else 0.0)))
 
     max_p = max(2, cfg.max_passages // 2) if shrink else cfg.max_passages
     kept: list[Passage] = unique[:max_p]
@@ -144,24 +146,31 @@ def retrieve(gateway: Gateway, resolver: CourseMapResolver, query: str,
     if have_tr < floor:
         extra_tr = [p for p in unique[max_p:]
                     if p.collection == "transcript"
-                    and p.distance is not None and p.distance <= cfg.thresholds.weak]
-        for p in extra_tr[: floor - have_tr]:
-            kept[-1:] = [p] if len(kept) >= max_p else kept + [p]
+                    and p.distance is not None and clears_weak(p.distance)]
+        need = min(floor - have_tr, len(extra_tr), len(kept))
+        if need > 0:
+            # replace the weakest `need` non-transcript tail slots in one shot
+            kept[-need:] = extra_tr[:need]
 
-    # label + resolve
+    # label, resolve, and set UI similarity
     for i, p in enumerate(kept, start=1):
         p.n = i
         p.resolved = (resolver.resolve_webbook(p.meta) if p.collection == "webbook"
                       else resolver.resolve_transcript(p.meta))
+        if p.distance is None:
+            p.similarity = 0.5
+        else:
+            raw = float(p.distance)
+            p.similarity = max(0.0, min(1.0, raw if higher else 1.0 - raw))
 
-    dists = [p.distance for p in kept if p.distance is not None]
-    top = min(dists) if dists else None
-    mean = sum(dists) / len(dists) if dists else None
+    scores = [p.distance for p in kept if p.distance is not None]
+    top = (max(scores) if higher else min(scores)) if scores else None
+    mean = sum(scores) / len(scores) if scores else None
     if not kept or top is None:
         tier = "no_evidence" if not kept else "caveat"
-    elif top <= cfg.thresholds.strong:
+    elif (top >= cfg.thresholds.strong) if higher else (top <= cfg.thresholds.strong):
         tier = "strong"
-    elif top <= cfg.thresholds.weak:
+    elif clears_weak(top):
         tier = "caveat"
     else:
         tier = "no_evidence"

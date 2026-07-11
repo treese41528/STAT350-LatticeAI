@@ -90,15 +90,31 @@ async def run_escalation(deps: AppDeps, *, question: str, context_hint: str,
     budget = Budget(max_tokens=esc.max_tokens, max_tool_calls=esc.max_tool_calls)
 
     events: _queue.Queue = _queue.Queue(maxsize=256)
+    stop_flag = threading.Event()
 
     def pump() -> None:
         try:
             for ev in agent.stream(prompt, budget=budget, cancel=cancel):
-                events.put(ev)
+                # blocking put with a stop check so a disconnected consumer
+                # (queue full, never drained) can't hang this thread forever
+                while not stop_flag.is_set():
+                    try:
+                        events.put(ev, timeout=0.5)
+                        break
+                    except _queue.Full:
+                        continue
+                if stop_flag.is_set():
+                    return
         except Exception as exc:
-            events.put(exc)
+            try:
+                events.put(exc, timeout=1)
+            except _queue.Full:
+                pass
         finally:
-            events.put(_SENTINEL)
+            try:
+                events.put(_SENTINEL, timeout=1)
+            except _queue.Full:
+                pass
 
     thread = threading.Thread(target=pump, daemon=True, name="escalation")
     thread.start()
@@ -143,6 +159,7 @@ async def run_escalation(deps: AppDeps, *, question: str, context_hint: str,
                 result = ev.result
     finally:
         cancel.cancel()
+        stop_flag.set()   # unblock the pump thread if the client disconnected
 
     latency_ms = int((time.monotonic() - t0) * 1000)
 

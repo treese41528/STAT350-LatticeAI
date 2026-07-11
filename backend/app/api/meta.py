@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import Literal
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Response
 from pydantic import BaseModel
 
 from ..concurrency import run_sync
-from ..identity import Identity
+from ..identity import DEVICE_COOKIE, Identity
 from .chat import _get_or_create_user
 from .deps import get_deps, require_identity
 
@@ -53,6 +53,14 @@ async def health(request: Request):
         "telemetryDropped": deps.recorder.dropped,
         "gatewayReady": deps.gateway_ready,
     }
+
+
+@router.post("/api/identity/reset", status_code=204)
+async def reset_identity(response: Response):
+    """Clear the signed device cookie so 'Clear my data' can mint a fresh
+    identity. Without this, the HttpOnly cookie (which JS can't remove) would
+    keep mismatching the new localStorage id and 401 every request."""
+    response.delete_cookie(DEVICE_COOKIE, samesite="lax")
 
 
 @router.get("/api/profile")

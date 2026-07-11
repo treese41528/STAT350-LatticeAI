@@ -107,14 +107,21 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.mount("/assets", StaticFiles(directory=static_dir / "assets"),
                   name="assets")
 
+        static_root = static_dir.resolve()
+
         @app.get("/{full_path:path}", include_in_schema=False)
         async def spa(full_path: str):
             if full_path.startswith(("api/", "admin/api")):
                 raise HTTPException(status_code=404)
-            candidate = static_dir / full_path
-            if full_path and candidate.is_file():
-                return FileResponse(candidate)
-            return FileResponse(static_dir / "index.html")
+            # Confine to static_root: reject percent-encoded/absolute traversal
+            # (`..%2f`, `%2e%2e/...`) — the ASGI stack doesn't normalize those,
+            # so `static_dir / full_path` could escape the directory.
+            if full_path:
+                candidate = (static_dir / full_path).resolve()
+                if (candidate == static_root or static_root in candidate.parents) \
+                        and candidate.is_file():
+                    return FileResponse(candidate)
+            return FileResponse(static_root / "index.html")
 
     return app
 

@@ -164,6 +164,30 @@ def test_admin_requires_token(client, device_id):
     assert csv_r.status_code == 200
 
 
+def test_spa_route_blocks_path_traversal(client):
+    # app_static/ has a real build in this checkout, so the SPA catch-all is
+    # active. Percent-encoded traversal must NOT escape the static dir.
+    for path in ("/%2e%2e/%2e%2e/etc/passwd",
+                 "/..%2f..%2fconfig.yaml",
+                 "/%2e%2e%2fapp%2fmain.py"):
+        r = client.get(path)
+        # served the SPA index (fallback), never the traversed file
+        assert r.status_code == 200
+        assert "root-outside" not in r.text.lower()
+        assert "GENAI_STUDIO_API_KEY" not in r.text  # never leak config
+        assert "<!doctype html" in r.text.lower() or "<html" in r.text.lower()
+
+
+def test_identity_reset_clears_cookie(client, device_id):
+    # bind a cookie, then reset should let a *new* device id work again
+    client.get("/api/profile", headers=_h(device_id))
+    r = client.post("/api/identity/reset")
+    assert r.status_code == 204
+    client.cookies.clear()  # emulate the browser dropping the deleted cookie
+    new_id = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+    assert client.get("/api/profile", headers=_h(new_id)).status_code == 200
+
+
 def test_ui_events_accepted(client, device_id):
     r = client.post("/api/events", headers=_h(device_id),
                     json={"events": [

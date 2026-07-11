@@ -12,6 +12,7 @@ The SDK blocks; FastAPI is asyncio. Two seams:
 from __future__ import annotations
 
 import asyncio
+import concurrent.futures
 import threading
 from typing import AsyncIterator, Callable, Iterator, TypeVar
 
@@ -31,19 +32,37 @@ async def aiter_sync(gen_factory: Callable[[], Iterator[T]]) -> AsyncIterator[T]
     queue: asyncio.Queue = asyncio.Queue(maxsize=256)
     stop = threading.Event()
 
-    def _put(item) -> None:
-        # Called from the worker thread; drop silently if the loop is closing.
-        try:
-            loop.call_soon_threadsafe(queue.put_nowait, item)
-        except RuntimeError:
-            pass
+    async def _aput(item) -> None:
+        await queue.put(item)
+
+    def _put(item) -> bool:
+        """Blocking, backpressured hand-off from the worker thread.
+
+        Uses a real ``await queue.put`` (not ``put_nowait``) so a slow consumer
+        throttles the producer instead of the bounded queue silently DROPPING
+        tokens — dropping deltas corrupts both the stream and the persisted
+        finalText, and a dropped sentinel would hang the consumer forever and
+        leak its LLM slot. Returns False if we're stopping or the loop is gone.
+        """
+        while not stop.is_set():
+            try:
+                fut = asyncio.run_coroutine_threadsafe(_aput(item), loop)
+            except RuntimeError:
+                return False
+            try:
+                fut.result(timeout=0.5)
+                return True
+            except concurrent.futures.TimeoutError:
+                continue  # queue full; re-check stop and retry (don't drop)
+            except Exception:
+                return False
+        return False
 
     def _pump() -> None:
         try:
             for item in gen_factory():
-                if stop.is_set():
-                    break
-                _put(item)
+                if not _put(item):
+                    return
         except Exception as exc:  # surface gateway errors on the async side
             _put(exc)
         finally:

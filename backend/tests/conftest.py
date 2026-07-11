@@ -75,7 +75,8 @@ class FakeGateway:
 
 
 def webbook_payload(*chunks: tuple[str, str, float]) -> dict:
-    """chunks: (rst_name, text, distance)"""
+    """chunks: (rst_name, text, score) — score is a SIMILARITY (higher=better)
+    to match this gateway (Phase 0 probe #4)."""
     return {
         "documents": [[t for _, t, _ in chunks]],
         "distances": [[d for _, _, d in chunks]],

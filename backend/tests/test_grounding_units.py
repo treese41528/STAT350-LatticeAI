@@ -63,9 +63,10 @@ def test_rewrite_strips_fluff():
 # ---- retrieve ---------------------------------------------------------------------
 
 def _cfg(**kw) -> RetrievalCfg:
+    # scores are similarities (higher=better): strong>=0.75, weak-floor 0.66
     base = dict(k_webbook=4, k_transcripts=2, max_passages=6,
-                min_transcript_slots=1,
-                thresholds=ThresholdsCfg(strong=0.55, weak=0.80))
+                min_transcript_slots=1, higher_is_better=True,
+                thresholds=ThresholdsCfg(strong=0.75, weak=0.66))
     base.update(kw)
     return RetrievalCfg(**base)
 
@@ -73,24 +74,26 @@ def _cfg(**kw) -> RetrievalCfg:
 def test_retrieve_labels_and_tiers(resolver):
     gw = FakeGateway(retrieval_payloads={
         "kb-web": webbook_payload(
-            ("7-3-clt.rst", "The CLT says the sample mean is approximately normal.", 0.30),
-            ("7-2-sampling-distribution-for-the-sample-mean.rst", "Sampling distributions...", 0.50)),
+            ("7-3-clt.rst", "The CLT says the sample mean is approximately normal.", 0.86),
+            ("7-2-sampling-distribution-for-the-sample-mean.rst", "Sampling distributions...", 0.80)),
         "kb-tr": {"documents": [["In lecture we said the CLT kicks in around n=30."]],
-                  "distances": [[0.45]],
+                  "distances": [[0.83]],
                   "metadatas": [[{"name": "lecture_7-3_transcript.vtt"}]]},
     })
     rr = retrieve(gw, resolver, "central limit theorem", _cfg())
     assert rr.tier == "strong"
+    # best-first ordering: 0.86 web, 0.83 transcript, 0.80 web
     assert [p.collection for p in rr.passages] == ["webbook", "transcript", "webbook"]
     assert [p.n for p in rr.passages] == [1, 2, 3]
     assert rr.passages[0].resolved.section.number == "7.3"
+    assert rr.passages[0].similarity > rr.passages[2].similarity  # higher score = higher sim
     assert rr.passages[1].resolved.video_url  # transcript → video link
     assert len(gw.retrieval_calls) == 2  # one per collection by default
 
 
 def test_retrieve_weak_tier_and_empty(resolver):
     gw = FakeGateway(retrieval_payloads={
-        "kb-web": webbook_payload(("7-3-clt.rst", "off topic text", 0.95))})
+        "kb-web": webbook_payload(("7-3-clt.rst", "off topic text", 0.58))})
     rr = retrieve(gw, resolver, "quantum chromodynamics", _cfg())
     assert rr.tier == "no_evidence"
 
@@ -107,11 +110,30 @@ def test_retrieve_caveat_between_thresholds(resolver):
 
 
 def test_retrieve_dedupes(resolver):
-    same = ("7-3-clt.rst", "identical chunk text repeated in both", 0.4)
+    same = ("7-3-clt.rst", "identical chunk text repeated in both", 0.8)
     gw = FakeGateway(retrieval_payloads={
         "kb-web": webbook_payload(same, same)})
     rr = retrieve(gw, resolver, "clt", _cfg())
     assert len(rr.passages) == 1
+
+
+def test_retrieve_transcript_floor_adds_multiple(resolver):
+    # webbook dominates top-k; two transcripts sit just below the cut but clear
+    # the weak bar. min_transcript_slots=2 must surface BOTH (regression: the
+    # old code overwrote the same slot and added only one).
+    gw = FakeGateway(retrieval_payloads={
+        "kb-web": webbook_payload(
+            ("7-3-clt.rst", "w1", 0.90),
+            ("7-2-sampling-distribution-for-the-sample-mean.rst", "w2", 0.88),
+            ("7-1-statistics-and-sampling-distributions.rst", "w3", 0.86)),
+        "kb-tr": {
+            "documents": [["t1", "t2"]], "distances": [[0.80, 0.78]],
+            "metadatas": [[{"name": "STAT 350 - Chapter 7.3 CLT.srt"},
+                           {"name": "STAT 350 - Chapter 7.2 sampling.srt"}]]},
+    })
+    rr = retrieve(gw, resolver, "clt", _cfg(max_passages=3, min_transcript_slots=2))
+    assert sum(1 for p in rr.passages if p.collection == "transcript") == 2
+    assert len(rr.passages) == 3  # cap respected
 
 
 def test_retrieve_survives_gateway_error(resolver):
@@ -154,6 +176,15 @@ def test_lint_links_removes_unknown_urls(resolver):
     clean, removed = lint_links(text, resolver)
     assert good in clean
     assert "sketchy" not in clean and "evil.com" not in clean
+    assert len(removed) == 2
+
+
+def test_lint_links_case_insensitive(resolver):
+    # uppercase scheme must NOT bypass the lint (the frontend renders HTTP://
+    # as a live link, so a survivor is a phishing vector)
+    text = "click HTTP://evil.com/x or Https://bad.example/y"
+    clean, removed = lint_links(text, resolver)
+    assert "evil.com" not in clean and "bad.example" not in clean
     assert len(removed) == 2
 
 

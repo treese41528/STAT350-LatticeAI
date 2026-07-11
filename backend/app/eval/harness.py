@@ -114,12 +114,21 @@ def cmd_run(args) -> int:
     for ch in sorted(per_chapter, key=lambda c: (c == '?', c.zfill(2))):
         e = per_chapter[ch]
         print(f"  chapter {ch:>2}: {e['hits']}/{e['n']}")
-    print("top-distance quantiles (all):", _quantiles(top_dists))
-    print("top-distance quantiles (hits):", _quantiles(hit_dists))
+    higher = settings.retrieval.higher_is_better
+    print(f"top-score quantiles (all, higher_is_better={higher}):",
+          _quantiles(top_dists))
+    print("top-score quantiles (hits):", _quantiles(hit_dists))
     if hit_dists:
         qs = _quantiles(hit_dists)
-        print(f"\nSuggested thresholds → strong: {qs['p75']:.3f}  "
-              f"weak: {min(0.99, qs['p90'] * 1.15):.3f}   "
+        if higher:
+            # good answers cluster HIGH; strong ≈ lower quartile of hits,
+            # weak ≈ a bit below that.
+            strong = qs["p25"]
+            weak = max(0.0, qs["p10"] - 0.03)
+        else:
+            strong = qs["p75"]
+            weak = min(0.99, qs["p90"] * 1.15)
+        print(f"\nSuggested thresholds → strong: {strong:.3f}  weak: {weak:.3f}   "
               "(update config.yaml retrieval.thresholds after review)")
 
     engine = make_engine(settings)
@@ -169,6 +178,7 @@ def cmd_replay(args) -> int:
         print("No logged queries to replay.")
         return 0
 
+    higher = settings.retrieval.higher_is_better
     print(f"Replaying {len(pairs)} logged queries against the current index…")
     old_tops, new_tops, regressions = [], [], 0
     for i, (query, old_top) in enumerate(pairs, 1):
@@ -176,18 +186,20 @@ def cmd_replay(args) -> int:
         if old_top is not None and rr.top_distance is not None:
             old_tops.append(old_top)
             new_tops.append(rr.top_distance)
-            if rr.top_distance > old_top + 0.05:
-                regressions += 1
+            regressed = (rr.top_distance < old_top - 0.05) if higher \
+                else (rr.top_distance > old_top + 0.05)
+            regressions += int(regressed)
         if i % 25 == 0:
             print(f"  …{i}/{len(pairs)}")
 
     print("\n===== REPLAY =====")
-    print("old top-distance:", _quantiles(old_tops))
-    print("new top-distance:", _quantiles(new_tops))
+    print("old top-score:", _quantiles(old_tops))
+    print("new top-score:", _quantiles(new_tops))
     if old_tops:
         delta = statistics.mean(new_tops) - statistics.mean(old_tops)
-        print(f"mean shift: {delta:+.4f}  (negative = better)   "
-              f"regressed >0.05: {regressions}/{len(old_tops)}")
+        better = "higher = better" if higher else "lower = better"
+        print(f"mean shift: {delta:+.4f}  ({better})   "
+              f"regressed: {regressions}/{len(old_tops)}")
     return 0
 
 

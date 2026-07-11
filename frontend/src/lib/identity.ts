@@ -28,8 +28,20 @@ export function getDeviceId(): string {
   }
 }
 
-/** Used by "Clear my data on this device". */
-export function resetDeviceId(): void {
+/**
+ * Used by "Clear my data on this device".
+ *
+ * MUST clear the server's signed HttpOnly device cookie first — JS can't touch
+ * it, and if it survives it will mismatch the freshly-minted localStorage id
+ * and 401 every request (permanent lockout). Awaited by the caller before
+ * reload.
+ */
+export async function resetDeviceId(): Promise<void> {
+  try {
+    await fetch("/api/identity/reset", { method: "POST", credentials: "include" });
+  } catch {
+    /* best effort — proceed to clear local state regardless */
+  }
   cached = null;
   try {
     localStorage.removeItem(KEY);

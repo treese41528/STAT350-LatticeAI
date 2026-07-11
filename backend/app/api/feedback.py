@@ -103,9 +103,14 @@ async def ui_events(body: UiEventBatch, request: Request,
     for ev in body.events:
         if ev.type not in ALLOWED_UI_EVENTS:
             continue
-        # enumerated types only; payload is small structured fields
+        # enumerated types only; payload is small structured fields (cap string
+        # values so a client can't stash large blobs as telemetry)
+        payload = {}
+        for k, v in list(ev.payload.items())[:8]:
+            if isinstance(v, str):
+                payload[str(k)[:40]] = v[:200]
+            elif isinstance(v, (int, float, bool)):
+                payload[str(k)[:40]] = v
         deps.recorder.emit(m.UiEvent(
             user_id=uid, conversation_id=ev.conversationId,
-            message_id=ev.messageId, event_type=ev.type,
-            payload={k: v for k, v in list(ev.payload.items())[:8]
-                     if isinstance(v, (str, int, float, bool))}))
+            message_id=ev.messageId, event_type=ev.type, payload=payload))

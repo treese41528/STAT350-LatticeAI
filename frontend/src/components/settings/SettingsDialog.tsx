@@ -34,9 +34,11 @@ export function SettingsDialog({
     applyTheme(t);
   };
 
-  const clearData = () => {
+  const clearData = async () => {
+    // await the server cookie reset BEFORE reload, else the surviving cookie
+    // mismatches the new device id and locks the user out.
+    await resetDeviceId();
     try {
-      resetDeviceId();
       localStorage.removeItem("stat350.settings");
       sessionStorage.clear();
     } catch {

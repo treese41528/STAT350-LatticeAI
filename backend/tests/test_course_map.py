@@ -83,6 +83,31 @@ def test_url_for_rst_fallback_chain(resolver):
     assert nothing.url  # still links somewhere safe (hub)
 
 
+def test_webbook_underscore_path_filenames(resolver):
+    # Real gateway metadata: repo path with '/' -> '_' (Phase 0 probe #1).
+    lecture = resolver.resolve_webbook({"name": "chapter7_lectures_7-3-clt.rst"})
+    assert lecture.match == "exact" and lecture.section.number == "7.3"
+
+    # worksheet source file → worksheet page (not a section)
+    ws = resolver.resolve_webbook(
+        {"name": "worksheets_worksheet_materials_worksheet11.rst"})
+    assert ws.section is None and "worksheet11.html" in ws.url
+    assert "Worksheet 11" in ws.title
+
+    # uuid-prefixed filename field
+    prefixed = resolver.resolve_webbook(
+        {"name": "chapter9_lectures_9-2-ci-sigma-known.rst",
+         "filename": "2f73bbd9-c810-4fbb-9068-4792ae1029d8_chapter9_lectures_9-2-ci-sigma-known.rst"})
+    assert prefixed.section.number == "9.2"
+
+
+def test_transcript_srt_filenames(resolver):
+    # real transcript naming from the gateway
+    hit = resolver.resolve_transcript(
+        {"name": "STAT 350 -  Chapter 7.3 Central Limit Theorem CLT.srt"})
+    assert hit.section.number == "7.3" and hit.video_url
+
+
 def test_transcript_resolution(resolver):
     hit = resolver.resolve_transcript({"name": "lecture_7-3_transcript.vtt"})
     assert hit.section.number == "7.3"
