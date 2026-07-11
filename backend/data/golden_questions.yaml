@@ -1,97 +1,2050 @@
-# Golden retrieval-eval set. Each question lists glob-ish patterns that should
-# match the SOURCE FILE of a correctly-retrieved chunk (matched against the
-# normalized rst basename, e.g. "4-3-conditional-probability").
-#
-# STARTER SET (~26) — grow this to 60-100 with real student phrasings; several
-# per chapter plus syllabus/exam/resource types. Run with:
+# STAT 350 retrieval-eval golden set — CONTENT-GROUNDED.
+# Generated from the webbook .rst files (one agent read each lecture and
+# authored realistic student questions grounded in that file's content).
+# expected_sources are '*basename*' globs matched against the gateway's
+# underscore-joined filenames. out_of_scope questions SHOULD retrieve weakly
+# (the harness scores them as correct when tier == no_evidence).
 #   python backend/scripts/eval.py run
-version: "2026-07-11-seed"
+# 315 in-scope + 30 out-of-scope = 345 questions
+version: 2026-07-11-webbook-grounded
 questions:
-  - question: "What's the difference between a parameter and a statistic?"
-    expected_sources: ["*1-1-intro*", "*7-1-statistics-and-sampling*"]
+  - question: "what are the four branches of statistics we're gonna cover in this class?"
+    expected_sources: ["*1-1-intro*"]
     chapter: 1
-  - question: "How do I read a boxplot and what counts as an outlier?"
-    # boxplots/outliers span graphical summaries (2.3/2.4) AND the IQR /
-    # five-number-summary / resistance sections in ch 3 — the initial glob was
-    # too narrow (a correct 0.86 retrieval was scored a miss). Confirm on re-run.
-    expected_sources: ["*2-4-exploring-quantitative*", "*2-3-tools-for-numerical*",
-                       "*3-4-measures-of-variability-IQR*", "*3-5-choosing-the-right-measure*"]
+    section: "1.1"
+    difficulty: easy
+    type: concept
+  - question: "im a little lost on what descriptive statistics actually do and how that ties into exploratory data analysis, can you explain?"
+    expected_sources: ["*1-1-intro*"]
+    chapter: 1
+    section: "1.1"
+    difficulty: medium
+    type: concept
+  - question: "how does a hypothesis test actually work, like what are the steps you go through?"
+    expected_sources: ["*1-1-intro*"]
+    chapter: 1
+    section: "1.1"
+    difficulty: medium
+    type: procedure
+  - question: "whats the difference between point estimation and interval estimation and when would i use one over the other?"
+    expected_sources: ["*1-1-intro*"]
+    chapter: 1
+    section: "1.1"
+    difficulty: medium
+    type: comparison
+  - question: "say I recorded the ages of 200 of my store's customers and found the average. if I want to say something about ALL my customers based on that group, is that just describing my data or is it a totally different kind of statistics? kinda confused about that"
+    expected_sources: ["*1-1-intro*"]
+    chapter: 1
+    section: "1.1"
+    difficulty: hard
+    type: misconception
+  - question: "whats the actual difference between a population and a sample? i keep mixing the two up"
+    expected_sources: ["*1-2-probability-inference*"]
+    chapter: 1
+    section: "1.2"
+    difficulty: easy
+    type: concept
+  - question: "im kinda lost on when we're doing probability vs statistical inference. like how do i tell which direction im going between the sample and the population?"
+    expected_sources: ["*1-2-probability-inference*"]
+    chapter: 1
+    section: "1.2"
+    difficulty: medium
+    type: comparison
+  - question: "what do they mean by saying we have 'complete knowledge' of the population, and what even is a probability distribution?"
+    expected_sources: ["*1-2-probability-inference*"]
+    chapter: 1
+    section: "1.2"
+    difficulty: medium
+    type: concept
+  - question: "we interviewed 20 random americans and 8 of them said they have a passport. how do i use that to estimate the percent of ALL americans who have one?"
+    expected_sources: ["*1-2-probability-inference*"]
+    chapter: 1
+    section: "1.2"
+    difficulty: medium
+    type: computation
+  - question: "my prof said if you only ask people at the airport whether they travel a lot, your results will be off. why does the place where you collect the data mess up how much you can trust the estimate?"
+    expected_sources: ["*1-2-probability-inference*"]
+    chapter: 1
+    section: "1.2"
+    difficulty: hard
+    type: misconception
+  - question: "what's the difference between a case and a variable in a data set? i keep mixing them up with rows and columns"
+    expected_sources: ["*2-1-understanding-the-structure-of-data-set*"]
     chapter: 2
-  - question: "When should I use the median instead of the mean?"
-    expected_sources: ["*3-5-choosing-the-right-measure*", "*3-2-measures-of-central-tendency*"]
+    section: "2.1"
+    difficulty: easy
+    type: concept
+  - question: "for a numerical variable how do I tell if its on an interval scale or a ratio scale? like whats the actual test to check"
+    expected_sources: ["*2-1-understanding-the-structure-of-data-set*"]
+    chapter: 2
+    section: "2.1"
+    difficulty: medium
+    type: comparison
+  - question: "is there a quick trick to figure out if a numeric variable is discrete or continuous? heart rate is always whole numbers on the monitor so wouldnt that make it discrete"
+    expected_sources: ["*2-1-understanding-the-structure-of-data-set*"]
+    chapter: 2
+    section: "2.1"
+    difficulty: medium
+    type: procedure
+  - question: "im confused, zip codes and jersey numbers are literally numbers so doesnt that automatically make them numerical variables?"
+    expected_sources: ["*2-1-understanding-the-structure-of-data-set*"]
+    chapter: 2
+    section: "2.1"
+    difficulty: medium
+    type: misconception
+  - question: "two TAs wrote down the same final exam results in different ways. one recorded the actual curved percentage each student got, and the other just put everyone into buckets like 0-60, 60-70, 70-80, 80-100. are those two columns the same type of thing or not, and why would it even matter?"
+    expected_sources: ["*2-1-understanding-the-structure-of-data-set*"]
+    chapter: 2
+    section: "2.1"
+    difficulty: hard
+    type: interpretation
+  - question: "what does relative frequency actually mean? like how is it different from just the regular frequency count?"
+    expected_sources: ["*2-2-tools-for-categorical-qualitative-data*"]
+    chapter: 2
+    section: "2.2"
+    difficulty: easy
+    type: concept
+  - question: "in this section it says the categories are also called classes or labels. are those three words all the same thing or is there some difference between them?"
+    expected_sources: ["*2-2-tools-for-categorical-qualitative-data*"]
+    chapter: 2
+    section: "2.2"
+    difficulty: medium
+    type: concept
+  - question: "if I have a table with the count for each category, how do I actually calculate the relative frequency and the percentage for each one? and are they supposed to add up to something?"
+    expected_sources: ["*2-2-tools-for-categorical-qualitative-data*"]
+    chapter: 2
+    section: "2.2"
+    difficulty: medium
+    type: computation
+  - question: "I have a categorical variable with like 12 different categories I want to plot. should I go with a pie chart or a bar graph for that many?"
+    expected_sources: ["*2-2-tools-for-categorical-qualitative-data*"]
+    chapter: 2
+    section: "2.2"
+    difficulty: medium
+    type: comparison
+  - question: "ok this is really confusing me. a new drug had a higher recovery rate than the standard one at BOTH hospitals it was tested at, but when you throw all the patients together the standard treatment ends up looking better. how can both of those be true at the same time??"
+    expected_sources: ["*2-2-tools-for-categorical-qualitative-data*"]
+    chapter: 2
+    section: "2.2"
+    difficulty: hard
+    type: misconception
+  - question: "what exactly is a histogram and what is it supposed to tell me about my data?"
+    expected_sources: ["*2-3-tools-for-numerical-quantitative-data*"]
+    chapter: 2
+    section: "2.3"
+    difficulty: easy
+    type: concept
+  - question: "when someone draws a red curve and a blue curve on top of a histogram, what are those two lines actually for?"
+    expected_sources: ["*2-3-tools-for-numerical-quantitative-data*"]
+    chapter: 2
+    section: "2.3"
+    difficulty: medium
+    type: concept
+  - question: "i have a dataset with 200 rows and i need to make a histogram, how do i figure out how many bins to start with?"
+    expected_sources: ["*2-3-tools-for-numerical-quantitative-data*"]
+    chapter: 2
+    section: "2.3"
+    difficulty: medium
+    type: computation
+  - question: "how am i supposed to decide whether to use a bar graph or a histogram for my variable? i keep mixing them up"
+    expected_sources: ["*2-3-tools-for-numerical-quantitative-data*"]
+    chapter: 2
+    section: "2.3"
+    difficulty: medium
+    type: comparison
+  - question: "i plotted out my measurements and the chart came out really spiky and jagged with a bunch of empty spots in the middle, so now it looks like chunks of my data are missing. did i do something wrong?"
+    expected_sources: ["*2-3-tools-for-numerical-quantitative-data*"]
+    chapter: 2
+    section: "2.3"
+    difficulty: hard
+    type: misconception
+  - question: "whats the difference between unimodal bimodal and multimodal? like how do i actually know which one a histogram is"
+    expected_sources: ["*2-4-exploring-quantitative-distributions-modality-shape-and-outliers*"]
+    chapter: 2
+    section: "2.4"
+    difficulty: easy
+    type: concept
+  - question: "for my homework i have to describe a histogram but im not really sure what im supposed to say about it. what stuff am i actually supposed to look at?"
+    expected_sources: ["*2-4-exploring-quantitative-distributions-modality-shape-and-outliers*"]
+    chapter: 2
+    section: "2.4"
+    difficulty: medium
+    type: procedure
+  - question: "i made a histogram and it has like 4 or 5 little peaks in it. does that mean my data is coming from 4 or 5 different groups/populations?"
+    expected_sources: ["*2-4-exploring-quantitative-distributions-modality-shape-and-outliers*"]
+    chapter: 2
+    section: "2.4"
+    difficulty: medium
+    type: misconception
+  - question: "when i spot an outlier in my data am i supposed to just delete it or keep it? i dont get how you decide whether to throw it out"
+    expected_sources: ["*2-4-exploring-quantitative-distributions-modality-shape-and-outliers*"]
+    chapter: 2
+    section: "2.4"
+    difficulty: medium
+    type: comparison
+  - question: "i measured cpu usage during a stress test and almost all the readings are jammed up near 100 percent, then it kind of thins out toward the lower values with fewer and fewer points. how would i describe the shape of that and is it something to worry about?"
+    expected_sources: ["*2-4-exploring-quantitative-distributions-modality-shape-and-outliers*"]
+    chapter: 2
+    section: "2.4"
+    difficulty: hard
+    type: interpretation
+  - question: "whats the actual difference between a parameter and a statistic?? i keep mixing up which one is which"
+    expected_sources: ["*3-1-intro-numerical-summaries*"]
     chapter: 3
-  - question: "Why do we divide by n-1 when computing sample variance?"
-    expected_sources: ["*3-3-measures-of-variability*"]
+    section: "3.1"
+    difficulty: easy
+    type: concept
+  - question: "why does my prof write some things with greek letters like mu and sigma but other stuff with normal letters like x-bar and s? is there a reason or is it just random"
+    expected_sources: ["*3-1-intro-numerical-summaries*"]
     chapter: 3
-  - question: "How does Bayes' rule work? I don't get the disease testing example"
-    expected_sources: ["*4-4-law-of-total-probability*", "*4-5-bayes-update*"]
+    section: "3.1"
+    difficulty: medium
+    type: notation
+  - question: "how do i actually write the formula for the mean of my data using that big sideways E sum symbol thing? like in real notation not just words"
+    expected_sources: ["*3-1-intro-numerical-summaries*"]
+    chapter: 3
+    section: "3.1"
+    difficulty: medium
+    type: procedure
+  - question: "when would i use the double subscript notation like y with two little numbers instead of just writing x1 x2 x3 like normal?"
+    expected_sources: ["*3-1-intro-numerical-summaries*"]
+    chapter: 3
+    section: "3.1"
+    difficulty: medium
+    type: comparison
+  - question: "so for my project i measured the satisfaction score of every single employee at the company, not just a sample of them. is the average i got an estimate of the true average, or is it literally the true value? and which symbol am i supposed to use for it"
+    expected_sources: ["*3-1-intro-numerical-summaries*"]
+    chapter: 3
+    section: "3.1"
+    difficulty: hard
+    type: misconception
+  - question: "what exactly is the sample mode and how do i find it in a data set?"
+    expected_sources: ["*3-2-measures-of-central-tendency*"]
+    chapter: 3
+    section: "3.2"
+    difficulty: easy
+    type: concept
+  - question: "how do i find the median if i have an even number of data points? theres no single middle number so im stuck"
+    expected_sources: ["*3-2-measures-of-central-tendency*"]
+    chapter: 3
+    section: "3.2"
+    difficulty: medium
+    type: procedure
+  - question: "when am i supposed to use the median instead of the mean? like how do i know which one to actually pick for my data"
+    expected_sources: ["*3-2-measures-of-central-tendency*", "*3-5-choosing-the-right-measure-resistance-to-extreme-values*"]
+    chapter: 3
+    section: "3.2"
+    difficulty: medium
+    type: comparison
+  - question: "im confused, i thought the mean and the median were basically the same thing since theyre both the average. isnt the median just adding up all the numbers and dividing by how many there are?"
+    expected_sources: ["*3-2-measures-of-central-tendency*"]
+    chapter: 3
+    section: "3.2"
+    difficulty: medium
+    type: misconception
+  - question: "in class we counted how many pets everyone had. most kids had a few but then we found out one kid actually had way more than we first wrote down. after we fixed that one number, the value we get from adding everything up and dividing went up a lot, but the middle value didnt change at all. why does that happen?"
+    expected_sources: ["*3-2-measures-of-central-tendency*"]
+    chapter: 3
+    section: "3.2"
+    difficulty: hard
+    type: interpretation
+  - question: "how do you find the range of a dataset? is it just the biggest value minus the smallest one?"
+    expected_sources: ["*3-3-measures-of-variability-range-variance-and-SD*"]
+    chapter: 3
+    section: "3.3"
+    difficulty: easy
+    type: concept
+  - question: "why do we square the deviations when calculating variance instead of just using absolute values? squaring seems like it makes the numbers way bigger for no reason"
+    expected_sources: ["*3-3-measures-of-variability-range-variance-and-SD*"]
+    chapter: 3
+    section: "3.3"
+    difficulty: medium
+    type: concept
+  - question: "can someone walk me through the actual steps to compute the sample standard deviation by hand? i keep getting lost with the sum of squared deviations and the dividing part"
+    expected_sources: ["*3-3-measures-of-variability-range-variance-and-SD*"]
+    chapter: 3
+    section: "3.3"
+    difficulty: medium
+    type: procedure
+  - question: "im confused on variance vs standard deviation, arent they basically the same thing? whats the actual difference and why do we bother with both"
+    expected_sources: ["*3-3-measures-of-variability-range-variance-and-SD*"]
+    chapter: 3
+    section: "3.3"
+    difficulty: medium
+    type: comparison
+  - question: "for our worksheet we had to take each data point, subtract the average from it, and add all those up across the whole dataset, and mine came out to exactly 0. did i do something wrong or is it supposed to end up like that?"
+    expected_sources: ["*3-3-measures-of-variability-range-variance-and-SD*"]
+    chapter: 3
+    section: "3.3"
+    difficulty: hard
+    type: misconception
+  - question: "wait what is the IQR actually measuring? like i know its Q3 minus Q1 but what does that number even tell me"
+    expected_sources: ["*3-4-measures-of-variability-IQR-and-5-number-summary*"]
+    chapter: 3
+    section: "3.4"
+    difficulty: easy
+    type: concept
+  - question: "why do they keep calling it a modified box plot? whats modified about it vs a regular boxplot"
+    expected_sources: ["*3-4-measures-of-variability-IQR-and-5-number-summary*"]
+    chapter: 3
+    section: "3.4"
+    difficulty: medium
+    type: concept
+  - question: "how do i find Q1 and Q3 by hand? im confused about whether you include the median value when you split the data into the two halves or leave it out"
+    expected_sources: ["*3-4-measures-of-variability-IQR-and-5-number-summary*"]
+    chapter: 3
+    section: "3.4"
+    difficulty: medium
+    type: procedure
+  - question: "whats the difference between a mild explicit point and an extreme explicit point, how do i tell which one a value is"
+    expected_sources: ["*3-4-measures-of-variability-IQR-and-5-number-summary*"]
+    chapter: 3
+    section: "3.4"
+    difficulty: medium
+    type: comparison
+  - question: "our TA showed two datasets that had almost the exact same boxplot but one was a nice bell curve and the other had two separate humps. how can the plots look the same if the data is that different?? i thought the plot shows you the shape"
+    expected_sources: ["*3-4-measures-of-variability-IQR-and-5-number-summary*"]
+    chapter: 3
+    section: "3.4"
+    difficulty: hard
+    type: misconception
+  - question: "what does it even mean when they say a measure is resistant? resistant to what exactly"
+    expected_sources: ["*3-5-choosing-the-right-measure-resistance-to-extreme-values*"]
+    chapter: 3
+    section: "3.5"
+    difficulty: easy
+    type: concept
+  - question: "why does the mean get dragged toward the tail when the data is skewed but the median kinda just stays put in the middle?"
+    expected_sources: ["*3-5-choosing-the-right-measure-resistance-to-extreme-values*"]
+    chapter: 3
+    section: "3.5"
+    difficulty: medium
+    type: concept
+  - question: "how do I actually find the standardized value for one data point? like whats the formula and what does the number end up telling me"
+    expected_sources: ["*3-5-choosing-the-right-measure-resistance-to-extreme-values*"]
+    chapter: 3
+    section: "3.5"
+    difficulty: medium
+    type: computation
+  - question: "im confused about when Im supposed to report mean and standard deviation vs median and IQR. how do I know which pair to pick for a dataset?"
+    expected_sources: ["*3-5-choosing-the-right-measure-resistance-to-extreme-values*"]
+    chapter: 3
+    section: "3.5"
+    difficulty: medium
+    type: comparison
+  - question: "i took the average of the home prices in my neighborhood and got like $650k but honestly almost every house is around $300k, only a couple huge mansions are way up there. did I mess up the calculation or why is the average so far off from what most houses actually cost?"
+    expected_sources: ["*3-5-choosing-the-right-measure-resistance-to-extreme-values*"]
+    chapter: 3
+    section: "3.5"
+    difficulty: hard
+    type: misconception
+  - question: "what exactly is a sample space? is it just all the possible outcomes of something or is there more to it"
+    expected_sources: ["*4-1-basic-set-theory*"]
     chapter: 4
-  - question: "What does it mean for two events to be independent?"
-    expected_sources: ["*4-6-independence-of-events*"]
+    section: "4.1"
+    difficulty: easy
+    type: concept
+  - question: "so if im rolling a 20 sided die and my event is A = {2,4,6,8,10,12,14,16,18,20}, how do i actually find A' (the complement)? like what numbers go in it"
+    expected_sources: ["*4-1-basic-set-theory*"]
     chapter: 4
-  - question: "What is conditional probability given that another event happened?"
+    section: "4.1"
+    difficulty: medium
+    type: procedure
+  - question: "i keep mixing up union and intersection. how do i know which symbol goes with 'and' and which one goes with 'or' when a word problem describes an event?"
+    expected_sources: ["*4-1-basic-set-theory*"]
+    chapter: 4
+    section: "4.1"
+    difficulty: medium
+    type: comparison
+  - question: "quick q, is the complement of (A or B) the same thing as (A complement) or (B complement)? i figured you just flip each piece but my answer came out wrong"
+    expected_sources: ["*4-1-basic-set-theory*"]
+    chapter: 4
+    section: "4.1"
+    difficulty: medium
+    type: misconception
+  - question: "if im rolling one die and I look at two events, getting an even number and getting exactly a 3, those two can literally never both happen on the same roll. is there a special name for two events like that, and how are you supposed to draw them in the circle picture?"
+    expected_sources: ["*4-1-basic-set-theory*"]
+    chapter: 4
+    section: "4.1"
+    difficulty: hard
+    type: concept
+  - question: "what are the 3 axioms of probability? i know one of them is that the whole sample space has probability 1 but i keep forgetting the other two"
+    expected_sources: ["*4-2-probability*"]
+    chapter: 4
+    section: "4.2"
+    difficulty: easy
+    type: concept
+  - question: "whats the actual difference between the frequentist and bayesian way of looking at probability, and which one are we supposed to use in this class?"
+    expected_sources: ["*4-2-probability*"]
+    chapter: 4
+    section: "4.2"
+    difficulty: medium
+    type: comparison
+  - question: "in a survey of 200 students, 120 know python, 85 know java, and 50 know both. how do i find the probability that a random student knows at least one of the two languages?"
+    expected_sources: ["*4-2-probability*"]
+    chapter: 4
+    section: "4.2"
+    difficulty: medium
+    type: computation
+  - question: "im kinda confused... sometimes to get the probability of A or B you just add P(A) and P(B), but other times you subtract something. when is it okay to just add the two probabilities together?"
+    expected_sources: ["*4-2-probability*"]
+    chapter: 4
+    section: "4.2"
+    difficulty: medium
+    type: misconception
+  - question: "i have to figure out the chance that at least one of two dice comes up even, but listing out every single pair is such a pain. is there a faster trick for these 'at least one' kinds of questions?"
+    expected_sources: ["*4-2-probability*"]
+    chapter: 4
+    section: "4.2"
+    difficulty: hard
+    type: procedure
+  - question: "what does P(A|B) actually mean and how do you read that little bar out loud?"
     expected_sources: ["*4-3-conditional-probability*"]
     chapter: 4
-  - question: "How do I know if a random variable is binomial?"
-    expected_sources: ["*5-6-binomial*"]
+    section: "4.3"
+    difficulty: easy
+    type: concept
+  - question: "im kinda confused why the conditional probability formula divides by P(B). like what happens to the rest of the sample space once you know B happened?"
+    expected_sources: ["*4-3-conditional-probability*"]
+    chapter: 4
+    section: "4.3"
+    difficulty: medium
+    type: concept
+  - question: "if a problem only gives me one regular probability and a conditional one, how do I get the probability that both events happen at the same time?"
+    expected_sources: ["*4-3-conditional-probability*"]
+    chapter: 4
+    section: "4.3"
+    difficulty: medium
+    type: procedure
+  - question: "is P(A|B) the same as P(B|A)? I keep swapping them and getting different answers, when am I supposed to use which one?"
+    expected_sources: ["*4-3-conditional-probability*"]
+    chapter: 4
+    section: "4.3"
+    difficulty: medium
+    type: comparison
+  - question: "so theres this two-step thing where first theres a 60% chance the candidate passes a screening, and then depending on that theres another chance they pass the next round. to find the chance they pass BOTH rounds do I add the two percents or multiply them? I always mess this up"
+    expected_sources: ["*4-3-conditional-probability*"]
+    chapter: 4
+    section: "4.3"
+    difficulty: hard
+    type: misconception
+  - question: "what does it actually mean for a group of events to be a partition? like what are the two conditions they have to meet"
+    expected_sources: ["*4-4-law-of-total-probability-and-bayes-rule*"]
+    chapter: 4
+    section: "4.4"
+    difficulty: easy
+    type: concept
+  - question: "im getting the bayes terms all mixed up. whats the difference between the prior, the likelihood, and the posterior? which one is P(A) and which is P(A|B)"
+    expected_sources: ["*4-4-law-of-total-probability-and-bayes-rule*"]
+    chapter: 4
+    section: "4.4"
+    difficulty: medium
+    type: concept
+  - question: "if i know that 50% of requests go to cluster A, 30% to B, 20% to C and each cluster has its own success rate, how do i actually find the overall probability that a request succeeds?"
+    expected_sources: ["*4-4-law-of-total-probability-and-bayes-rule*"]
+    chapter: 4
+    section: "4.4"
+    difficulty: medium
+    type: computation
+  - question: "when am i supposed to use the law of total probability vs bayes rule?? they both have that P(B|A)P(A) stuff and i cant tell them apart"
+    expected_sources: ["*4-4-law-of-total-probability-and-bayes-rule*"]
+    chapter: 4
+    section: "4.4"
+    difficulty: medium
+    type: comparison
+  - question: "my prof said that even with a test thats 95% accurate, if the disease is rare then testing positive only gives you like a 9% chance of actually having it. that makes zero sense to me?? how can it be that low when the test is so good"
+    expected_sources: ["*4-4-law-of-total-probability-and-bayes-rule*"]
+    chapter: 4
+    section: "4.4"
+    difficulty: hard
+    type: misconception
+  - question: "in bayesian updating what do people actually mean when they say the posterior becomes the new prior? i dont really get how you keep reusing it over and over"
+    expected_sources: ["*4-5-bayes-update-rule-example*"]
+    chapter: 4
+    section: "4.5"
+    difficulty: easy
+    type: concept
+  - question: "theres a bag of 10 coins where one is biased with 0.8 chance of heads and the other 9 are fair. i pull one out at random and the first flip is heads. how do i figure out the probability i grabbed the biased one after just that one flip?"
+    expected_sources: ["*4-5-bayes-update-rule-example*"]
+    chapter: 4
+    section: "4.5"
+    difficulty: medium
+    type: computation
+  - question: "do i actually have to update flip by flip, or can i just plug in all 10 heads at once? whats the difference between the sequential way and the one step way, and do they even give the same answer at the end?"
+    expected_sources: ["*4-5-bayes-update-rule-example*"]
+    chapter: 4
+    section: "4.5"
+    difficulty: medium
+    type: comparison
+  - question: "im kinda confused... since each posterior turns into the prior for the next step, wouldnt that mean if the flips had come in a different order id end up with a different final probability?"
+    expected_sources: ["*4-5-bayes-update-rule-example*"]
+    chapter: 4
+    section: "4.5"
+    difficulty: medium
+    type: misconception
+  - question: "i picked a coin out of a jar where almost all of them are normal but one is rigged to land heads a lot. i kept flipping the same coin and getting heads and was getting pretty confident i had the rigged one, but then it came up tails once and now im way less sure. how can a single tails swing my confidence that much?"
+    expected_sources: ["*4-5-bayes-update-rule-example*"]
+    chapter: 4
+    section: "4.5"
+    difficulty: hard
+    type: concept
+  - question: "what does it actually mean for two events to be independent? like is there an actual formula/definition for it?"
+    expected_sources: ["*4-6-independence-of-events*"]
+    chapter: 4
+    section: "4.6"
+    difficulty: easy
+    type: concept
+  - question: "my notes have this special multiplication rule that says P(A and B) = P(A)P(B). when am I actually allowed to use that one instead of the regular version?"
+    expected_sources: ["*4-6-independence-of-events*"]
+    chapter: 4
+    section: "4.6"
+    difficulty: medium
+    type: concept
+  - question: "how do I know whether to use P(A)P(B) or P(A|B)P(B) when I'm trying to find the probability that A and B both happen?"
+    expected_sources: ["*4-6-independence-of-events*"]
+    chapter: 4
+    section: "4.6"
+    difficulty: medium
+    type: comparison
+  - question: "if two events can't both happen at the same time, doesn't that automatically mean they're independent? I keep mixing up mutually exclusive and independent and I don't get the difference"
+    expected_sources: ["*4-6-independence-of-events*"]
+    chapter: 4
+    section: "4.6"
+    difficulty: medium
+    type: misconception
+  - question: "I've got a website that runs on 3 backup servers, each one is working 90% of the time and they go down separately from each other. the site stays online as long as at least one server is up. how do I figure out the probability the site stays online?"
+    expected_sources: ["*4-6-independence-of-events*"]
+    chapter: 4
+    section: "4.6"
+    difficulty: hard
+    type: computation
+  - question: "what is a pmf exactly? like what does that p_X(x) notation actually tell you"
+    expected_sources: ["*5-1-discrete-rvs-and-pmfs*"]
     chapter: 5
-  - question: "When do I use the Poisson distribution instead of binomial?"
-    expected_sources: ["*5-7-poisson*"]
+    section: "5.1"
+    difficulty: easy
+    type: concept
+  - question: "my notes keep talking about the 'support' of a random variable and there's this supp(X) thing with a set. what does support even mean here?"
+    expected_sources: ["*5-1-discrete-rvs-and-pmfs*"]
     chapter: 5
-  - question: "How do I find the expected value of a discrete random variable?"
-    expected_sources: ["*5-3-expected-value*"]
+    section: "5.1"
+    difficulty: medium
+    type: concept
+  - question: "how do i tell if a random variable is supposed to be discrete or continuous? like whats the actual rule for deciding which one im dealing with"
+    expected_sources: ["*5-1-discrete-rvs-and-pmfs*"]
     chapter: 5
-  - question: "How do I compute probabilities with a PDF for a continuous random variable?"
-    expected_sources: ["*6-1-continuous-rvs*", "*6-3-cdfs*"]
+    section: "5.1"
+    difficulty: medium
+    type: comparison
+  - question: "i have P(X=1)=0.4 and P(X=2)=0.7 and both of those are between 0 and 1 so this should be a valid pmf right?? but the answer key says its not valid and im so confused why"
+    expected_sources: ["*5-1-discrete-rvs-and-pmfs*"]
+    chapter: 5
+    section: "5.1"
+    difficulty: medium
+    type: misconception
+  - question: "i have a coin thats weighted so it comes up heads 70 percent of the time and i toss it 4 times. how do i work out the probability for each possible number of heads i might get across the four tosses?"
+    expected_sources: ["*5-1-discrete-rvs-and-pmfs*"]
+    chapter: 5
+    section: "5.1"
+    difficulty: hard
+    type: procedure
+  - question: "what exactly is a joint pmf? like what does that p_X,Y(x,y) notation actually tell you"
+    expected_sources: ["*5-2-joint-pmfs*"]
+    chapter: 5
+    section: "5.2"
+    difficulty: easy
+    type: concept
+  - question: "why do they call them marginal distributions? and what is the marginal pmf of X even supposed to represent when you already have the joint one"
+    expected_sources: ["*5-2-joint-pmfs*"]
+    chapter: 5
+    section: "5.2"
+    difficulty: medium
+    type: concept
+  - question: "ok so i have a joint pmf table where X is the rows and Y is the columns, how do i actually pull out the marginal pmf for X from that table?"
+    expected_sources: ["*5-2-joint-pmfs*"]
+    chapter: 5
+    section: "5.2"
+    difficulty: medium
+    type: procedure
+  - question: "when is it actually ok to just multiply p_X(x) times p_Y(y) to get the joint probability, versus when am i not allowed to do that?"
+    expected_sources: ["*5-2-joint-pmfs*"]
+    chapter: 5
+    section: "5.2"
+    difficulty: medium
+    type: comparison
+  - question: "im confused about this problem. we have two dice but the setup makes some totals impossible to roll, and every allowed combo is equally likely. each die by itself still kinda looks like a normal die to me, so does the restriction on the total actually make the two dice related to each other or not? i feel like it shouldnt matter"
+    expected_sources: ["*5-2-joint-pmfs*"]
+    chapter: 5
+    section: "5.2"
+    difficulty: hard
+    type: misconception
+  - question: "what does the expected value of a random variable actually mean? like is it just the average or something different"
+    expected_sources: ["*5-3-expected-value-of-discrete-rv*"]
+    chapter: 5
+    section: "5.3"
+    difficulty: easy
+    type: concept
+  - question: "if i only have the pmf table for X (the x values and their probabilities), how do i actually compute E[X^2]? do i have to make a whole new table for X squared first?"
+    expected_sources: ["*5-3-expected-value-of-discrete-rv*"]
+    chapter: 5
+    section: "5.3"
+    difficulty: medium
+    type: computation
+  - question: "im confused, my notes have the sample mean from data and also the mean of a random variable and my prof just calls both of them the mean. whats the actual difference between those two?"
+    expected_sources: ["*5-3-expected-value-of-discrete-rv*"]
+    chapter: 5
+    section: "5.3"
+    difficulty: medium
+    type: comparison
+  - question: "i keep getting points off because i wrote E[X^2] = (E[X])^2 but the answer key says thats wrong. arent those the same thing??"
+    expected_sources: ["*5-3-expected-value-of-discrete-rv*"]
+    chapter: 5
+    section: "5.3"
+    difficulty: medium
+    type: misconception
+  - question: "say i track how many parking tickets and how many speeding tickets a driver gets in a year, and i already worked out the average of each one separately. can i just add those two averages to get the average total number of tickets, or does that only work if the two things dont affect each other?"
+    expected_sources: ["*5-3-expected-value-of-discrete-rv*"]
+    chapter: 5
+    section: "5.3"
+    difficulty: hard
+    type: concept
+  - question: "whats the actual difference between the variance and the standard deviation of a random variable? like why do we need both if one is just the square root of the other"
+    expected_sources: ["*5-4-variance-of-discrete-rv*"]
+    chapter: 5
+    section: "5.4"
+    difficulty: easy
+    type: concept
+  - question: "why does adding a constant to a random variable not change its variance but multiplying it by a number does? and why does the number get squared when you scale it"
+    expected_sources: ["*5-4-variance-of-discrete-rv*"]
+    chapter: 5
+    section: "5.4"
+    difficulty: medium
+    type: concept
+  - question: "if im given a table of x values and their probabilities how do i actually compute the variance? is there a shortcut or do i have to subtract the mean from every value and square it each time"
+    expected_sources: ["*5-4-variance-of-discrete-rv*"]
+    chapter: 5
+    section: "5.4"
+    difficulty: medium
+    type: procedure
+  - question: "for two independent random variables when i want the spread of X+Y do i add the standard deviations or the variances? i keep mixing up which one is the one that adds"
+    expected_sources: ["*5-4-variance-of-discrete-rv*"]
+    chapter: 5
+    section: "5.4"
+    difficulty: medium
+    type: comparison
+  - question: "ive got a little drink cart. each busy stretch i sell some sodas at $2 each and some snacks at $3 each, and how many sodas i sell doesnt affect how many snacks i sell. i already worked out roughly how much each count wanders from its usual amount. now i want to know how much my total money per stretch jumps around, but when i added the two wander amounts together my friend said thats wrong. what am i supposed to do instead?"
+    expected_sources: ["*5-4-variance-of-discrete-rv*"]
+    chapter: 5
+    section: "5.4"
+    difficulty: hard
+    type: misconception
+  - question: "what does covariance actually measure? like if the covariance of X and Y comes out positive what is that telling me about the two variables"
+    expected_sources: ["*5-5-covariance-of-dependent-rvs*"]
+    chapter: 5
+    section: "5.5"
+    difficulty: easy
+    type: concept
+  - question: "we computed a correlation of like 0.52 for the moving violations and accidents example. is that considered a strong relationship or not? how do i even read the correlation number"
+    expected_sources: ["*5-5-covariance-of-dependent-rvs*"]
+    chapter: 5
+    section: "5.5"
+    difficulty: medium
+    type: interpretation
+  - question: "how do i actually compute the covariance of X and Y when im just given a joint pmf table? do i have to find E[XY] first or is there a shortcut"
+    expected_sources: ["*5-5-covariance-of-dependent-rvs*"]
+    chapter: 5
+    section: "5.5"
+    difficulty: medium
+    type: computation
+  - question: "im confused about when to use covariance and when to use correlation. they both seem to measure how two variables move together so whats the difference and which one do i report?"
+    expected_sources: ["*5-5-covariance-of-dependent-rvs*"]
+    chapter: 5
+    section: "5.5"
+    difficulty: medium
+    type: comparison
+  - question: "ok so i have two things where when one goes up the other one usually goes down. if i add them together to get a total, is the spread of that total gonna be bigger or smaller than if the two things had nothing to do with each other? i kinda assumed the variability just adds up no matter what"
+    expected_sources: ["*5-5-covariance-of-dependent-rvs*"]
+    chapter: 5
+    section: "5.5"
+    difficulty: hard
+    type: misconception
+  - question: "what does BInS actually stand for and how do i use it to tell if something counts as a binomial experiment?"
+    expected_sources: ["*5-6-binomial-distribution*"]
+    chapter: 5
+    section: "5.6"
+    difficulty: easy
+    type: concept
+  - question: "my prof keeps saying a binomial variable is just a bunch of Bernoulli trials added together but i don't really get what a Bernoulli thing even is. can you explain how they connect?"
+    expected_sources: ["*5-6-binomial-distribution*"]
+    chapter: 5
+    section: "5.6"
+    difficulty: medium
+    type: concept
+  - question: "how do i actually calculate the chance of getting exactly 2 successes when theres 12 trials and each one has like a 15% chance? whats the formula i plug into"
+    expected_sources: ["*5-6-binomial-distribution*"]
+    chapter: 5
+    section: "5.6"
+    difficulty: medium
+    type: computation
+  - question: "wait im getting confused, is the mean of a binomial np or np(1-p)? i keep mixing up which one is the average and which is the variance"
+    expected_sources: ["*5-6-binomial-distribution*"]
+    chapter: 5
+    section: "5.6"
+    difficulty: medium
+    type: misconception
+  - question: "if i keep rolling a die until i finally get a 6 and count how many rolls it took, is that the same type of setup as rolling it exactly 20 times and counting how many 6s show up? or are those two totally different kinds of problems?"
+    expected_sources: ["*5-6-binomial-distribution*"]
+    chapter: 5
+    section: "5.6"
+    difficulty: hard
+    type: comparison
+  - question: "for the poisson distribution what does that lambda thing actually mean? like what is it telling me about the problem"
+    expected_sources: ["*5-7-poisson-distribution*"]
+    chapter: 5
+    section: "5.7"
+    difficulty: easy
+    type: concept
+  - question: "our help desk gets about 3 calls an hour on average. how do I find the probability of getting exactly 5 calls if im looking at a 2 hour stretch instead of just 1 hour?"
+    expected_sources: ["*5-7-poisson-distribution*"]
+    chapter: 5
+    section: "5.7"
+    difficulty: medium
+    type: computation
+  - question: "im never sure when a word problem wants me to use binomial vs poisson. is there a way to tell which one im supposed to pick?"
+    expected_sources: ["*5-7-poisson-distribution*"]
+    chapter: 5
+    section: "5.7"
+    difficulty: medium
+    type: comparison
+  - question: "wait so for poisson the mean and the variance are literally the same number?? that seems off to me, how can E[X] and Var(X) both just equal lambda"
+    expected_sources: ["*5-7-poisson-distribution*"]
+    chapter: 5
+    section: "5.7"
+    difficulty: medium
+    type: misconception
+  - question: "I made graphs of the counts for two setups, one where the thing barely ever happens and one where it happens a lot. the rare one is super lopsided with a long tail going right, but the busy one looks like a smooth symmetric bump. why does the shape change like that as the average goes up?"
+    expected_sources: ["*5-7-poisson-distribution*"]
+    chapter: 5
+    section: "5.7"
+    difficulty: hard
+    type: concept
+  - question: "how do i tell if some function is actually a valid pdf or not? like what stuff does it have to satisfy"
+    expected_sources: ["*6-1-continuous-rvs-and-pdfs*"]
     chapter: 6
-  - question: "How do I standardize a normal random variable to use the z table?"
+    section: "6.1"
+    difficulty: easy
+    type: concept
+  - question: "i keep hearing that for continuous variables the probability is the area under the curve. can someone explain how an area is the same thing as a probability? like how do i actually get a probability out of the density function between two numbers"
+    expected_sources: ["*6-1-continuous-rvs-and-pdfs*"]
+    chapter: 6
+    section: "6.1"
+    difficulty: medium
+    type: concept
+  - question: "why is it that for continuous stuff P(a < X < b) comes out the same as P(a <= X <= b), but back with the discrete distributions the <= vs < actually mattered? confused about when the equal sign changes the answer"
+    expected_sources: ["*6-1-continuous-rvs-and-pdfs*"]
+    chapter: 6
+    section: "6.1"
+    difficulty: medium
+    type: comparison
+  - question: "im really confused, my notes have a density that equals 3 at one of the points. isnt that impossible?? i thought nothing about probability can go above 1. and does f(x)=3 mean that value happens with probability 3 or something"
+    expected_sources: ["*6-1-continuous-rvs-and-pdfs*"]
+    chapter: 6
+    section: "6.1"
+    difficulty: medium
+    type: misconception
+  - question: "for my homework i got this function, its x squared for x between 0 and 2 and zero everywhere else, and its supposed to describe some measurement. but when i work out the total area under it i get 8/3 instead of 1. so is it just not usable, or is there a way to scale it so it works?"
+    expected_sources: ["*6-1-continuous-rvs-and-pdfs*"]
+    chapter: 6
+    section: "6.1"
+    difficulty: hard
+    type: procedure
+  - question: "how do you actually find the expected value of a continuous random variable? for discrete stuff we added things up but I'm not sure what changes now that it's continuous"
+    expected_sources: ["*6-2-expected-value-and-variance-of-cts-rvs*"]
+    chapter: 6
+    section: "6.2"
+    difficulty: easy
+    type: concept
+  - question: "if a problem asks me for E[X^2] or E of the square root of X, do I have to go find the pdf of that new variable first, or is there a shortcut where I can just use the original pdf of X?"
+    expected_sources: ["*6-2-expected-value-and-variance-of-cts-rvs*"]
+    chapter: 6
+    section: "6.2"
+    difficulty: medium
+    type: concept
+  - question: "whats the fastest way to get the variance of a continuous rv? setting up the integral of (x - mu)^2 times f(x) is really tedious and I keep messing it up"
+    expected_sources: ["*6-2-expected-value-and-variance-of-cts-rvs*"]
+    chapter: 6
+    section: "6.2"
+    difficulty: medium
+    type: computation
+  - question: "when I have X + Y can I just add Var(X) and Var(Y) together, or is that only allowed sometimes? confused about when that rule actually holds"
+    expected_sources: ["*6-2-expected-value-and-variance-of-cts-rvs*"]
+    chapter: 6
+    section: "6.2"
+    difficulty: medium
+    type: comparison
+  - question: "on my homework the power used is 100 times the drag coefficient cubed. I took the average drag value, cubed it, and multiplied by 100, but my buddy did it another way and got a bigger number and says mine is wrong. why would just plugging in the average give the wrong answer here?"
+    expected_sources: ["*6-2-expected-value-and-variance-of-cts-rvs*"]
+    chapter: 6
+    section: "6.2"
+    difficulty: hard
+    type: misconception
+  - question: "what exactly is the CDF supposed to tell me? like when i see F_X(x) what does that even represent"
+    expected_sources: ["*6-3-cdfs*"]
+    chapter: 6
+    section: "6.3"
+    difficulty: easy
+    type: concept
+  - question: "if i already have the cdf how do i find the probability that X is between like 0.2 and 5.8? do i still gotta integrate the density or is there a shortcut"
+    expected_sources: ["*6-3-cdfs*"]
+    chapter: 6
+    section: "6.3"
+    difficulty: medium
+    type: computation
+  - question: "i keep mixing these two up... to go from the pdf to the cdf do i integrate or take a derivative? and then which way is it for going backwards"
+    expected_sources: ["*6-3-cdfs*"]
+    chapter: 6
+    section: "6.3"
+    difficulty: medium
+    type: comparison
+  - question: "im confused, if the density is 0 on some stretch of x values shouldnt the cdf just be 0 there too? why would it be some flat nonzero number instead"
+    expected_sources: ["*6-3-cdfs*"]
+    chapter: 6
+    section: "6.3"
+    difficulty: medium
+    type: misconception
+  - question: "for my continuous random variable i need to find the value where a quarter of the probability sits below it and three quarters above. how do i actually compute that number?"
+    expected_sources: ["*6-3-cdfs*"]
+    chapter: 6
+    section: "6.3"
+    difficulty: hard
+    type: procedure
+  - question: "whats the 68 95 99.7 rule thing i keep seeing in this chapter? like what is it actually telling me about a normal curve"
     expected_sources: ["*6-4-normal-distribution*"]
     chapter: 6
-  - question: "What's the memoryless property of the exponential distribution?"
-    expected_sources: ["*6-6-exponential*"]
+    section: "6.4"
+    difficulty: easy
+    type: concept
+  - question: "why do we even bother turning everything into z scores? cant we just work with the normal curve directly instead of always standardizing to N(0,1)"
+    expected_sources: ["*6-4-normal-distribution*"]
     chapter: 6
-  - question: "Can you explain the Central Limit Theorem in plain English?"
-    expected_sources: ["*7-3-clt*", "*7-4-discret*"]
+    section: "6.4"
+    difficulty: medium
+    type: concept
+  - question: "my notes say X ~ N(100, 25). does that mean the standard deviation is 25? kinda confused what the second number is"
+    expected_sources: ["*6-4-normal-distribution*"]
+    chapter: 6
+    section: "6.4"
+    difficulty: medium
+    type: misconception
+  - question: "if im trying to check whether my data is actually normal, whats the difference between just making a histogram versus doing one of those qq plot things? do i need both or is one enough"
+    expected_sources: ["*6-4-normal-distribution*"]
+    chapter: 6
+    section: "6.4"
+    difficulty: medium
+    type: comparison
+  - question: "ive got a bunch of measurements that make a bell shaped curve and i know the average and the spread. i want to find the exact cutoff value where only the top 5% of them are above it. how do i go from that percentage back to the actual number?"
+    expected_sources: ["*6-4-normal-distribution*"]
+    chapter: 6
+    section: "6.4"
+    difficulty: hard
+    type: computation
+  - question: "im kinda confused about the uniform distribution... why is the height of the pdf just 1 over b minus a? like where does that number come from"
+    expected_sources: ["*6-5-uniform-distribution*"]
+    chapter: 6
+    section: "6.5"
+    difficulty: easy
+    type: concept
+  - question: "how do i write out the cdf for a uniform distribution for all the x values? im not sure what its supposed to be when x is below a or above b, i only know the middle part"
+    expected_sources: ["*6-5-uniform-distribution*"]
+    chapter: 6
+    section: "6.5"
+    difficulty: medium
+    type: concept
+  - question: "if X ~ Uniform(0,10) how do i find P(8.5 <= X <= 10.5)? part of that interval goes past 10 and i dont know what to do with the piece that sticks out"
+    expected_sources: ["*6-5-uniform-distribution*"]
+    chapter: 6
+    section: "6.5"
+    difficulty: medium
+    type: computation
+  - question: "for a uniform(0,10), is P(2 <= X <= 4) the same as P(7 <= X <= 9)? like does it matter where the interval sits or only how long it is?"
+    expected_sources: ["*6-5-uniform-distribution*"]
+    chapter: 6
+    section: "6.5"
+    difficulty: medium
+    type: comparison
+  - question: "a program spits out a random decimal thats equally likely to be anywhere between 0 and 20. whats the probability it lands exactly on 7? i keep thinking its 1/20 but that feels off to me"
+    expected_sources: ["*6-5-uniform-distribution*"]
+    chapter: 6
+    section: "6.5"
+    difficulty: hard
+    type: misconception
+  - question: "what does the exponential distribution actually model? my notes just say something about waiting times and decay but I don't really get what that means"
+    expected_sources: ["*6-6-exponential-distribution*"]
+    chapter: 6
+    section: "6.6"
+    difficulty: easy
+    type: concept
+  - question: "why does my prof keep saying the mean and the standard deviation are the same for an exponential distribution? that seems really weird, isn't that not true for most distributions?"
+    expected_sources: ["*6-6-exponential-distribution*"]
+    chapter: 6
+    section: "6.6"
+    difficulty: medium
+    type: concept
+  - question: "if I'm given a rate for an exponential and I need to find the time where like 90% of the wait times fall below it, how do I actually solve for that? do I use the pdf or the cdf?"
+    expected_sources: ["*6-6-exponential-distribution*"]
+    chapter: 6
+    section: "6.6"
+    difficulty: medium
+    type: procedure
+  - question: "for these exponential problems how do I know if I'm supposed to plug in lambda or mu? sometimes it gives me a rate like arrivals per hour and sometimes it just gives an average time and I keep mixing up which one goes in the formula"
+    expected_sources: ["*6-6-exponential-distribution*"]
+    chapter: 6
+    section: "6.6"
+    difficulty: medium
+    type: comparison
+  - question: "ok so buses show up randomly and the gaps between them have that pattern where short waits are way more common than long ones. I've already been standing at the stop for 15 minutes with no bus. doesn't that mean one is basically due any second now, so my remaining wait should be shorter than usual?"
+    expected_sources: ["*6-6-exponential-distribution*"]
+    chapter: 6
+    section: "6.6"
+    difficulty: hard
+    type: misconception
+  - question: "whats the difference between a parameter and a statistic?? i keep mixing them up on the hw"
+    expected_sources: ["*7-1-statistics-and-sampling-distributions*"]
     chapter: 7
-  - question: "What is the sampling distribution of the sample mean?"
-    expected_sources: ["*7-2-sampling-distribution*"]
+    section: "7.1"
+    difficulty: easy
+    type: concept
+  - question: "what actually is a sampling distribution... like a distribution of what exactly? my notes just say its for a statistic and im lost"
+    expected_sources: ["*7-1-statistics-and-sampling-distributions*"]
     chapter: 7
-  - question: "What's the difference between an observational study and an experiment?"
-    expected_sources: ["*8-1-experimental-and-sampling*", "*8-2-experimental-design*"]
+    section: "7.1"
+    difficulty: medium
+    type: concept
+  - question: "we got a little population of 5 salaries (45,50,55,60,70) and im supposed to build the sampling distribution of x-bar for samples of size 2 without replacement. how do i actually do that step by step?"
+    expected_sources: ["*7-1-statistics-and-sampling-distributions*"]
+    chapter: 7
+    section: "7.1"
+    difficulty: medium
+    type: computation
+  - question: "when am i supposed to use the big capital X-bar vs the little lowercase x-bar? and same with S vs s. they look basically the same to me and i dont get when each one is right"
+    expected_sources: ["*7-1-statistics-and-sampling-distributions*"]
+    chapter: 7
+    section: "7.1"
+    difficulty: medium
+    type: notation
+  - question: "i ran basically the same study three times, each time grabbing 50 different random people, and i got a different average every single time (like 8.2, 7.6, 8.9). did i mess something up? and which one is the real true value im trying to find?"
+    expected_sources: ["*7-1-statistics-and-sampling-distributions*"]
+    chapter: 7
+    section: "7.1"
+    difficulty: hard
+    type: misconception
+  - question: "what is the standard error of the sample mean exactly? is that just a fancy name for the standard deviation or is it something different"
+    expected_sources: ["*7-2-sampling-distribution-for-the-sample-mean*"]
+    chapter: 7
+    section: "7.2"
+    difficulty: easy
+    type: concept
+  - question: "if the population im sampling from is normally distributed, what does the distribution of the sample mean x-bar look like? like do i actually know its shape for sure or just its center and spread?"
+    expected_sources: ["*7-2-sampling-distribution-for-the-sample-mean*"]
+    chapter: 7
+    section: "7.2"
+    difficulty: medium
+    type: concept
+  - question: "we have a normal population with a known mean and sd and we grab a sample of size n. how do i actually work out the probability that the sample average comes out bigger than some specific number?"
+    expected_sources: ["*7-2-sampling-distribution-for-the-sample-mean*"]
+    chapter: 7
+    section: "7.2"
+    difficulty: medium
+    type: procedure
+  - question: "im confused about when im supposed to divide the sd by root n and when im not. like whats the difference between the chance one single measurement is above some value versus the chance the average of a bunch of them is above that same value?"
+    expected_sources: ["*7-2-sampling-distribution-for-the-sample-mean*"]
+    chapter: 7
+    section: "7.2"
+    difficulty: medium
+    type: comparison
+  - question: "i assumed that if i take a group of readings and average them, those averages would bounce around just as much as the individual readings do. but when i actually tried it the averages barely moved compared to single readings, even though the original data was really lopsided. did i mess something up or is that just how its supposed to work?"
+    expected_sources: ["*7-2-sampling-distribution-for-the-sample-mean*"]
+    chapter: 7
+    section: "7.2"
+    difficulty: hard
+    type: misconception
+  - question: "whats the central limit theorem and why does everyone keep saying the sample mean turns normal even when the population isnt?"
+    expected_sources: ["*7-3-clt*"]
+    chapter: 7
+    section: "7.3"
+    difficulty: easy
+    type: concept
+  - question: "before i can actually use the CLT what conditions do i need to check? like what has to be true about my sample and the population"
+    expected_sources: ["*7-3-clt*"]
+    chapter: 7
+    section: "7.3"
+    difficulty: medium
+    type: concept
+  - question: "my population is right skewed with mean 10 and sd 3 and i grab 60 of them, how do i find the probability that the average time is bigger than 11?"
+    expected_sources: ["*7-3-clt*"]
+    chapter: 7
+    section: "7.3"
+    difficulty: medium
+    type: computation
+  - question: "when am i supposed to use the CLT vs just doing the normal distribution stuff directly? whats the difference if the population is already normal"
+    expected_sources: ["*7-3-clt*", "*7-2-sampling-distribution-for-the-sample-mean*"]
+    chapter: 7
+    section: "7.3"
+    difficulty: medium
+    type: comparison
+  - question: "i have measurements from a process that every once in a while spits out a totally insane huge value, and i figured averaging a bunch would smooth it into a nice bell shape, but even after averaging tons of them the average keeps jumping around and never settles down. why isnt averaging fixing it?"
+    expected_sources: ["*7-3-clt*"]
+    chapter: 7
+    section: "7.3"
+    difficulty: hard
+    type: misconception
+  - question: "so when can i actually use a normal curve to approximate a binomial? is there some rule about np or something i'm supposed to check?"
+    expected_sources: ["*7-4-discret-rvs-and-clt*"]
+    chapter: 7
+    section: "7.4"
+    difficulty: easy
+    type: concept
+  - question: "why does the CLT even let us approximate a binomial or a poisson with a normal distribution? like what's the reasoning behind it, i don't really get why it works"
+    expected_sources: ["*7-4-discret-rvs-and-clt*"]
+    chapter: 7
+    section: "7.4"
+    difficulty: medium
+    type: concept
+  - question: "i have a poisson with lambda = 24 and i want to use the normal approximation to find a probability. what do i actually plug in for the mean and the standard deviation?"
+    expected_sources: ["*7-4-discret-rvs-and-clt*"]
+    chapter: 7
+    section: "7.4"
+    difficulty: medium
+    type: procedure
+  - question: "im confused about when to check np>=10 and n(1-p)>=10 versus just checking if lambda>=10. how do i know which one of those i'm supposed to use?"
+    expected_sources: ["*7-4-discret-rvs-and-clt*"]
+    chapter: 7
+    section: "7.4"
+    difficulty: medium
+    type: comparison
+  - question: "i tried finding the chance of getting exactly 48 heads out of 100 flips using the bell curve thing and it came out to basically 0, but obviously getting 48 heads can happen so that can't be right. what am i doing wrong here?"
+    expected_sources: ["*7-4-discret-rvs-and-clt*"]
+    chapter: 7
+    section: "7.4"
+    difficulty: hard
+    type: misconception
+  - question: "whats the difference between a statistical question and a deterministic question? kinda lost on what actually makes a question count as statistical"
+    expected_sources: ["*8-1-experimental-and-sampling-designs*"]
     chapter: 8
-  - question: "What kinds of sampling bias should I watch out for?"
+    section: "8.1"
+    difficulty: easy
+    type: concept
+  - question: "my notes say data has variation that comes from a few different sources but I can't remember them all. what are the sources of variation in data and which one are we actually hoping is the main one?"
+    expected_sources: ["*8-1-experimental-and-sampling-designs*"]
+    chapter: 8
+    section: "8.1"
+    difficulty: medium
+    type: concept
+  - question: "if I wanted to actually run an observational study, what are the steps I'm supposed to go through in order?"
+    expected_sources: ["*8-1-experimental-and-sampling-designs*"]
+    chapter: 8
+    section: "8.1"
+    difficulty: medium
+    type: procedure
+  - question: "when am I supposed to use an observational study vs an experiment? and is it true that only one of them lets you say something actually causes something else?"
+    expected_sources: ["*8-1-experimental-and-sampling-designs*"]
+    chapter: 8
+    section: "8.1"
+    difficulty: medium
+    type: comparison
+  - question: "my roommate swears her new mechanical keyboard made her code way faster, and she showed me a bunch of posts online where tons of people said the exact same thing. that's a lot of people agreeing so doesn't that basically prove the keyboard works? I feel like I'm missing why my prof wouldn't accept this as evidence"
+    expected_sources: ["*8-1-experimental-and-sampling-designs*"]
+    chapter: 8
+    section: "8.1"
+    difficulty: hard
+    type: misconception
+  - question: "what are the three main principles a well designed experiment is supposed to follow?"
+    expected_sources: ["*8-2-experimental-design-principles*"]
+    chapter: 8
+    section: "8.2"
+    difficulty: easy
+    type: concept
+  - question: "why do studies bother giving people a fake pill? like what's the actual point of a placebo?"
+    expected_sources: ["*8-2-experimental-design-principles*"]
+    chapter: 8
+    section: "8.2"
+    difficulty: medium
+    type: concept
+  - question: "if my experiment has a bunch of different factors and each one has a different number of levels, how do I figure out the total number of treatments?"
+    expected_sources: ["*8-2-experimental-design-principles*"]
+    chapter: 8
+    section: "8.2"
+    difficulty: medium
+    type: computation
+  - question: "im confused on when you're supposed to do single blind vs double blind, how do i know which one to use?"
+    expected_sources: ["*8-2-experimental-design-principles*"]
+    chapter: 8
+    section: "8.2"
+    difficulty: medium
+    type: comparison
+  - question: "my professor tried out a new teaching method with her morning class and then compared their test scores to the afternoon class that got taught the normal way, and said the new method was better. is there something wrong with setting it up like that?"
+    expected_sources: ["*8-2-experimental-design-principles*"]
+    chapter: 8
+    section: "8.2"
+    difficulty: hard
+    type: misconception
+  - question: "what exactly is a completely randomized design? is it just when you throw people into treatment groups at random?"
+    expected_sources: ["*8-3-basic-types-of-experimental-design*"]
+    chapter: 8
+    section: "8.3"
+    difficulty: easy
+    type: concept
+  - question: "when would I actually go with a randomized block design instead of just doing a completely randomized one? like whats the deciding factor"
+    expected_sources: ["*8-3-basic-types-of-experimental-design*"]
+    chapter: 8
+    section: "8.3"
+    difficulty: medium
+    type: comparison
+  - question: "for our project we're testing 3 fertilizers on plots that come in 4 soil types (sandy, clay, loam, silt). how many blocks is that and how do the plots get assigned to fertilizers?"
+    expected_sources: ["*8-3-basic-types-of-experimental-design*"]
+    chapter: 8
+    section: "8.3"
+    difficulty: medium
+    type: computation
+  - question: "im a little confused... if you already split people into blocks by age to control for age, why do you STILL have to randomly assign the treatments inside each block? doesnt the blocking already take care of it"
+    expected_sources: ["*8-3-basic-types-of-experimental-design*"]
+    chapter: 8
+    section: "8.3"
+    difficulty: medium
+    type: misconception
+  - question: "in this study each patient takes one blood pressure medication for a few weeks and then switches to a second one and they measure again on the same people. my worry is the effects of the first one are still hanging around when they start the second, wont that mess up the comparison? is there a name for this and how do you fix it"
+    expected_sources: ["*8-3-basic-types-of-experimental-design*"]
+    chapter: 8
+    section: "8.3"
+    difficulty: hard
+    type: concept
+  - question: "what are the different types of bias that can mess up an experiment?"
+    expected_sources: ["*8-4-addressing-potential-flaws-in-experimental-design*"]
+    chapter: 8
+    section: "8.4"
+    difficulty: easy
+    type: concept
+  - question: "wait so if my study ends up being biased, can't I just collect way more data to cancel it out? isn't that the whole point of a big sample?"
+    expected_sources: ["*8-4-addressing-potential-flaws-in-experimental-design*"]
+    chapter: 8
+    section: "8.4"
+    difficulty: medium
+    type: misconception
+  - question: "how do I actually tell if some variable counts as a confounding variable or not? is there like a checklist of conditions it has to meet?"
+    expected_sources: ["*8-4-addressing-potential-flaws-in-experimental-design*"]
+    chapter: 8
+    section: "8.4"
+    difficulty: medium
+    type: procedure
+  - question: "im confused about internal vs external validity, whats the difference between them and why cant a study just be strong on both at the same time?"
+    expected_sources: ["*8-4-addressing-potential-flaws-in-experimental-design*"]
+    chapter: 8
+    section: "8.4"
+    difficulty: medium
+    type: comparison
+  - question: "so a group wanted to see how coworkers react when people around them get laid off, but obviously they cant go make a real company fire random employees. instead they hired some college students for a fake proofreading job and randomly 'let go' a few of them to watch how the rest reacted. even though they used random assignment and had a control group my prof says the study still has a big weakness. what's that weakness called and why is it a problem?"
+    expected_sources: ["*8-4-addressing-potential-flaws-in-experimental-design*"]
+    chapter: 8
+    section: "8.4"
+    difficulty: hard
+    type: interpretation
+  - question: "in the study methods example with the 3 groups, why does it say the 90 students are called 'subjects' instead of just experimental units?"
+    expected_sources: ["*8-5-examples-of-experimental-design*"]
+    chapter: 8
+    section: "8.5"
+    difficulty: easy
+    type: concept
+  - question: "how do I tell whether an experiment is a completely randomized design or a randomized block design? i keep mixing them up when i read the descriptions"
+    expected_sources: ["*8-5-examples-of-experimental-design*"]
+    chapter: 8
+    section: "8.5"
+    difficulty: medium
+    type: comparison
+  - question: "if a study tests 4 fertilizers across 5 soil types with 3 plots per treatment in each block, how do I find the total number of experimental units?"
+    expected_sources: ["*8-5-examples-of-experimental-design*"]
+    chapter: 8
+    section: "8.5"
+    difficulty: medium
+    type: computation
+  - question: "wait so is the blocking variable the thing the researchers actually want to study?? like in the cow one is breed the main point of the experiment"
+    expected_sources: ["*8-5-examples-of-experimental-design*"]
+    chapter: 8
+    section: "8.5"
+    difficulty: medium
+    type: misconception
+  - question: "we did a taste test where each person tried recipe A for a week, then took a week off to let it wear off, then tried recipe B, and we compared how each person's ratings differed. what is this kind of setup called and why is that week off in the middle important?"
+    expected_sources: ["*8-5-examples-of-experimental-design*"]
+    chapter: 8
+    section: "8.5"
+    difficulty: hard
+    type: concept
+  - question: "what is simple random sampling? like what actually makes it \"simple random\""
+    expected_sources: ["*8-6-sampling-design*"]
+    chapter: 8
+    section: "8.6"
+    difficulty: easy
+    type: concept
+  - question: "why does it even matter how we pick our sample? cant i just use whatever data i can get and run the stats on it"
+    expected_sources: ["*8-6-sampling-design*"]
+    chapter: 8
+    section: "8.6"
+    difficulty: medium
+    type: concept
+  - question: "if im pulling a random sample of 50 items out of 2000, how do i find the probability that one specific item ends up in my sample?"
+    expected_sources: ["*8-6-sampling-design*"]
+    chapter: 8
+    section: "8.6"
+    difficulty: medium
+    type: computation
+  - question: "when am i supposed to use stratified sampling instead of just doing a regular simple random sample? whats the point of splitting the population into groups first"
+    expected_sources: ["*8-6-sampling-design*"]
+    chapter: 8
+    section: "8.6"
+    difficulty: medium
+    type: comparison
+  - question: "a radio show asked listeners to text in whether they support a new law and got like 30,000 responses showing 80% against it. my roommate says that many responses means it definitely represents what the whole town thinks. im confused, that doesnt sound right to me but i cant explain why"
+    expected_sources: ["*8-6-sampling-design*"]
+    chapter: 8
+    section: "8.6"
+    difficulty: hard
+    type: misconception
+  - question: "im kinda mixing up the sampling bias types for this section, what are the main ones and what makes each of them different?"
     expected_sources: ["*8-7-sampling-bias*"]
     chapter: 8
-  - question: "How do I build a 95% confidence interval for the mean when sigma is known?"
+    section: "8.7"
+    difficulty: easy
+    type: concept
+  - question: "undercoverage bias vs non-response bias kinda sounds like the same thing to me, arent they both just people who dont end up in the results? how do i tell them apart?"
+    expected_sources: ["*8-7-sampling-bias*"]
+    chapter: 8
+    section: "8.7"
+    difficulty: medium
+    type: comparison
+  - question: "if a study has some kind of error in it, how do i figure out whether its bias or just variability? is there some trick to tell?"
+    expected_sources: ["*8-7-sampling-bias*"]
+    chapter: 8
+    section: "8.7"
+    difficulty: medium
+    type: procedure
+  - question: "there was that target/bullseye picture with like 4 cases for bias and variability, what is each of the four scenarios actually supposed to show?"
+    expected_sources: ["*8-7-sampling-bias*"]
+    chapter: 8
+    section: "8.7"
+    difficulty: medium
+    type: concept
+  - question: "our class poll about whether young people vote keeps coming out way too low every single time because we only call house phones. my group says just call a lot more numbers and it'll even out. will getting way more responses actually fix this?"
+    expected_sources: ["*8-7-sampling-bias*"]
+    chapter: 8
+    section: "8.7"
+    difficulty: hard
+    type: misconception
+  - question: "im kinda getting confused on all the terms in this chapter, whats the actual difference between a parameter, an estimator, and an estimate? they all sound like the same thing to me"
+    expected_sources: ["*9-1-intro-statistical-inference*"]
+    chapter: 9
+    section: "9.1"
+    difficulty: easy
+    type: concept
+  - question: "if im trying to estimate the population mean, why do we normally just use the sample mean instead of the median or the midrange (avg of the min and max)? like how are you supposed to decide which one is better"
+    expected_sources: ["*9-1-intro-statistical-inference*"]
+    chapter: 9
+    section: "9.1"
+    difficulty: medium
+    type: comparison
+  - question: "how do i actually check whether some estimator is unbiased or not? like what am i supposed to compute to show that"
+    expected_sources: ["*9-1-intro-statistical-inference*"]
+    chapter: 9
+    section: "9.1"
+    difficulty: medium
+    type: procedure
+  - question: "wait so if S^2 is an unbiased estimator of the variance, doesnt that automatically mean the sample standard deviation s is unbiased for sigma too since its just the square root of S^2? my friend keeps saying its not and now im confused"
+    expected_sources: ["*9-1-intro-statistical-inference*"]
+    chapter: 9
+    section: "9.1"
+    difficulty: medium
+    type: misconception
+  - question: "say i have a few different formulas to guess some unknown population value, and they all end up landing on the true number on average, but one of them bounces around way more than the others depending on which sample i grab. which one is considered the best choice, and is there a specific name for that best one?"
+    expected_sources: ["*9-1-intro-statistical-inference*"]
+    chapter: 9
+    section: "9.1"
+    difficulty: hard
+    type: concept
+  - question: "what even is the margin of error in a confidence interval? like whats the actual formula for it when sigma is known"
     expected_sources: ["*9-2-ci-sigma-known*"]
     chapter: 9
-  - question: "How big a sample do I need for a given margin of error?"
-    expected_sources: ["*9-3-precision-of-ci*"]
+    section: "9.2"
+    difficulty: easy
+    type: concept
+  - question: "im kinda confused, whats the difference between standard error and standard deviation? my notes keep writing this sigma over the square root of n thing and calling it something else"
+    expected_sources: ["*9-2-ci-sigma-known*"]
     chapter: 9
-  - question: "When do I use a t distribution instead of z for a confidence interval?"
+    section: "9.2"
+    difficulty: medium
+    type: concept
+  - question: "how do I actually get the z value for a 90% confidence interval? i keep messing up what number to put into qnorm and whether its upper tail or not"
+    expected_sources: ["*9-2-ci-sigma-known*"]
+    chapter: 9
+    section: "9.2"
+    difficulty: medium
+    type: procedure
+  - question: "if I want to be 99% confident instead of 95%, does my interval end up wider or narrower? and why does changing the confidence do that"
+    expected_sources: ["*9-2-ci-sigma-known*"]
+    chapter: 9
+    section: "9.2"
+    difficulty: medium
+    type: comparison
+  - question: "my buddy took one sample and built a range for the true average, and he says theres a 95% chance the real average is inside those two numbers he got. that sounds totally fine to me but the TA circled it and said its wrong. what is actually wrong with saying it that way?"
+    expected_sources: ["*9-2-ci-sigma-known*"]
+    chapter: 9
+    section: "9.2"
+    difficulty: hard
+    type: misconception
+  - question: "what are the three things that go into the margin of error and decide how precise a confidence interval is?"
+    expected_sources: ["*9-3-precision-of-ci-and-sample-size-calculation*"]
+    chapter: 9
+    section: "9.3"
+    difficulty: easy
+    type: concept
+  - question: "for a 95% confidence interval, how do I find the smallest sample size I need to get the margin of error down to 3 if the standard deviation is 15?"
+    expected_sources: ["*9-3-precision-of-ci-and-sample-size-calculation*"]
+    chapter: 9
+    section: "9.3"
+    difficulty: medium
+    type: computation
+  - question: "my homework gives me the total width the interval is supposed to be instead of a margin of error. is the sample size formula different when they hand you the width vs when they hand you the ME?"
+    expected_sources: ["*9-3-precision-of-ci-and-sample-size-calculation*"]
+    chapter: 9
+    section: "9.3"
+    difficulty: medium
+    type: comparison
+  - question: "why does everyone say the sample size is the only thing you can actually change to make a CI narrower? cant I just use a lower confidence level or a smaller sigma to shrink it?"
+    expected_sources: ["*9-3-precision-of-ci-and-sample-size-calculation*"]
+    chapter: 9
+    section: "9.3"
+    difficulty: medium
+    type: misconception
+  - question: "I ran a small pilot study and got an estimate, but my advisor wants the final result to be twice as tight. I figured I'd just double the number of subjects but she says thats nowhere close to enough. why does making it twice as precise need way more than double the data?"
+    expected_sources: ["*9-3-precision-of-ci-and-sample-size-calculation*"]
+    chapter: 9
+    section: "9.3"
+    difficulty: hard
+    type: concept
+  - question: "what's a one-sided confidence bound and when would I actually use one instead of a normal confidence interval?"
+    expected_sources: ["*9-4-cb-sigma-known*"]
+    chapter: 9
+    section: "9.4"
+    difficulty: easy
+    type: concept
+  - question: "why is the margin of error for a confidence bound smaller than for a confidence interval when the confidence level is the same? seems like you get a tighter answer for free"
+    expected_sources: ["*9-4-cb-sigma-known*"]
+    chapter: 9
+    section: "9.4"
+    difficulty: medium
+    type: concept
+  - question: "for a 95% upper confidence bound what critical value am I supposed to use? do I use 1.96 or is it different, and how do I get it in R"
+    expected_sources: ["*9-4-cb-sigma-known*"]
+    chapter: 9
+    section: "9.4"
+    difficulty: medium
+    type: computation
+  - question: "how do I know whether I'm supposed to build an upper bound or a lower bound? I keep mixing up which one goes with 'at least' vs 'does not exceed'"
+    expected_sources: ["*9-4-cb-sigma-known*"]
+    chapter: 9
+    section: "9.4"
+    difficulty: medium
+    type: comparison
+  - question: "Our lab has to show the average amount of a chemical in our factory's discharge stays under the legal max of 3.5. I took 50 measurements and made the usual interval that spreads out both directions around the mean, but a labmate said since I only care that it doesn't go over the limit I'm throwing away precision by splitting the error both ways. Is he right or is he confusing me?"
+    expected_sources: ["*9-4-cb-sigma-known*"]
+    chapter: 9
+    section: "9.4"
+    difficulty: hard
+    type: misconception
+  - question: "why does the t distribution have fatter tails than the normal bell curve? like whats actually making them different"
     expected_sources: ["*9-5-ci-cb-sigma-unknown*"]
     chapter: 9
-  - question: "What's the difference between Type I and Type II error?"
+    section: "9.5"
+    difficulty: easy
+    type: concept
+  - question: "im confused about standardizing vs studentizing, my notes have both words and I dont get when its one or the other"
+    expected_sources: ["*9-5-ci-cb-sigma-unknown*"]
+    chapter: 9
+    section: "9.5"
+    difficulty: medium
+    type: concept
+  - question: "how do i actually calculate a confidence interval for the mean if i only have the sample standard deviation s and not the real sigma?"
+    expected_sources: ["*9-5-ci-cb-sigma-unknown*"]
+    chapter: 9
+    section: "9.5"
+    difficulty: medium
+    type: computation
+  - question: "when am I supposed to use t instead of z for a confidence interval, and does it even matter since one gives a wider interval than the other?"
+    expected_sources: ["*9-5-ci-cb-sigma-unknown*"]
+    chapter: 9
+    section: "9.5"
+    difficulty: medium
+    type: comparison
+  - question: "i only measured 9 batches from the production line and one of them came out way higher than all the rest. can i still just use my sample average and spread to get a range for the true mean, or does that little sample and weird value mess it up?"
+    expected_sources: ["*9-5-ci-cb-sigma-unknown*"]
+    chapter: 9
+    section: "9.5"
+    difficulty: hard
+    type: misconception
+  - question: "whats the actual difference between a type 1 error and a type 2 error? i keep getting them confused"
     expected_sources: ["*10-1-ht-errors-and-power*"]
     chapter: 10
-  - question: "How do I interpret a p-value? Is 0.03 significant?"
-    expected_sources: ["*10-4-pvalue-significance*"]
+    section: "10.1"
+    difficulty: easy
+    type: concept
+  - question: "our test came out with really low power and i dont really get why. what stuff actually affects how much power a test has?"
+    expected_sources: ["*10-1-ht-errors-and-power*"]
     chapter: 10
-  - question: "When do I pool the variances in a two-sample t test?"
-    expected_sources: ["*11-3-comparing-two-means-independent-pooled*", "*11-4-comparing-two-means-independent-unpooled*"]
+    section: "10.1"
+    difficulty: medium
+    type: concept
+  - question: "how do i figure out if my hypotheses should be one sided or two sided? like when do i use mu > 63 vs mu < 63 vs mu not equal to 63"
+    expected_sources: ["*10-1-ht-errors-and-power*"]
+    chapter: 10
+    section: "10.1"
+    difficulty: medium
+    type: comparison
+  - question: "if my professor says our test has 80% power, does that mean theres a 20% chance we rejected the null hypothesis when it was actually true?"
+    expected_sources: ["*10-1-ht-errors-and-power*"]
+    chapter: 10
+    section: "10.1"
+    difficulty: medium
+    type: misconception
+  - question: "a market research firm is about to survey mall shoppers to check if they earn more than the $63k area average. they want their survey to catch it at least 80% of the time if shoppers really make about 2k more, and they already know the standard deviation. they havent collected any data yet, so how do they work out how many shoppers they need to include?"
+    expected_sources: ["*10-1-ht-errors-and-power*"]
+    chapter: 10
+    section: "10.1"
+    difficulty: hard
+    type: procedure
+  - question: "how do i know if my alternative hypothesis should be greater than, less than, or not equal to? i always get confused which one to pick"
+    expected_sources: ["*10-2-ht-for-mean-sigma-known*"]
+    chapter: 10
+    section: "10.2"
+    difficulty: easy
+    type: concept
+  - question: "once i have my z stat for a two-tailed test, how do i actually get the p-value in R? i know the one for upper tail is pnorm but two sided confuses me"
+    expected_sources: ["*10-2-ht-for-mean-sigma-known*"]
+    chapter: 10
+    section: "10.2"
+    difficulty: medium
+    type: procedure
+  - question: "why does everyone use p-values instead of just checking if the z is bigger than the critical value like z_0.05? whats the point of doing it the p-value way"
+    expected_sources: ["*10-2-ht-for-mean-sigma-known*"]
+    chapter: 10
+    section: "10.2"
+    difficulty: medium
+    type: comparison
+  - question: "what does the p-value actually represent? like it's the probability of what exactly, im not sure what the number is measuring"
+    expected_sources: ["*10-2-ht-for-mean-sigma-known*"]
+    chapter: 10
+    section: "10.2"
+    difficulty: medium
+    type: concept
+  - question: "i did a problem about some machine parts thats supposed to be 5mm. i calculated that theres only about a 1.6% chance of getting a sample this far off if the machine were actually fine, but the answer key said we cant conclude the machine needs fixing. that seems wrong to me, if theres only a 1.6% chance isnt that basically proof the machine is broken? what am i missing"
+    expected_sources: ["*10-2-ht-for-mean-sigma-known*"]
+    chapter: 10
+    section: "10.2"
+    difficulty: hard
+    type: misconception
+  - question: "we started talking about hypothesis tests for a mean when we dont know sigma. what do we actually use for the test statistic in that case?"
+    expected_sources: ["*10-3-ht-for-mean-sigma-unknown*"]
+    chapter: 10
+    section: "10.3"
+    difficulty: easy
+    type: concept
+  - question: "im kinda confused on how confidence intervals connect to tests. if the mu0 value im testing falls inside my 95% confidence interval, am i supposed to reject H0 or fail to reject it?"
+    expected_sources: ["*10-3-ht-for-mean-sigma-unknown*"]
+    chapter: 10
+    section: "10.3"
+    difficulty: medium
+    type: concept
+  - question: "how do you actually compute the p-value in R for a two tailed t test? like what pt() command do i type in?"
+    expected_sources: ["*10-3-ht-for-mean-sigma-unknown*"]
+    chapter: 10
+    section: "10.3"
+    difficulty: medium
+    type: procedure
+  - question: "how do i decide whether to use a t test or a z test when im testing a mean, and does it change my p-value which one i pick?"
+    expected_sources: ["*10-3-ht-for-mean-sigma-unknown*"]
+    chapter: 10
+    section: "10.3"
+    difficulty: medium
+    type: comparison
+  - question: "we put like a dozen sensors in a chamber set to an exact level and the readings were honestly all over the place, some pretty far off, but when we ran the test it said we couldnt conclude they were wrong. how does it come out that way when the numbers looked so off?"
+    expected_sources: ["*10-3-ht-for-mean-sigma-unknown*"]
+    chapter: 10
+    section: "10.3"
+    difficulty: hard
+    type: misconception
+  - question: "what are the four steps we're supposed to follow when doing a hypothesis test in this class?"
+    expected_sources: ["*10-4-pvalue-significance-conclusion*"]
+    chapter: 10
+    section: "10.4"
+    difficulty: easy
+    type: concept
+  - question: "my professor keeps saying a result is \"statistically significant\" but im not really sure what that means. does getting a small p-value basically prove that the null hypothesis is false?"
+    expected_sources: ["*10-4-pvalue-significance-conclusion*"]
+    chapter: 10
+    section: "10.4"
+    difficulty: medium
+    type: concept
+  - question: "ok so once i have my t test statistic for an upper tail test, how do i actually turn that into a p-value? is there r code for it?"
+    expected_sources: ["*10-4-pvalue-significance-conclusion*"]
+    chapter: 10
+    section: "10.4"
+    difficulty: medium
+    type: computation
+  - question: "why do we always have to write \"fail to reject\" the null instead of just saying we accept it? whats even the difference"
+    expected_sources: ["*10-4-pvalue-significance-conclusion*"]
+    chapter: 10
+    section: "10.4"
+    difficulty: medium
+    type: comparison
+  - question: "my friend was running an experiment and it didnt come out the way he wanted at first, so he just kept adding more people to his sample until the numbers finally showed something, and he also tried a bunch of different outcome variables and only wrote up the one that worked. that seems fine to me since more data is better right?"
+    expected_sources: ["*10-4-pvalue-significance-conclusion*"]
+    chapter: 10
+    section: "10.4"
+    difficulty: hard
+    type: misconception
+  - question: "whats the difference between paired samples and independent samples? like how am i supposed to tell them apart in a problem"
+    expected_sources: ["*11-1-ci-ht-two-samples*"]
     chapter: 11
-  - question: "How is a paired t test different from two independent samples?"
-    expected_sources: ["*11-5-mean-of-paired-differences*"]
+    section: "11.1"
+    difficulty: easy
+    type: concept
+  - question: "for two sample stuff im confused about when i compare the two means directly vs when i turn everything into one column of differences and use mu_D. how do i know which parameter to use?"
+    expected_sources: ["*11-1-ci-ht-two-samples*"]
     chapter: 11
-  - question: "What does the F test in one-way ANOVA actually test?"
-    expected_sources: ["*12-3-f-test*", "*12-1-intro-one-way-anova*"]
+    section: "11.1"
+    difficulty: medium
+    type: comparison
+  - question: "if i have the two sample means for group A and group B, how do i find the point estimate for the difference in the population means?"
+    expected_sources: ["*11-1-ci-ht-two-samples*"]
+    chapter: 11
+    section: "11.1"
+    difficulty: medium
+    type: computation
+  - question: "i really dont get why it matters which order you subtract the groups. whether i do A minus B or B minus A shouldnt the test come out the same??"
+    expected_sources: ["*11-1-ci-ht-two-samples*"]
+    chapter: 11
+    section: "11.1"
+    difficulty: medium
+    type: misconception
+  - question: "a battery company says their premium battery lasts at least 3 hours longer than the standard one and my group wants to test that claim. how do i write the null and alternative for this, im not sure what goes on the right side instead of 0"
+    expected_sources: ["*11-1-ci-ht-two-samples*"]
+    chapter: 11
+    section: "11.1"
+    difficulty: hard
+    type: procedure
+  - question: "what conditions do I need to check before I'm allowed to use the two-sample z test for comparing two means when both sigmas are known?"
+    expected_sources: ["*11-2-comparing-two-means-independent-sigmas-known*"]
+    chapter: 11
+    section: "11.2"
+    difficulty: easy
+    type: concept
+  - question: "for the standard error of the difference of two means, why do you ADD the two variances? we're subtracting the means so I feel like it should be a minus sign not a plus"
+    expected_sources: ["*11-2-comparing-two-means-independent-sigmas-known*"]
+    chapter: 11
+    section: "11.2"
+    difficulty: medium
+    type: concept
+  - question: "how do I actually compute the z test statistic when I'm comparing the means of two separate independent groups with known sigmas? like what goes on top and what's on the bottom"
+    expected_sources: ["*11-2-comparing-two-means-independent-sigmas-known*"]
+    chapter: 11
+    section: "11.2"
+    difficulty: medium
+    type: computation
+  - question: "when I build a confidence interval for the difference of two means do I use z with alpha/2 or just z with alpha? I keep mixing up which one goes with the interval vs the one-sided bound"
+    expected_sources: ["*11-2-comparing-two-means-independent-sigmas-known*"]
+    chapter: 11
+    section: "11.2"
+    difficulty: medium
+    type: comparison
+  - question: "I compared the average number of transactions from two different scheduling setups tested at separate stores and got a difference of 5, but when I made a range of plausible values for the true difference it went from a little below 0 up to about 11. since that range crosses zero, doesn't that prove the two setups actually perform the same?"
+    expected_sources: ["*11-2-comparing-two-means-independent-sigmas-known*"]
+    chapter: 11
+    section: "11.2"
+    difficulty: hard
+    type: misconception
+  - question: "whats the pooled variance estimator? like when do we actually use it instead of just the regular sample variance"
+    expected_sources: ["*11-3-comparing-two-means-independent-pooled*"]
+    chapter: 11
+    section: "11.3"
+    difficulty: easy
+    type: concept
+  - question: "why do we use n_A + n_B - 2 as the degrees of freedom for the pooled t test? where does the minus 2 even come from"
+    expected_sources: ["*11-3-comparing-two-means-independent-pooled*"]
+    chapter: 11
+    section: "11.3"
+    difficulty: medium
+    type: concept
+  - question: "how do i decide if im supposed to use the pooled two sample t test or not? is there some rule for checking whether the two groups have equal enough variance"
+    expected_sources: ["*11-3-comparing-two-means-independent-pooled*"]
+    chapter: 11
+    section: "11.3"
+    difficulty: medium
+    type: comparison
+  - question: "im confused, why cant we just dump both samples together into one big dataset and compute the overall variance from that instead of doing this weighted average s_p thing"
+    expected_sources: ["*11-3-comparing-two-means-independent-pooled*"]
+    chapter: 11
+    section: "11.3"
+    difficulty: medium
+    type: misconception
+  - question: "im comparing the average scores of two separate independent groups. i dont know either population's standard deviation but im pretty sure both groups spread out about the same amount. how do i take my two sample SDs and combine them into one single number to plug into my t statistic, and what df do i use?"
+    expected_sources: ["*11-3-comparing-two-means-independent-pooled*"]
+    chapter: 11
+    section: "11.3"
+    difficulty: hard
+    type: procedure
+  - question: "whats the formula for the standard error when youre comparing two group means but you cant assume the two groups have the same variance?"
+    expected_sources: ["*11-4-comparing-two-means-independent-unpooled*"]
+    chapter: 11
+    section: "11.4"
+    difficulty: easy
+    type: concept
+  - question: "how do I actually compute the degrees of freedom for the unpooled two sample t test? theres this huge Welch-Satterthwaite formula and I dont really get what goes where"
+    expected_sources: ["*11-4-comparing-two-means-independent-unpooled*"]
+    chapter: 11
+    section: "11.4"
+    difficulty: medium
+    type: computation
+  - question: "when am I supposed to use the pooled method vs the unpooled one for a two sample t test? like is there one Im just supposed to default to?"
+    expected_sources: ["*11-4-comparing-two-means-independent-unpooled*"]
+    chapter: 11
+    section: "11.4"
+    difficulty: medium
+    type: comparison
+  - question: "my degrees of freedom for a two sample test came out to 37.8 which isnt a whole number. did I do something wrong or am I supposed to round it before I use it in R?"
+    expected_sources: ["*11-4-comparing-two-means-independent-unpooled*"]
+    chapter: 11
+    section: "11.4"
+    difficulty: medium
+    type: misconception
+  - question: "Im comparing the average download speeds of two internet providers. one providers speeds bounce around a lot more than the others, and I also collected way more data points for the first one than the second. a friend said to just merge the two spreads into a single combined number to run the comparison. would that end up messing up my results?"
+    expected_sources: ["*11-4-comparing-two-means-independent-unpooled*"]
+    chapter: 11
+    section: "11.4"
+    difficulty: hard
+    type: concept
+  - question: "what exactly makes a study a paired design? like what kinds of situations actually count as paired data"
+    expected_sources: ["*11-5-mean-of-paired-differences-two-dependent-populations*"]
+    chapter: 11
+    section: "11.5"
+    difficulty: easy
+    type: concept
+  - question: "if all i have is n, d bar and s_d for a paired study, how do i actually compute the t test statistic and then get the p value?"
+    expected_sources: ["*11-5-mean-of-paired-differences-two-dependent-populations*"]
+    chapter: 11
+    section: "11.5"
+    difficulty: medium
+    type: computation
+  - question: "for before and after data how am i supposed to know whether to use the paired method or just do a regular two sample test?"
+    expected_sources: ["*11-5-mean-of-paired-differences-two-dependent-populations*"]
+    chapter: 11
+    section: "11.5"
+    difficulty: medium
+    type: comparison
+  - question: "im confused... if the mean of the differences mu_D is just mu_A minus mu_B, then whats even the actual difference between the paired test and the independent two sample test??"
+    expected_sources: ["*11-5-mean-of-paired-differences-two-dependent-populations*"]
+    chapter: 11
+    section: "11.5"
+    difficulty: medium
+    type: misconception
+  - question: "i had 10 people each try a keyboard before and after some training, and i compared the before scores against the after scores using a normal two-sample t test treating them as two separate groups. my TA says this loses power and my standard error comes out too big. why does that happen?"
+    expected_sources: ["*11-5-mean-of-paired-differences-two-dependent-populations*"]
+    chapter: 11
+    section: "11.5"
+    difficulty: hard
+    type: interpretation
+  - question: "wait why is it even called analysis of variance? i thought the whole point was to compare the means of the groups, so where does the variance part come in"
+    expected_sources: ["*12-1-intro-one-way-anova*"]
     chapter: 12
-  - question: "Why do we need Tukey's procedure after ANOVA?"
-    expected_sources: ["*12-4-multiple-comparison*"]
+    section: "12.1"
+    difficulty: easy
+    type: concept
+  - question: "quick question about the anova alternative hypothesis, can i just write it as mu1 not equal mu2 not equal mu3 not equal mu4? like all the means are different from each other? or is that wrong somehow"
+    expected_sources: ["*12-1-intro-one-way-anova*"]
     chapter: 12
-  - question: "How do I interpret the slope in simple linear regression?"
+    section: "12.1"
+    difficulty: medium
+    type: misconception
+  - question: "how do i find the overall mean for all the data in anova? can i just average the 3 group means together or do i have to do something with the sample sizes"
+    expected_sources: ["*12-1-intro-one-way-anova*"]
+    chapter: 12
+    section: "12.1"
+    difficulty: medium
+    type: computation
+  - question: "im kinda lost on one-way vs two-way anova, whats the actual difference between them and which one are we even doing in this class"
+    expected_sources: ["*12-1-intro-one-way-anova*"]
+    chapter: 12
+    section: "12.1"
+    difficulty: medium
+    type: comparison
+  - question: "i have crop yield numbers for 5 different fertilizers and i want to see if the yields differ. why cant i just run the two-group t-test on every pair of fertilizers? my TA said running a whole bunch of comparisons like that causes a problem but i dont really get what actually goes wrong"
+    expected_sources: ["*12-1-intro-one-way-anova*"]
+    chapter: 12
+    section: "12.1"
+    difficulty: hard
+    type: concept
+  - question: "for ANOVA what are the three sources of variability we're supposed to look at?"
+    expected_sources: ["*12-2-sources-of-variability*"]
+    chapter: 12
+    section: "12.2"
+    difficulty: easy
+    type: concept
+  - question: "in the anova model they write X_ij = mu_i + epsilon_ij. what is the epsilon term actually supposed to represent and what are we assuming about it?"
+    expected_sources: ["*12-2-sources-of-variability*"]
+    chapter: 12
+    section: "12.2"
+    difficulty: medium
+    type: concept
+  - question: "how do i calculate SSE if i only have each group's sample size and sample variance instead of the raw data points?"
+    expected_sources: ["*12-2-sources-of-variability*"]
+    chapter: 12
+    section: "12.2"
+    difficulty: medium
+    type: computation
+  - question: "which one am i supposed to use to estimate the population variance sigma squared, MSA or MSE? and why does it even matter which one?"
+    expected_sources: ["*12-2-sources-of-variability*"]
+    chapter: 12
+    section: "12.2"
+    difficulty: medium
+    type: comparison
+  - question: "im confused about my experiment. the individual measurements bounce around a lot inside each group, but the group averages are all pretty close to the overall average of everything. my friend said the big scatter inside the groups is evidence that the groups are really different. is that right?"
+    expected_sources: ["*12-2-sources-of-variability*"]
+    chapter: 12
+    section: "12.2"
+    difficulty: hard
+    type: misconception
+  - question: "wait so what exactly is the F test statistic in ANOVA and how do I actually calculate it? is it just MSA over MSE?"
+    expected_sources: ["*12-3-f-test-and-relationship-to-t-test*"]
+    chapter: 12
+    section: "12.3"
+    difficulty: easy
+    type: concept
+  - question: "I have my F value and the two degrees of freedom for an ANOVA, how do I turn that into a p-value in R? not sure which function or settings to use"
+    expected_sources: ["*12-3-f-test-and-relationship-to-t-test*"]
+    chapter: 12
+    section: "12.3"
+    difficulty: medium
+    type: procedure
+  - question: "if I'm only comparing two groups should I just do a two sample t test or use ANOVA? like whats the actual difference between them and does it even matter which one I pick"
+    expected_sources: ["*12-3-f-test-and-relationship-to-t-test*"]
+    chapter: 12
+    section: "12.3"
+    difficulty: medium
+    type: comparison
+  - question: "for the ANOVA p-value do I need to multiply by 2 like a two-sided test? with t-tests I always doubled the tail probability so I'm confused why my notes only use the upper tail (P(F >= f)) here"
+    expected_sources: ["*12-3-f-test-and-relationship-to-t-test*"]
+    chapter: 12
+    section: "12.3"
+    difficulty: medium
+    type: misconception
+  - question: "I compared the same two groups two different ways and one test gave me about -2.8 while the other spit out 7.88, which is basically -2.8 squared, and both ended up with the exact same p-value. is that just a coincidence or is something actually connecting those two numbers?"
+    expected_sources: ["*12-3-f-test-and-relationship-to-t-test*"]
+    chapter: 12
+    section: "12.3"
+    difficulty: hard
+    type: concept
+  - question: "what does the family-wise error rate actually mean? i keep seeing FWER written in my notes for the anova stuff"
+    expected_sources: ["*12-4-multiple-comparison-procedures-family-wise-error-rates*"]
+    chapter: 12
+    section: "12.4"
+    difficulty: easy
+    type: concept
+  - question: "my anova f-test came back significant so i know at least one of the group means is different, but how do i actually figure out which specific groups are the ones that differ?"
+    expected_sources: ["*12-4-multiple-comparison-procedures-family-wise-error-rates*"]
+    chapter: 12
+    section: "12.4"
+    difficulty: medium
+    type: concept
+  - question: "how do i compute the bonferroni critical value for the pairwise confidence intervals? like what alpha am i supposed to use and how do i get t** in R if i have 5 groups"
+    expected_sources: ["*12-4-multiple-comparison-procedures-family-wise-error-rates*"]
+    chapter: 12
+    section: "12.4"
+    difficulty: medium
+    type: computation
+  - question: "im kinda confused about when to use bonferroni vs tukey for comparing all the group means. is one of them just better than the other?"
+    expected_sources: ["*12-4-multiple-comparison-procedures-family-wise-error-rates*"]
+    chapter: 12
+    section: "12.4"
+    difficulty: medium
+    type: comparison
+  - question: "something weird is going on with my follow up comparisons after the group test. group A and B came out as not different, and B and C also not different, but then A and C somehow ARE different. that makes no sense to me, if A=B and B=C shouldnt A=C too??"
+    expected_sources: ["*12-4-multiple-comparison-procedures-family-wise-error-rates*"]
+    chapter: 12
+    section: "12.4"
+    difficulty: hard
+    type: misconception
+  - question: "wait which one is supposed to be x and which one is y in regression? like whats the actual difference between the explanatory variable and the response variable?"
+    expected_sources: ["*13-1-intro-to-lr-correlation-scatter-plots*"]
+    chapter: 13
+    section: "13.1"
+    difficulty: easy
+    type: concept
+  - question: "how are you supposed to tell if a linear relationship is strong or weak just by looking at the scatter plot?"
+    expected_sources: ["*13-1-intro-to-lr-correlation-scatter-plots*"]
+    chapter: 13
+    section: "13.1"
+    difficulty: medium
+    type: concept
+  - question: "if i already worked out Sxx, Syy, and Sxy for my data, how do i actually get the correlation r out of those numbers?"
+    expected_sources: ["*13-1-intro-to-lr-correlation-scatter-plots*"]
+    chapter: 13
+    section: "13.1"
+    difficulty: medium
+    type: computation
+  - question: "im kinda confused on the two types of outliers... whats the difference between an x-outlier and a y-outlier, and does one of them mess up the fitted line more than the other?"
+    expected_sources: ["*13-1-intro-to-lr-correlation-scatter-plots*"]
+    chapter: 13
+    section: "13.1"
+    difficulty: medium
+    type: comparison
+  - question: "i plotted my two measurements and all the dots land exactly on a straight line, but the line just goes flat straight across the graph. that still means the two variables are perfectly related since theyre all on one line, right?"
+    expected_sources: ["*13-1-intro-to-lr-correlation-scatter-plots*"]
+    chapter: 13
+    section: "13.1"
+    difficulty: hard
+    type: misconception
+  - question: "what does R^2 actually tell you about a regression? my notes just say coefficient of determination and im kinda lost on what that number means"
     expected_sources: ["*13-2-simple-linear-regression*"]
     chapter: 13
-  - question: "What is R squared telling me about my regression?"
-    expected_sources: ["*13-2-simple-linear-regression*", "*13-3-diagnostics*"]
+    section: "13.2"
+    difficulty: easy
+    type: concept
+  - question: "if a problem gives me the sum of xi*yi and the sum of xi^2 plus the two means, how am I supposed to actually get the slope b1 out of that? whats the steps"
+    expected_sources: ["*13-2-simple-linear-regression*"]
     chapter: 13
+    section: "13.2"
+    difficulty: medium
+    type: computation
+  - question: "whats the difference between the correlation r and the slope b1? they both kinda describe the line so im not sure how theyre related or when id use one vs the other"
+    expected_sources: ["*13-2-simple-linear-regression*"]
+    chapter: 13
+    section: "13.2"
+    difficulty: medium
+    type: comparison
+  - question: "im confused why for regression we divide the error sum of squares by n-2 to get MSE, like why n-2 and not n-1 or just n?"
+    expected_sources: ["*13-2-simple-linear-regression*"]
+    chapter: 13
+    section: "13.2"
+    difficulty: medium
+    type: misconception
+  - question: "i made a scatterplot for my data and the points are pretty tight together on the left but spread out way more as you go right, sort of a fan shape. does that mess up one of the things we're supposed to assume for the line to be valid?"
+    expected_sources: ["*13-2-simple-linear-regression*"]
+    chapter: 13
+    section: "13.2"
+    difficulty: hard
+    type: concept
+  - question: "what exactly is a residual plot and what am I supposed to be looking for when I make one?"
+    expected_sources: ["*13-3-diagnostics-inference*"]
+    chapter: 13
+    section: "13.3"
+    difficulty: easy
+    type: concept
+  - question: "when we do the hypothesis test on the slope, why do we use a t distribution with n-2 degrees of freedom? like where does that even come from?"
+    expected_sources: ["*13-3-diagnostics-inference*"]
+    chapter: 13
+    section: "13.3"
+    difficulty: medium
+    type: concept
+  - question: "if the problem gives me the ANOVA table for a regression, how do I actually get the F statistic and the p-value for the model utility test?"
+    expected_sources: ["*13-3-diagnostics-inference*"]
+    chapter: 13
+    section: "13.3"
+    difficulty: medium
+    type: computation
+  - question: "im kinda lost on the F test vs the t test for the slope, arent they basically testing the same thing? when am I supposed to use which one"
+    expected_sources: ["*13-3-diagnostics-inference*"]
+    chapter: 13
+    section: "13.3"
+    difficulty: medium
+    type: comparison
+  - question: "so I plotted the leftover gaps between my points and the fitted line against x, and near the low end the dots sit super close to the line but toward the high end theyre scattered way more. my friend says its fine since the trend still looks straight. can I just go ahead and run my tests?"
+    expected_sources: ["*13-3-diagnostics-inference*"]
+    chapter: 13
+    section: "13.3"
+    difficulty: hard
+    type: misconception
+  - question: "what does extrapolation actually mean in regression and why does my prof keep telling us not to do it?"
+    expected_sources: ["*13-4-prediction-robustness*"]
+    chapter: 13
+    section: "13.4"
+    difficulty: easy
+    type: concept
+  - question: "on the scatterplot with the two sets of bands, why do they bow out at the ends and get skinniest in the middle instead of just being straight lines parallel to the regression line?"
+    expected_sources: ["*13-4-prediction-robustness*"]
+    chapter: 13
+    section: "13.4"
+    difficulty: medium
+    type: concept
+  - question: "im confused about when to use a confidence interval vs a prediction interval when i plug in a new x value. arent they both just predicting y? whats the difference in what theyre actually estimating"
+    expected_sources: ["*13-4-prediction-robustness*"]
+    chapter: 13
+    section: "13.4"
+    difficulty: medium
+    type: comparison
+  - question: "how do i actually compute a 95% prediction interval for one new observation at some x* value? like what goes under the square root and what do i multiply by"
+    expected_sources: ["*13-4-prediction-robustness*"]
+    chapter: 13
+    section: "13.4"
+    difficulty: medium
+    type: computation
+  - question: "so i fit a line and the leftover errors look pretty lopsided, definitely not bell shaped. a classmate said since i have tons of data points, checking whether the slope is really nonzero is still fine, but giving a range for a single new outcome is still shaky. i dont get why having a big sample saves one of those but not the other"
+    expected_sources: ["*13-4-prediction-robustness*"]
+    chapter: 13
+    section: "13.4"
+    difficulty: hard
+    type: misconception
+  - question: "For my confidence interval on a mean, how do I instead build a 95% Bayesian credible interval using a normal prior on mu, and what's the actual difference between the credible interval and the confidence interval I learned in class?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "Can you walk me through deriving the maximum likelihood estimator for the rate parameter of an exponential distribution by taking the log-likelihood, differentiating, and setting it to zero?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "How do I compute the Fisher information for a Bernoulli(p) sample and then use the Cramer-Rao lower bound to check whether the sample proportion is an efficient estimator?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "When I run a hypothesis test, how does the Neyman-Pearson lemma tell me which likelihood-ratio test is the uniformly most powerful (UMP) one for testing two simple hypotheses about a normal mean?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "For estimating a Poisson mean, how do I update a Gamma prior into the posterior distribution and then use Gibbs sampling / MCMC to draw samples when the posterior doesn't have a nice closed form?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "For my confidence interval, can you walk me through how to do a bootstrap confidence interval by resampling my data with replacement instead of using the normal-based formula?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "How do I use k-fold cross-validation to check whether my regression model is overfitting, and what's a good number of folds to pick?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "Can you explain how a random forest builds a bunch of decision trees and averages them to make predictions? I want to use it instead of regression for my project."
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "I split my dataset into a training set and a test set — how does gradient descent actually update the weights when I train a neural network on the training data?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "My dataset has like 15 variables. How do I run PCA to reduce dimensions and then use k-means clustering to find groups in the data?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "I have monthly sales data for the last five years and I need to forecast next quarter. How do I fit an ARIMA model and figure out the right p, d, and q values from the ACF and PACF plots?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "For my project I'm tracking how long patients survive after treatment, but some of them dropped out before the study ended. How do I build a Kaplan-Meier survival curve and run a log-rank test to compare the two treatment groups with that censored data?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "My internship has me monitoring a manufacturing line, and I need to set up an X-bar and R control chart to catch when the process goes out of control. How do I calculate the control limits and interpret the Western Electric rules?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "My study measured each student multiple times across several classrooms, so the observations aren't independent. How do I set up a linear mixed-effects model with random intercepts for classroom and get the variance components?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "My response variable is binary (whether a customer churned or not), so I don't think ordinary regression works. How do I fit a logistic regression and interpret the odds ratios and the coefficients on the log-odds scale?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "In my regression I have three predictors for house price, but the square footage and number of rooms seem really correlated. How do I calculate the VIF to check for multicollinearity and decide which variable to drop?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "My outcome is whether a customer churned or not (yes/no), so I don't think a normal regression line works. How do I set up a logistic regression to model that probability, and how do I interpret the odds ratios?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "I want to add an interaction term between dosage and age in my model to see if the effect of the drug depends on age. How do I include and interpret that interaction coefficient?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "I have like 15 candidate predictors and I'm not sure which ones to keep. Can you walk me through stepwise selection versus lasso regularization for picking the best subset of variables?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "My scatterplot of the residuals looks curved, so a straight line isn't fitting well. How do I fit a polynomial regression with squared and cubed terms, and how do I know what degree to use?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "I have my survey data in a pandas DataFrame — can you write the Python code to use groupby and pivot_table to reshape it, then export the result to a CSV? I keep getting a KeyError."
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "For my part-time job I need to pull the average order amount per customer region from our company database. Can you help me write the SQL query with the right JOIN and GROUP BY?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "How do I set up an instrumental variables regression to estimate the causal effect of years of schooling on income, and can you help me draw the DAG so I know if my instrument is valid?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "Can you write me a 5-page essay on the ethics of p-hacking and the replication crisis in psychology for my research methods seminar?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "I'm starting to draft my senior thesis — how should I structure the literature review and methodology chapters, and how many sources do I need for the write-up?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "For my survey project I counted how many students prefer each of four dining courts and I want to test whether the preferences are evenly spread. How do I run a chi-square goodness-of-fit test and find the expected counts?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "My before-and-after reaction time data is really skewed and not normal, so a paired t-test feels wrong. Can you walk me through doing a Wilcoxon signed-rank test on it instead?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "I have three groups but the data is very non-normal with outliers. Instead of regular ANOVA, how do I set up and interpret a Kruskal-Wallis test?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "My experiment has two factors, fertilizer type and watering schedule, and I think they interact. How do I run a two-way ANOVA and read the interaction effect in the output?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope
+  - question: "We measured each subject's blood pressure at four different time points on the same people. What's the right way to do a repeated-measures ANOVA to account for the within-subject correlation?"
+    out_of_scope: true
+    expected_sources: []
+    difficulty: medium
+    type: out_of_scope

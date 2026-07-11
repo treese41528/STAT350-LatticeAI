@@ -79,57 +79,101 @@ def cmd_run(args) -> int:
 
     hits, rrs, top_dists, hit_dists = [], [], [], []
     per_chapter: dict[str, dict] = {}
+    per_difficulty: dict[str, dict] = {}
     weak_count = 0
+    # out-of-scope questions: success = correctly refused (tier no_evidence)
+    oos_total, oos_correct, oos_scores = 0, 0, []
+    miss_lines: list[str] = []
 
     for i, q in enumerate(questions, 1):
         rr = retrieve(gateway, resolver, q["question"], cfg)
+        top = rr.top_distance
+        if q.get("out_of_scope"):
+            oos_total += 1
+            correct = rr.tier == "no_evidence"
+            oos_correct += int(correct)
+            if top is not None:
+                oos_scores.append(top)
+            mark = "✓" if correct else "✗"
+            line = (f"  [{i:3}/{len(questions)}] {mark} OOS refused={correct} "
+                    f"top={top if top is not None else '-':<8} {q['question'][:56]}")
+            print(line)
+            if not correct:
+                miss_lines.append(line)
+            continue
+
         files = [str(p.meta.get("name") or p.meta.get("source") or "")
                  for p in rr.passages]
         rank = _match(q.get("expected_sources", []), files)
         hit = rank is not None and rank <= args.k
         hits.append(hit)
         rrs.append(1.0 / rank if rank else 0.0)
-        if rr.top_distance is not None:
-            top_dists.append(rr.top_distance)
+        if top is not None:
+            top_dists.append(top)
             if hit:
-                hit_dists.append(rr.top_distance)
+                hit_dists.append(top)
         if rr.tier == "no_evidence":
             weak_count += 1
         ch = str(q.get("chapter", "?"))
         entry = per_chapter.setdefault(ch, {"n": 0, "hits": 0})
         entry["n"] += 1
         entry["hits"] += int(hit)
+        diff = str(q.get("difficulty", "?"))
+        de = per_difficulty.setdefault(diff, {"n": 0, "hits": 0})
+        de["n"] += 1
+        de["hits"] += int(hit)
         mark = "✓" if hit else "✗"
-        print(f"  [{i:3}/{len(questions)}] {mark} rank={rank or '-':<3} "
-              f"top={rr.top_distance if rr.top_distance is not None else '-':<8} "
-              f"{q['question'][:60]}")
+        line = (f"  [{i:3}/{len(questions)}] {mark} rank={rank or '-':<3} "
+                f"top={top if top is not None else '-':<8} {q['question'][:56]}")
+        print(line)
+        if not hit:
+            miss_lines.append(line + f"   [want {q.get('expected_sources')}]")
 
-    hit_rate = sum(hits) / len(hits) if hits else 0.0
-    mrr = sum(rrs) / len(rrs) if rrs else 0.0
-    weak_rate = weak_count / len(questions) if questions else 0.0
+    n_in = len(hits)
+    hit_rate = sum(hits) / n_in if n_in else 0.0
+    mrr = sum(rrs) / n_in if n_in else 0.0
+    weak_rate = weak_count / n_in if n_in else 0.0
 
     print("\n===== RESULTS =====")
-    print(f"hit@{args.k}: {hit_rate:.3f}   MRR: {mrr:.3f}   "
+    print(f"in-scope: {n_in}   hit@{args.k}: {hit_rate:.3f}   MRR: {mrr:.3f}   "
           f"weak-rate: {weak_rate:.3f}")
+    if oos_total:
+        print(f"out-of-scope: {oos_total}   refusal-accuracy: "
+              f"{oos_correct / oos_total:.3f}   (correctly weak/refused)")
     for ch in sorted(per_chapter, key=lambda c: (c == '?', c.zfill(2))):
         e = per_chapter[ch]
-        print(f"  chapter {ch:>2}: {e['hits']}/{e['n']}")
+        flag = "  <-- LOW" if e["n"] and e["hits"] / e["n"] < 0.8 else ""
+        print(f"  chapter {ch:>2}: {e['hits']}/{e['n']}{flag}")
+    if per_difficulty:
+        print("  by difficulty: " + "  ".join(
+            f"{d}={e['hits']}/{e['n']}" for d, e in sorted(per_difficulty.items())))
     higher = settings.retrieval.higher_is_better
-    print(f"top-score quantiles (all, higher_is_better={higher}):",
-          _quantiles(top_dists))
-    print("top-score quantiles (hits):", _quantiles(hit_dists))
-    if hit_dists:
-        qs = _quantiles(hit_dists)
+    print(f"top-score quantiles (in-scope hits, higher_is_better={higher}):",
+          _quantiles(hit_dists))
+    if oos_scores:
+        print("top-score quantiles (out-of-scope):", _quantiles(oos_scores))
+    if hit_dists and oos_scores:
+        # data-driven midpoint between the weakest hits and the strongest
+        # out-of-scope score — the ideal separating band.
+        hq, oq = _quantiles(hit_dists), _quantiles(oos_scores)
         if higher:
-            # good answers cluster HIGH; strong ≈ lower quartile of hits,
-            # weak ≈ a bit below that.
-            strong = qs["p25"]
-            weak = max(0.0, qs["p10"] - 0.03)
+            strong = round(hq["p10"], 3)          # nearly all hits answer cleanly
+            weak = round((hq["p10"] + oq["p90"]) / 2, 3)  # midway in the gap
         else:
-            strong = qs["p75"]
-            weak = min(0.99, qs["p90"] * 1.15)
+            strong = round(hq["p90"], 3)
+            weak = round((hq["p90"] + oq["p10"]) / 2, 3)
+        print(f"\nSuggested thresholds (hits vs out-of-scope separation) → "
+              f"strong: {strong:.3f}  weak: {weak:.3f}")
+    elif hit_dists:
+        qs = _quantiles(hit_dists)
+        strong, weak = (qs["p25"], max(0.0, qs["p10"] - 0.03)) if higher \
+            else (qs["p75"], min(0.99, qs["p90"] * 1.15))
         print(f"\nSuggested thresholds → strong: {strong:.3f}  weak: {weak:.3f}   "
-              "(update config.yaml retrieval.thresholds after review)")
+              "(add out_of_scope questions for a gap-based estimate)")
+    if miss_lines:
+        print(f"\n----- {len(miss_lines)} MISSES (fix golden globs or KB gaps) -----")
+        for line in miss_lines:
+            print(line)
 
     engine = make_engine(settings)
     from ..db.base import Base
