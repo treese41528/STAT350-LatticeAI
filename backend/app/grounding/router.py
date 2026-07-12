@@ -47,7 +47,11 @@ _EXAM_RE = re.compile(
 _RESOURCE_RE = re.compile(
     r"\b(link|url|page|where (?:is|can i find)|show me|open|pull up|give me)\b", re.I)
 _WORKSHEET_RE = re.compile(r"\bworksheets?\s*#?\s*(\d{1,2})\b", re.I)
-_SECTION_REF_RE = re.compile(r"\b(?:section|lecture|chapter)?\s*(\d{1,2}\.\d{1,2})\b")
+# Section numbers are 1.x–13.x. Constrain the chapter part to 1–13 so a
+# STATISTICAL decimal — an alpha level (0.05), a p-value, a test statistic —
+# is NOT misread as a section reference and does not force resource_lookup on a
+# genuine problem-solving question ("test at alpha=0.05 …").
+_SECTION_REF_RE = re.compile(r"\b(?:section|lecture|chapter)?\s*((?:1[0-3]|[1-9])\.\d{1,2})\b")
 _CHAPTER_REF_RE = re.compile(r"\bchapter\s*(\d{1,2})\b", re.I)
 _VIDEO_RE = re.compile(r"\b(video|watch|recording)\b", re.I)
 _SIM_RE = re.compile(r"\b(simulation|simulator|shiny|interactive|applet)\b", re.I)
