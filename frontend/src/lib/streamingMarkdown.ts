@@ -142,6 +142,27 @@ export function splitStable(md: string): StableSplit {
  * memoized <MarkdownBlock>, so during streaming only the last block re-renders.
  */
 /**
+ * The model often emits math with LaTeX delimiters `\[ … \]` (display) and
+ * `\( … \)` (inline), but remark-math only understands `$$…$$` / `$…$` — so
+ * markdown swallows the backslashes (`\[` → `[`) and the TeX never renders.
+ * Convert those delimiters to dollar signs, PROTECTING fenced/inline code (R
+ * snippets) so we don't rewrite code. Replacements are done per-delimiter (not
+ * per-pair) so a half-streamed `\[ …` still becomes an unclosed `$$ …` that
+ * splitStable can hold in the tail.
+ */
+export function normalizeMathDelimiters(md: string): string {
+  const segments = md.split(/(```[\s\S]*?```|`[^`\n]*`)/g);
+  for (let i = 0; i < segments.length; i += 2) {
+    segments[i] = segments[i]
+      .replace(/\\\[/g, () => "$$")
+      .replace(/\\\]/g, () => "$$")
+      .replace(/\\\(/g, () => "$")
+      .replace(/\\\)/g, () => "$");
+  }
+  return segments.join("");
+}
+
+/**
  * remark-math only renders `$$…$$` as *display* math (centered, enlarged) when
  * the `$$` sit on their own lines; a single-line `$$ x $$` renders inline. The
  * model emits either style, so normalize a line that is ENTIRELY one `$$…$$`

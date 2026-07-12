@@ -1,6 +1,6 @@
 import { createContext, memo, useMemo } from "react";
 import type { Citation } from "../../api/types";
-import { splitBlocks, splitStable } from "../../lib/streamingMarkdown";
+import { normalizeMathDelimiters, splitBlocks, splitStable } from "../../lib/streamingMarkdown";
 import { MarkdownBlock } from "./MarkdownBlock";
 import styles from "./MessageMarkdown.module.css";
 
@@ -40,9 +40,12 @@ export const MessageMarkdown = memo(function MessageMarkdown({
   citations,
   streaming = false,
 }: MessageMarkdownProps) {
+  // convert \[…\] / \(…\) to $$…$$ / $…$ BEFORE splitting, so both the
+  // streaming split and the render see math delimiters remark-math understands.
+  const prepared = useMemo(() => normalizeMathDelimiters(content), [content]);
   const { stable, tail } = useMemo(
-    () => (streaming ? splitStable(content) : { stable: content, tail: "" }),
-    [content, streaming],
+    () => (streaming ? splitStable(prepared) : { stable: prepared, tail: "" }),
+    [prepared, streaming],
   );
 
   const blocks = useMemo(() => splitBlocks(stable), [stable]);

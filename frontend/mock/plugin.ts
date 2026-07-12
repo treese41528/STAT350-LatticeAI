@@ -11,7 +11,8 @@ import type { Plugin } from "vite";
 
 const CONFIG = {
   courseName: "STAT 350",
-  term: "Fall 2026",
+  // matches backend config.course.term; the header is term-aware (reads this)
+  term: "SPRING 2026",
   welcome:
     "I'm your Socratic study companion for Introduction to Statistics. I'll nudge you toward the answer with questions, hints, and pointers into the course webbook, lecture videos, and simulations — and I always cite my sources.",
   starterQuestions: [

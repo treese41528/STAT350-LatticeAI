@@ -47,6 +47,31 @@ describe("formula rendering (KaTeX)", () => {
     expect(container.textContent).toContain("upper-tail critical value");
   });
 
+  it("renders LaTeX \\[…\\] display and \\(…\\) inline delimiters", () => {
+    // exactly the delimiters the model emits that used to render as raw text
+    const content = [
+      "We require the equal-variance rule \\( \\displaystyle \\frac{s_{\\text{larger}}}{s_{\\text{smaller}}} \\le 2 \\):",
+      "",
+      "\\[ s_p^2 = \\frac{(n_A-1)s_A^2 + (n_B-1)s_B^2}{n_A + n_B - 2} \\]",
+    ].join("\n");
+    const { container } = render(<MessageMarkdown content={content} citations={[]} />);
+    expect(container.querySelector(".katex-display")).not.toBeNull();   // \[…\] → display
+    expect(container.querySelectorAll(".katex").length).toBeGreaterThanOrEqual(2);
+    expect(container.querySelector(".katex-error")).toBeNull();
+    // the literal LaTeX delimiters must be gone (KaTeX keeps the TeX source in a
+    // MathML annotation, so \frac legitimately survives there — the delimiters
+    // do not).
+    expect(container.textContent).not.toContain("\\[");
+    expect(container.textContent).not.toContain("\\(");
+  });
+
+  it("leaves \\[ inside a code fence alone", () => {
+    const content = "```r\nm <- matrix(x)\\[1,\\]\n```";
+    const { container } = render(<MessageMarkdown content={content} citations={[]} />);
+    expect(container.querySelector(".katex")).toBeNull();     // not treated as math
+    expect(container.querySelector("pre")).not.toBeNull();
+  });
+
   it("does not treat a lone dollar sign in prose as math", () => {
     const { container } = render(
       <MessageMarkdown content={"Edfinity costs $35 for the semester."} citations={[]} />,
