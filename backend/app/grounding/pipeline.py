@@ -18,7 +18,7 @@ from ..queueing import QueueFullError
 from .citations import (catalog_card_for, citations_payload, lint_links,
                         normalize_markers, resources_payload, validate_markers)
 from .prompt_builder import build_messages
-from .retrieve import RetrievalResult, retrieve
+from .retrieve import Passage, RetrievalResult, retrieve
 from .rewrite import build_retrieval_query
 from .router import Route, route
 from ..syllabus import (resolve_current_term, resolve_syllabus_links,
@@ -78,6 +78,29 @@ def _restrict_to_syllabus(rr: RetrievalResult, term: str, modality: str,
     rr.mean_distance = sum(scores) / len(scores) if scores else None
     # a filename match is authoritative grounding, so treat it as strong
     rr.tier = "strong"
+
+
+def _syllabus_from_store(store, term: str, modality: str,
+                         resolver) -> RetrievalResult | None:
+    """The FULL (term, modality) syllabus from the Supabase-backed store as one
+    authoritative passage — bypasses KB retrieval, where the grading table
+    embeds weakly and gets missed. Returns None if the store has no match."""
+    if not (store and getattr(store, "enabled", False)):
+        return None
+    hit = store.get(term, modality)
+    if not hit:
+        return None
+    name, content = hit
+    p = Passage(n=1, collection="webbook", text=content, distance=None,
+                meta={"name": name, "source": name})
+    try:
+        p.resolved = resolver.resolve_webbook(p.meta)
+    except Exception:                                              # noqa: BLE001
+        p.resolved = None
+    p.similarity = 1.0
+    return RetrievalResult(passages=[p], tier="strong", top_distance=None,
+                           mean_distance=None, latency_ms=0,
+                           per_collection_counts={"webbook": 1, "transcript": 0})
 
 
 def _syllabus_cards(deps, modality: str | None) -> list[dict]:
@@ -401,29 +424,24 @@ async def _grounded_answer(ctx: TurnContext, r: Route, seq: int,
     rewritten = build_retrieval_query(ctx.history, ctx.message)
 
     if syllabus_mode and ctx.modality:
-        # Ground in the correct (term, modality): retrieve broadly, then keep
-        # ONLY passages whose filename matches this term + section. If none
-        # match, tier falls to no_evidence and we link the authoritative PDF —
-        # never quote the wrong term.
-        #
-        # Bias the query toward syllabus CONTENT, not the term/modality name:
-        # a session modality ("summer"/"winter") otherwise collides with the
-        # webbook's summer.rst / winter.rst pages and buries the real syllabus
-        # below k. `_restrict_to_syllabus` does the (term, modality) picking, so
-        # the query only needs to surface syllabus files at all.
-        rewritten = f"{rewritten} — STAT 350 syllabus grading policy and course logistics"
-        # Retrieve DEEP: a syllabus is one long file and its policy chunks —
-        # especially the markdown grading TABLE — embed weakly and rank low
-        # (~30th). The (term, modality) filter then keeps only that file's chunks
-        # (a handful), so a deep pull is cheap and gets the policy/weights chunk
-        # into context instead of just an intro paragraph.
-        syl_cfg = cfg.model_copy(update={
-            "k_webbook": max(cfg.k_webbook, 40), "max_passages": 40,
-            "min_transcript_slots": 0})
-        rr: RetrievalResult = await run_sync(
-            retrieve, ctx.retrieval_gateway, deps.resolver, rewritten, syl_cfg,
-            shrink=False, single_call=False)
-        _restrict_to_syllabus(rr, term, ctx.modality, cfg.higher_is_better)
+        # PREFER the full syllabus from the store (Supabase-backed): the whole
+        # (term, modality) syllabus as one authoritative passage, so the grading
+        # TABLE and every policy always answer — no table-embedding flakiness.
+        rr: RetrievalResult | None = _syllabus_from_store(
+            getattr(deps, "syllabus_store", None), term, ctx.modality, deps.resolver)
+        if rr is None:
+            # Fallback: deep KB retrieval, biased toward syllabus CONTENT (not
+            # the term/modality name, which collides with summer.rst/winter.rst),
+            # then keep only this (term, modality) file's chunks. If none match,
+            # tier -> no_evidence and we link the authoritative PDF.
+            rewritten = f"{rewritten} — STAT 350 syllabus grading policy and course logistics"
+            syl_cfg = cfg.model_copy(update={
+                "k_webbook": max(cfg.k_webbook, 40), "max_passages": 40,
+                "min_transcript_slots": 0})
+            rr = await run_sync(
+                retrieve, ctx.retrieval_gateway, deps.resolver, rewritten, syl_cfg,
+                shrink=False, single_call=False)
+            _restrict_to_syllabus(rr, term, ctx.modality, cfg.higher_is_better)
     else:
         rr = await run_sync(
             retrieve, ctx.retrieval_gateway, deps.resolver, rewritten, cfg,

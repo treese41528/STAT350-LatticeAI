@@ -36,6 +36,17 @@ def require_admin(request: Request) -> AppDeps:
     return deps
 
 
+@router.post("/refresh-syllabi")
+async def refresh_syllabi(deps: AppDeps = Depends(require_admin)):
+    """Re-sync syllabi from Supabase NOW, so an edit goes live without waiting
+    for the background timer or restarting the app."""
+    store = deps.syllabus_store
+    if not (store and store.enabled):
+        return {"enabled": False, "synced": 0}
+    n = await run_sync(store.refresh)
+    return {"enabled": True, "synced": n}
+
+
 def _maybe_csv(rows: list[dict], fmt: str | None):
     if fmt != "csv":
         return rows

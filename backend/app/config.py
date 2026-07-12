@@ -127,6 +127,21 @@ class ByokCfg(BaseModel):
     retrieval: str = "own"
 
 
+class SyllabiStoreCfg(BaseModel):
+    # Serve full (term, modality) syllabus text from Supabase Storage so policy
+    # questions always answer, and so syllabi can be edited each term WITHOUT
+    # redeploying. All reads are public GETs (no key needed).
+    enabled: bool = False
+    supabase_url: str = ""             # https://<ref>.supabase.co  (non-secret)
+    bucket: str = "stat-350-assets"
+    prefix: str = "syllabi/"
+    refresh_seconds: int = 900         # background re-sync cadence
+    timeout_s: int = 15
+    max_files: int = 50
+    max_bytes: int = 512_000           # skip absurdly large files (~500 KB)
+    cache_dir: str = "data/syllabi_cache"
+
+
 class Settings(BaseModel):
     course: CourseCfg = CourseCfg()
     gateway: GatewayCfg = GatewayCfg()
@@ -140,6 +155,7 @@ class Settings(BaseModel):
     logging: LoggingCfg = LoggingCfg()
     admin: AdminCfg = AdminCfg()
     byok: ByokCfg = ByokCfg()
+    syllabi_store: SyllabiStoreCfg = SyllabiStoreCfg()
 
     # --- secrets / env-only ---
     api_key: str | None = None          # GENAI_STUDIO_API_KEY

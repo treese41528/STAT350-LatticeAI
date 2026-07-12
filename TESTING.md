@@ -41,21 +41,21 @@ derived from the date every request (no restart, no edit), and any configured
 PDF link that doesn't match the new term is suppressed rather than shown wrong.
 
 **To add a new term (e.g. FALL 2026):**
-1. Upload the new syllabi to the knowledge collection, named with the season,
-   year, and modality (e.g. `Syllabus_FALL_2026_Flipped.md`). **(required)**
-   For a full refresh (new collection from updated materials), use
-   `python backend/scripts/build_kb.py --name "STAT 350 Knowledge Base (FALL 2026)"`
-   — uploads all webbook rst + syllabus md files via the SDK, resumable with
-   `--resume`, `--dry-run` to preview; prints the config switch + regression
-   steps, and leaves the old collection untouched as rollback.
+1. Upload the new term's syllabus `.md` files to Supabase Storage at
+   `stat-350-assets/syllabi/`, named with the season, year, and modality (e.g.
+   `Syllabus_FALL_2026_Flipped.md`), and **add their names to
+   `syllabi/index.json`**. **(required — this is where syllabus answers are now
+   grounded: `app/syllabi_store.py` serves the FULL file, so grading tables and
+   policies always answer.)** No redeploy: the app re-syncs on a ~15-min timer,
+   or `curl -X POST -H "Authorization: Bearer $ADMIN_TOKEN"
+   https://<host>/admin/api/refresh-syllabi` to push it live instantly.
 2. Term: with `auto_term: true`, nothing to do. Otherwise set
    `course.term: "FALL 2026"`.
 3. Syllabus PDF links: update `course.syllabi.<modality>.syllabus_pdf` when you
    publish the new PDFs (schedules rarely change). Optional — answers stay
    correct without it.
-4. `python backend/scripts/probe_gateway.py` — probe #10 reports whether the
-   **current term's** syllabus is retrievable for each modality (confirms the KB
-   upload + filename are recognized).
+4. Optionally add the syllabi to the webbook KB too (`build_kb.py`) — it's the
+   fallback if the Supabase store is empty, but the store is authoritative.
 
 A new *modality* (e.g. an evening section) also needs a one-line entry added to
 `MODALITY_TOKENS` in `app/syllabus.py`. A startup warning fires if `course.term`

@@ -31,6 +31,7 @@ def settings(tmp_path):
     s.course.auto_term = False
     s.course.term = "SPRING 2026"
     s.byok.enabled = True
+    s.syllabi_store.enabled = False   # never hit real Supabase from tests
     return s
 
 

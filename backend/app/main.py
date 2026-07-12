@@ -8,6 +8,7 @@ gateway silently drops bursts and the SDK limiter is in-process state.
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -28,9 +29,24 @@ from .identity import DeviceCookieIdentity
 from .overload import Overload
 from .queueing import LlmQueue
 from .ratelimit import UserLimiter
+from .syllabi_store import SyllabusStore
 from .telemetry.recorder import Recorder
 
 logger = logging.getLogger("stat350")
+
+
+async def _syllabi_refresh_loop(store: SyllabusStore) -> None:
+    """Re-sync syllabi from Supabase on a timer so edits go live without a
+    restart. Runs the blocking sync off the event loop; survives failures."""
+    import anyio
+    while True:
+        try:
+            await asyncio.sleep(store.refresh_seconds)
+            await anyio.to_thread.run_sync(store.refresh)
+        except asyncio.CancelledError:
+            break
+        except Exception:                                          # noqa: BLE001
+            logger.exception("syllabi refresh loop hit an error; continuing")
 
 
 def build_deps(settings: Settings) -> AppDeps:
@@ -58,6 +74,7 @@ def build_deps(settings: Settings) -> AppDeps:
         escalation_prompt=(backend / "prompts" / "escalation_agent.md")
         .read_text(encoding="utf-8"),
         traces_dir=traces_dir,
+        syllabus_store=SyllabusStore(settings),
     )
 
 
@@ -98,7 +115,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             logger.warning(
                 "GENAI_STUDIO_API_KEY is not set — running degraded "
                 "(deterministic answers only).")
+        # Syllabus store: serve last-known-good from the local cache instantly,
+        # then sync from Supabase, then keep it fresh in the background.
+        syllabi_task = None
+        store = deps.syllabus_store
+        if store and store.enabled:
+            import anyio
+            store.load_local()
+            await anyio.to_thread.run_sync(store.refresh)
+            logger.info("syllabus store: %d syllabi loaded", store.count())
+            syllabi_task = asyncio.create_task(_syllabi_refresh_loop(store))
         yield
+        if syllabi_task:
+            syllabi_task.cancel()
         await deps.recorder.stop()
 
     from . import __version__

@@ -17,6 +17,7 @@ from ..identity import Identity, IdentityProvider
 from ..overload import Overload
 from ..queueing import LlmQueue
 from ..ratelimit import UserLimiter
+from ..syllabi_store import SyllabusStore
 from ..telemetry.recorder import Recorder
 
 BYOK_HEADER = "X-GenAI-Key"
@@ -38,6 +39,7 @@ class AppDeps:
     escalation_prompt: str
     traces_dir: Path
     gateway_ready: bool = False   # collections resolved (needs API key)
+    syllabus_store: SyllabusStore | None = None
 
 
 def get_byok_key(request: Request) -> str | None:
