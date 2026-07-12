@@ -43,6 +43,11 @@ PDF link that doesn't match the new term is suppressed rather than shown wrong.
 **To add a new term (e.g. FALL 2026):**
 1. Upload the new syllabi to the knowledge collection, named with the season,
    year, and modality (e.g. `Syllabus_FALL_2026_Flipped.md`). **(required)**
+   For a full refresh (new collection from updated materials), use
+   `python backend/scripts/build_kb.py --name "STAT 350 Knowledge Base (FALL 2026)"`
+   — uploads all webbook rst + syllabus md files via the SDK, resumable with
+   `--resume`, `--dry-run` to preview; prints the config switch + regression
+   steps, and leaves the old collection untouched as rollback.
 2. Term: with `auto_term: true`, nothing to do. Otherwise set
    `course.term: "FALL 2026"`.
 3. Syllabus PDF links: update `course.syllabi.<modality>.syllabus_pdf` when you
