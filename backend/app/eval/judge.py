@@ -1,4 +1,5 @@
-"""LLM-as-judge answer eval — score GENERATED tutor answers, not just retrieval.
+"""LLM-as-judge answer eval — score the tutor's GENERATED answers, not just
+retrieval.
 
 `app.eval.harness run` measures whether we RETRIEVE the right passages (hit@k).
 This measures whether the tutor's ANSWER is any good: correct, grounded in the
@@ -7,10 +8,13 @@ on-question — via an independent LLM judge scoring six rubric dimensions that
 map onto the tutor's real failure modes and the UI feedback tags.
 
 Two halves:
-  1. `generate_answer()` — reproduce the pipeline's grounded answer for one
-     question (concept + syllabus paths), WITHOUT the DB / recorder / queue:
-     just retrieve -> build_messages -> stream_chat -> lint_links. So it grades
-     exactly the text a student would see (`done.finalText`).
+  1. `generate_answer()` drives the REAL `pipeline.run_turn` — through the same
+     intent router — so the judge grades byte-for-byte what a student receives:
+     grounded answers, deterministic course-map answers, and refusals alike.
+     No DB is needed: a duck-typed `deps` supplies only the seven attributes the
+     pipeline reads, and a capture recorder grabs the chat-trace (tier +
+     passages). Running the actual pipeline (not a re-implementation) means the
+     judge can never silently drift from production.
   2. an SDK `Agent` judge (`output_schema=RubricVerdict`, greedy temp=0) scores
      it against the passages (+ a reference answer for syllabus questions).
 
@@ -21,7 +25,9 @@ more failure surface — so it is deliberately not used here.
 """
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass, field
+from types import SimpleNamespace
 from typing import Optional
 
 from pydantic import BaseModel, Field
@@ -29,18 +35,13 @@ from pydantic import BaseModel, Field
 from ..config import Settings
 from ..course_map.resolver import CourseMapResolver
 from ..gateway import Gateway
-from ..grounding.citations import (citations_payload, lint_links,
-                                   resources_payload, validate_markers)
-from ..grounding.pipeline import REFUSAL_MESSAGE, _restrict_to_syllabus
-from ..grounding.prompt_builder import build_messages
-from ..grounding.retrieve import RetrievalResult, retrieve
-from ..grounding.rewrite import build_retrieval_query
-from ..syllabus import resolve_current_term
+from ..grounding.citations import validate_markers
+from ..grounding.retrieve import Passage
 
 DIMENSIONS = ("correctness", "grounded", "citations", "scope", "pedagogy", "addressed")
 
 # ---------------------------------------------------------------------------
-# 1. Answer generation (reproduces the pipeline's grounded answer, no DB)
+# 1. Answer generation — drive the ACTUAL production pipeline (no DB)
 # ---------------------------------------------------------------------------
 
 
@@ -50,8 +51,9 @@ class AnswerRun:
     kind: str                       # "concept" | "syllabus"
     modality: Optional[str]
     answer: str
-    refused: bool                   # tier == no_evidence -> tutor declines
-    tier: str
+    refused: bool                   # the tutor declined (weak retrieval / overload)
+    tier: str                       # strong | caveat | no_evidence | deterministic
+    intent: Optional[str] = None    # the router's classification (what path ran)
     passages: list = field(default_factory=list)          # list[Passage]
     resolved_markers: list = field(default_factory=list)  # [n] that map to a passage
     hallucinated_markers: list = field(default_factory=list)  # [n] with no passage
@@ -60,51 +62,89 @@ class AnswerRun:
     error: Optional[str] = None
 
 
+class _CaptureRecorder:
+    """The pipeline only calls `emit()` (persistence — dropped here) and
+    `emit_chat_trace()` (which carries tier + passages). We keep the last
+    trace and no-op everything else."""
+
+    def __init__(self) -> None:
+        self.last_trace: Optional[dict] = None
+
+    def emit(self, *args, **kwargs) -> None:
+        pass
+
+    def emit_chat_trace(self, payload: dict) -> None:
+        self.last_trace = payload
+
+
+def _passages_from_trace(trace: Optional[dict]) -> list:
+    if not trace:
+        return []
+    return [Passage(n=p.get("n", 0), collection=p.get("collection", ""),
+                    text=p.get("text", ""), distance=None, meta=p.get("meta") or {})
+            for p in trace.get("passages", [])]
+
+
+def _answer_from_events(events: list, q: dict, trace: Optional[dict]) -> AnswerRun:
+    tokens: list[str] = []
+    final: Optional[str] = None
+    citations: list = []
+    resources: list = []
+    refused = False
+    error = None
+    for name, data in events:
+        if name == "token":
+            tokens.append(data.get("text", ""))
+        elif name == "citations":
+            citations = data.get("citations", [])
+        elif name == "resources":
+            resources = data.get("resources", [])
+        elif name == "refusal":
+            refused = True
+        elif name == "done":
+            final = data.get("finalText", final)
+            if data.get("finishReason") == "refusal":
+                refused = True
+        elif name == "error":
+            error = data.get("code")
+            refused = True
+    answer = final if final is not None else "".join(tokens)
+    passages = _passages_from_trace(trace)
+    tier = (trace or {}).get("tier") or ("no_evidence" if refused else "deterministic")
+    resolved, hallucinated = ([], [])
+    if passages and not refused:
+        resolved, hallucinated = validate_markers(answer, passages)
+    return AnswerRun(
+        question=q["question"],
+        kind=("syllabus" if q.get("type") == "syllabus" else "concept"),
+        modality=q.get("modality"), answer=answer, refused=refused, tier=tier,
+        intent=(trace or {}).get("intent"), passages=passages,
+        resolved_markers=resolved, hallucinated_markers=hallucinated,
+        citations=citations, resources=resources, error=error)
+
+
 def generate_answer(gateway: Gateway, resolver: CourseMapResolver,
                     settings: Settings, tutor_core: str, q: dict) -> AnswerRun:
-    """Question dict -> the grounded answer the student would get. Mirrors
-    `pipeline._grounded_answer` minus streaming/telemetry/queue."""
-    cfg = settings.retrieval
-    modality = q.get("modality")
-    kind = "syllabus" if q.get("type") == "syllabus" else "concept"
-    term = resolve_current_term(settings)
-    rewritten = build_retrieval_query([], q["question"])
+    """Question dict -> exactly the answer a student gets, by driving the real
+    `run_turn` (same router, same grounded/deterministic/refusal branches).
 
-    if kind == "syllabus" and modality:
-        # Ground in the correct (term, modality): bias the query, retrieve
-        # broadly, then keep ONLY this term+section's syllabus passages.
-        rewritten = f"STAT 350 {term} {modality} section syllabus — {rewritten}"
-        syl_cfg = cfg.model_copy(update={
-            "k_webbook": max(cfg.k_webbook, 14), "max_passages": 14,
-            "min_transcript_slots": 0})
-        rr: RetrievalResult = retrieve(gateway, resolver, rewritten, syl_cfg,
-                                       shrink=False, single_call=False)
-        _restrict_to_syllabus(rr, term, modality, cfg.higher_is_better)
-    else:
-        rr = retrieve(gateway, resolver, rewritten, cfg, shrink=False,
-                      single_call=getattr(cfg, "single_call", False))
+    `uses_own_key=True` takes the queue-bypass path so no LlmQueue is needed;
+    the duck-typed deps supplies only what the pipeline reads."""
+    from ..grounding.pipeline import TurnContext, run_turn
 
-    common = dict(question=q["question"], kind=kind, modality=modality,
-                  tier=rr.tier, passages=rr.passages, error=rr.error)
+    rec = _CaptureRecorder()
+    deps = SimpleNamespace(
+        gateway=gateway, gateway_ready=True, llm_queue=None, recorder=rec,
+        resolver=resolver, settings=settings, tutor_core=tutor_core)
+    ctx = TurnContext(
+        deps, user_row_id="eval", conversation_id="eval", history=[],
+        message=q["question"], modality=q.get("modality"), shrink=False,
+        escalation_enabled=False, uses_own_key=True)
 
-    if rr.tier == "no_evidence":
-        # A weak-retrieval refusal IS the pipeline's behaviour here — the judge
-        # decides whether declining was appropriate for this question.
-        return AnswerRun(answer=REFUSAL_MESSAGE, refused=True,
-                         resources=resources_payload(rr.passages, resolver),
-                         **common)
+    async def _collect() -> list:
+        return [ev async for ev in run_turn(ctx, seq=0)]
 
-    messages = build_messages(
-        tutor_core, rr.passages, [], q["question"], modality=modality,
-        caveat=(rr.tier == "caveat"), syllabus=(kind == "syllabus"),
-        term=term if kind == "syllabus" else None)
-    raw = "".join(gateway.stream_chat(messages, max_tokens=settings.generation.max_tokens))
-    answer, _removed = lint_links(raw, resolver)
-    resolved, hallucinated = validate_markers(answer, rr.passages)
-    return AnswerRun(answer=answer, refused=False,
-                     resolved_markers=resolved, hallucinated_markers=hallucinated,
-                     citations=citations_payload(rr.passages),
-                     resources=resources_payload(rr.passages, resolver), **common)
+    return _answer_from_events(asyncio.run(_collect()), q, rec.last_trace)
 
 
 # ---------------------------------------------------------------------------

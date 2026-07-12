@@ -13,11 +13,11 @@ suggested strong/weak thresholds from the observed distance distributions.
 the current index and reports the score-distribution shift vs. what was
 logged: the regression gate before flipping any KB/chunking change.
 
-`judge` GENERATES the grounded answer for each question (the exact text a
-student gets) and has an independent LLM judge score it on six rubric
-dimensions (correctness, grounded, citations, scope, pedagogy, addressed) —
-this measures whether the tutor is any GOOD, not just whether retrieval hit.
-See `app/eval/judge.py`.
+`judge` drives the REAL pipeline (`run_turn`, same intent router) to produce
+the exact answer a student gets, then has an independent LLM judge score it on
+six rubric dimensions (correctness, grounded, citations, scope, pedagogy,
+addressed) — measuring whether the tutor is any GOOD, not just whether
+retrieval hit. See `app/eval/judge.py`.
 
 All arms are paced through the shared RateLimiter (sequential; `run`/`replay`
 ~3s/query, `judge` ~13s/question — it adds a generation + a judge call).
@@ -350,8 +350,9 @@ def cmd_judge(args) -> int:
         detail.append({
             "question": q["question"], "type": q.get("type"),
             "chapter": q.get("chapter"), "modality": ar.modality, "kind": ar.kind,
-            "refused": ar.refused, "tier": ar.tier, "score": round(score, 3),
-            "verdict": v.verdict, "main_issue": v.main_issue,
+            "intent": ar.intent, "refused": ar.refused, "tier": ar.tier,
+            "score": round(score, 3), "verdict": v.verdict,
+            "main_issue": v.main_issue,
             "dimensions": {d: getattr(v, d) for d in DIMENSIONS},
             "expected_answer": q.get("expected_answer"),
             "hallucinated_markers": ar.hallucinated_markers, "answer": ar.answer})
