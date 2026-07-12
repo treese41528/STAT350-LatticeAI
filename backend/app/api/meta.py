@@ -46,8 +46,17 @@ async def health(request: Request):
         status = "degraded"
     elif deps.overload.state(deps.llm_queue.depth).level > 0:
         status = "degraded"
+    from .. import __version__
+    try:
+        import genai_studio
+        sdk_version = genai_studio.__version__
+    except Exception:
+        sdk_version = None
     return {
         "status": status,
+        "version": __version__,
+        "sdkVersion": sdk_version,
+        "term": deps.settings.course.term,
         "queueDepth": deps.llm_queue.depth,
         "telemetryQueue": deps.recorder.depth,
         "telemetryDropped": deps.recorder.dropped,

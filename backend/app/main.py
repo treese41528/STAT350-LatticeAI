@@ -95,7 +95,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         yield
         await deps.recorder.stop()
 
-    app = FastAPI(title="STAT 350 Tutor", lifespan=lifespan,
+    from . import __version__
+    app = FastAPI(title="STAT 350 Tutor", version=__version__, lifespan=lifespan,
                   docs_url="/api/docs", openapi_url="/api/openapi.json")
 
     @app.exception_handler(HTTPException)
