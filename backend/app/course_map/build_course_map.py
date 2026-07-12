@@ -363,12 +363,74 @@ def build(prompt_text: str) -> dict:
     }
 
 
+def overlay_youtube(course_map: dict, rst_dir: Path) -> int:
+    """Replace section video links with DIRECT YouTube URLs extracted from the
+    webbook rst sources (the Video Viewer is a general tool — its #anchors do
+    not deep-link to individual videos, so direct links serve students better).
+
+    File naming: chapterN_N-M-....rst → section N.M. The first embed on a page
+    becomes the section's primary video; the rest become extra_videos (their
+    titles may carry the video-numbering, e.g. file 13-2 hosts videos titled
+    13.3–13.5 — that's the known video/section numbering offset; the FILE is
+    what determines which page they live on). The top-level videos{} map keeps
+    the old viewer anchors for reference/URL-parity.
+    """
+    iframe_re = re.compile(r"<iframe(.*?)</iframe>", re.S)
+    src_re = re.compile(
+        r'src="https://www\.youtube\.com/embed/([\w-]+)(?:\?([^"]*))?"')
+    title_re = re.compile(r'title="([^"]*)"')
+    list_re = re.compile(r"list=([\w-]+)")
+
+    def watch_url(vid: str, query: str | None) -> str:
+        lm = list_re.search(query or "")
+        return (f"https://www.youtube.com/watch?v={vid}&list={lm.group(1)}"
+                if lm else f"https://www.youtube.com/watch?v={vid}")
+
+    n_overlaid = 0
+    for f in sorted(rst_dir.glob("chapter*_*.rst")):
+        m = re.match(r"chapter(\d{1,2})_(\d{1,2})-(\d{1,2})", f.stem)
+        if not m:
+            continue
+        section = f"{int(m.group(2))}.{int(m.group(3))}"
+        sec = course_map["chapters"].get(m.group(1), {}) \
+            .get("sections", {}).get(section)
+        if sec is None:
+            continue
+        vids = []
+        for im in iframe_re.finditer(f.read_text(encoding="utf-8",
+                                                 errors="replace")):
+            block = im.group(1)
+            sm = src_re.search(block)
+            if not sm:
+                continue
+            tm = title_re.search(block)
+            title = (tm.group(1).strip() if tm else "") or \
+                f"{sec['number']} {sec['title']}"
+            vids.append({"anchor": "", "url": watch_url(sm.group(1), sm.group(2)),
+                         "title": title.removesuffix(" Video").strip()})
+        if not vids:
+            continue
+        old_anchor = (sec.get("video") or {}).get("anchor", "")
+        vids[0]["anchor"] = old_anchor       # keep the viewer anchor for reference
+        sec["video"] = vids[0]
+        sec["extra_videos"] = vids[1:]
+        n_overlaid += 1
+    return n_overlaid
+
+
 def main() -> None:
     src = Path(sys.argv[1]) if len(sys.argv) > 1 else \
         Path(__file__).resolve().parents[3].parent / "system_prompt.txt"
     dst = Path(sys.argv[2]) if len(sys.argv) > 2 else \
         Path(__file__).resolve().parents[2] / "data" / "course_map.json"
+    rst_dir = Path(sys.argv[3]) if len(sys.argv) > 3 else \
+        Path("/mnt/c/CommonFiles/STAT_350_Website/rst_files_for_chatbot")
     course_map = build(src.read_text(encoding="utf-8"))
+    if rst_dir.is_dir():
+        n = overlay_youtube(course_map, rst_dir)
+        print(f"Overlaid direct YouTube links on {n} sections from {rst_dir}")
+    else:
+        print(f"NOTE: rst dir {rst_dir} not found — keeping Video Viewer links")
     dst.parent.mkdir(parents=True, exist_ok=True)
     dst.write_text(json.dumps(course_map, indent=2, ensure_ascii=False),
                    encoding="utf-8")

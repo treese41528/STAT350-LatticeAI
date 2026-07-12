@@ -14,8 +14,8 @@
           "rst_basename": "1-1-intro",
           "video": {
             "anchor": "#002",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#002",
-            "title": "What Is Statistics?"
+            "url": "https://www.youtube.com/watch?v=DcDqlxacmRY&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "1.1 What Is Statistics?"
           },
           "extra_videos": [],
           "keywords": [
@@ -29,8 +29,8 @@
           "rst_basename": "1-2-probability-inference",
           "video": {
             "anchor": "#004",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#004",
-            "title": "Probability & Statistical Inference: How Are They Associated?"
+            "url": "https://www.youtube.com/watch?v=PE0EBtI4ffk&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "1.2 Probability & Statistical Inference: How Are They Associated?"
           },
           "extra_videos": [],
           "keywords": [
@@ -55,8 +55,8 @@
           "rst_basename": "2-1-understanding-the-structure-of-data-set",
           "video": {
             "anchor": "#005",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#005",
-            "title": "Data Set Structure and Variable Types"
+            "url": "https://www.youtube.com/watch?v=SKYjEnzY75I&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "2.1 Data Set Structure and Variable Types"
           },
           "extra_videos": [],
           "keywords": [
@@ -74,8 +74,8 @@
           "rst_basename": "2-2-tools-for-categorical-qualitative-data",
           "video": {
             "anchor": "#006",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#006",
-            "title": "Tools for Categorical (Qualitative) Data"
+            "url": "https://www.youtube.com/watch?v=g8A7vIt8L9o&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "2.2 Tools for Categorical (Qualitative) Data"
           },
           "extra_videos": [],
           "keywords": [
@@ -92,8 +92,8 @@
           "rst_basename": "2-3-tools-for-numerical-quantitative-data",
           "video": {
             "anchor": "#007",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#007",
-            "title": "Tools for Numerical (Quantitative) Data"
+            "url": "https://www.youtube.com/watch?v=EiVdnnZtcRI&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "2.3 Tools for Numerical (Quantitative) Data"
           },
           "extra_videos": [],
           "keywords": [
@@ -110,8 +110,8 @@
           "rst_basename": "2-4-exploring-quantitative-distributions-modality-shape-and-outliers",
           "video": {
             "anchor": "#008",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#008",
-            "title": "Exploring Quantitative Distributions: Modality, Shape & Outliers"
+            "url": "https://www.youtube.com/watch?v=XwtyBLVThPY&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "2.4 Exploring Quantitative Distributions: Modality, Shape & Outliers"
           },
           "extra_videos": [],
           "keywords": [
@@ -137,8 +137,8 @@
           "rst_basename": "3-1-intro-numerical-summaries",
           "video": {
             "anchor": "#009",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#009",
-            "title": "Introduction to Numerical Summaries"
+            "url": "https://www.youtube.com/watch?v=SR-68DQX4Gs&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "3.1 Introduction to Numerical Summaries: Notation and Terminology"
           },
           "extra_videos": [],
           "keywords": [
@@ -155,8 +155,8 @@
           "rst_basename": "3-2-measures-of-central-tendency",
           "video": {
             "anchor": "#010",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#010",
-            "title": "Measures of Central Tendency"
+            "url": "https://www.youtube.com/watch?v=jWyWxBhBZZY",
+            "title": "3.2 Measures of Central Tendency"
           },
           "extra_videos": [],
           "keywords": [
@@ -172,8 +172,8 @@
           "rst_basename": "3-3-measures-of-variability-range-variance-and-SD",
           "video": {
             "anchor": "#011",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#011",
-            "title": "Measures of Variability — Range/Variance/SD"
+            "url": "https://www.youtube.com/watch?v=Bc85TbLQ11M&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "3.3 Measures of Variability — Range, Variance, and Standard Deviation"
           },
           "extra_videos": [],
           "keywords": [
@@ -192,8 +192,8 @@
           "rst_basename": "3-4-measures-of-variability-IQR-and-5-number-summary",
           "video": {
             "anchor": "#012",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#012",
-            "title": "Measures of Variability — IQR/Five-Number Summary"
+            "url": "https://www.youtube.com/watch?v=ktc3R0fC4C8&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "3.4 Measures of Variability — Interquartile Range and Five-Number Summary"
           },
           "extra_videos": [],
           "keywords": [
@@ -213,8 +213,8 @@
           "rst_basename": "3-5-choosing-the-right-measure-resistance-to-extreme-values",
           "video": {
             "anchor": "#013",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#013",
-            "title": "Choosing the Right Measure & Resistance"
+            "url": "https://www.youtube.com/watch?v=if-8h2DECQg&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "3.5 Choosing the Right Measure & Comparing Measures Across Data Sets"
           },
           "extra_videos": [],
           "keywords": [
@@ -242,8 +242,8 @@
           "rst_basename": "4-1-basic-set-theory",
           "video": {
             "anchor": "#014",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#014",
-            "title": "Basic Set Theory"
+            "url": "https://www.youtube.com/watch?v=xrMHgS064WE&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "4.1 Basic Set Theory"
           },
           "extra_videos": [],
           "keywords": [
@@ -259,8 +259,8 @@
           "rst_basename": "4-2-probability",
           "video": {
             "anchor": "#015",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#015",
-            "title": "Probability"
+            "url": "https://www.youtube.com/watch?v=PsanPPT3pW8&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "4.2 Probability"
           },
           "extra_videos": [],
           "keywords": [
@@ -274,8 +274,8 @@
           "rst_basename": "4-3-conditional-probability",
           "video": {
             "anchor": "#016",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#016",
-            "title": "Conditional Probability"
+            "url": "https://www.youtube.com/watch?v=JMZDN70PDO0&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "4.3 Conditional Probability"
           },
           "extra_videos": [],
           "keywords": [
@@ -291,8 +291,8 @@
           "rst_basename": "4-4-law-of-total-probability-and-bayes-rule",
           "video": {
             "anchor": "#017",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#017",
-            "title": "Law of Total Probability & Bayes’ Rule"
+            "url": "https://www.youtube.com/watch?v=4XDj9VRCVtE&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "4.4 Law of Total Probability and Bayes’ Rule"
           },
           "extra_videos": [],
           "keywords": [
@@ -313,8 +313,8 @@
           "rst_basename": "4-5-bayes-update-rule-example",
           "video": {
             "anchor": "#018",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#018",
-            "title": "Bayesian Updating (Example)"
+            "url": "https://www.youtube.com/watch?v=KJK5tMOz89g&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "4.5 Bayesian Updating: Sequential Learning"
           },
           "extra_videos": [],
           "keywords": [
@@ -331,8 +331,8 @@
           "rst_basename": "4-6-independence-of-events",
           "video": {
             "anchor": "#019",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#019",
-            "title": "Independence of Events"
+            "url": "https://www.youtube.com/watch?v=_3Ukdl7pGPE&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "4.6 Independence of Events"
           },
           "extra_videos": [],
           "keywords": [
@@ -354,8 +354,8 @@
           "rst_basename": "5-1-discrete-rvs-and-pmfs",
           "video": {
             "anchor": "#020",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#020",
-            "title": "Discrete RVs & PMFs"
+            "url": "https://www.youtube.com/watch?v=Inkj1RtLA_Q&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 5.1 Random Variables and Discrete Probability Distributions"
           },
           "extra_videos": [],
           "keywords": [
@@ -374,8 +374,8 @@
           "rst_basename": "5-2-joint-pmfs",
           "video": {
             "anchor": "#021",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#021",
-            "title": "Joint PMFs"
+            "url": "https://www.youtube.com/watch?v=eJa8C_Yg0dg&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 5.2 Joint Probability Mass Function"
           },
           "extra_videos": [],
           "keywords": [
@@ -392,8 +392,8 @@
           "rst_basename": "5-3-expected-value-of-discrete-rv",
           "video": {
             "anchor": "#022",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#022",
-            "title": "Expected Value (Discrete)"
+            "url": "https://www.youtube.com/watch?v=hTusBEM88fA&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 5.3 Expected Value of a Discrete Random Variable"
           },
           "extra_videos": [],
           "keywords": [
@@ -411,8 +411,8 @@
           "rst_basename": "5-4-variance-of-discrete-rv",
           "video": {
             "anchor": "#023",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#023",
-            "title": "Variance (Discrete)"
+            "url": "https://www.youtube.com/watch?v=gA4f4mpjGk0&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 5.4 Spread of a Discrete Random Variable"
           },
           "extra_videos": [],
           "keywords": [
@@ -429,8 +429,8 @@
           "rst_basename": "5-5-covariance-of-dependent-rvs",
           "video": {
             "anchor": "#024",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#024",
-            "title": "Covariance of Dependent RVs"
+            "url": "https://www.youtube.com/watch?v=xP5_W5ZtBYs&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "5.5 Covariance of Dependent Random Variables"
           },
           "extra_videos": [],
           "keywords": [
@@ -447,8 +447,8 @@
           "rst_basename": "5-6-binomial-distribution",
           "video": {
             "anchor": "#025",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#025",
-            "title": "Binomial Distribution"
+            "url": "https://www.youtube.com/watch?v=1WON80Ut7lc&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 5.6 The Binomial Distribution"
           },
           "extra_videos": [],
           "keywords": [
@@ -463,8 +463,8 @@
           "rst_basename": "5-7-poisson-distribution",
           "video": {
             "anchor": "#026",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#026",
-            "title": "Poisson Distribution"
+            "url": "https://www.youtube.com/watch?v=L9flxu2RCEc&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 5.7 The Poisson Distribution"
           },
           "extra_videos": [],
           "keywords": [
@@ -486,8 +486,8 @@
           "rst_basename": "6-1-continuous-rvs-and-pdfs",
           "video": {
             "anchor": "#027",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#027",
-            "title": "Continuous RVs & PDFs"
+            "url": "https://www.youtube.com/watch?v=F_crmr4FAcg&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 6.1 Continuous Random Variables"
           },
           "extra_videos": [],
           "keywords": [
@@ -506,8 +506,8 @@
           "rst_basename": "6-2-expected-value-and-variance-of-cts-rvs",
           "video": {
             "anchor": "#028",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#028",
-            "title": "E[X] and Var(X) for Continuous RVs"
+            "url": "https://www.youtube.com/watch?v=_5PodnOjT5o&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 6.2 Expected Value and Variance"
           },
           "extra_videos": [],
           "keywords": [
@@ -526,19 +526,19 @@
           "rst_basename": "6-3-cdfs",
           "video": {
             "anchor": "#029",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#029",
-            "title": "CDFs"
+            "url": "https://www.youtube.com/watch?v=cq_a1PFV0wQ&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 6.3 Cumulative Distribution Function"
           },
           "extra_videos": [
             {
-              "anchor": "#030",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#030",
-              "title": "Example 1"
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=hbpqL-h0830",
+              "title": "STAT 350 – Chapter 6.3.1 Example 1"
             },
             {
-              "anchor": "#031",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#031",
-              "title": "Example 2"
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=G-u5vHtQI3s&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+              "title": "STAT 350 – Chapter 6.3.2 Continuous Random Variable Example 2"
             }
           ],
           "keywords": [
@@ -554,24 +554,24 @@
           "rst_basename": "6-4-normal-distribution",
           "video": {
             "anchor": "#032",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#032",
-            "title": "Normal Distribution"
+            "url": "https://www.youtube.com/watch?v=O3wz4JgtZsA",
+            "title": "STAT 350 – Chapter 6.4 Normal Distribution"
           },
           "extra_videos": [
             {
-              "anchor": "#033",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#033",
-              "title": "Forward (Probabilities)"
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=IGnLAeROI44",
+              "title": "STAT 350 – Chapter 6.4.1 Normal Distribution Forward Calculations"
             },
             {
-              "anchor": "#034",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#034",
-              "title": "Backward (Quantiles)"
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=nExxuvoX-gQ&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+              "title": "STAT 350 – Chapter 6.4.2 Normal Distribution Backward Calculations"
             },
             {
-              "anchor": "#035",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#035",
-              "title": "Checking Normality of Data"
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=iuWe6rxgNbI&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+              "title": "STAT 350 – Chapter 6.4.3 Checking Normality of Data"
             }
           ],
           "keywords": [
@@ -589,8 +589,8 @@
           "rst_basename": "6-5-uniform-distribution",
           "video": {
             "anchor": "#036",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#036",
-            "title": "Uniform Distribution"
+            "url": "https://www.youtube.com/watch?v=dJLgVD_ViHc&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 6.5 Uniform Distribution"
           },
           "extra_videos": [],
           "keywords": [
@@ -605,8 +605,8 @@
           "rst_basename": "6-6-exponential-distribution",
           "video": {
             "anchor": "#037",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#037",
-            "title": "Exponential Distribution"
+            "url": "https://www.youtube.com/watch?v=NM3PD-pO-94&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 6.6 Exponential Distribution"
           },
           "extra_videos": [],
           "keywords": [
@@ -628,8 +628,8 @@
           "rst_basename": "7-1-statistics-and-sampling-distributions",
           "video": {
             "anchor": "#038",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#038",
-            "title": "Statistics & Sampling Distributions"
+            "url": "https://www.youtube.com/watch?v=YLCUV0h1mRA&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 7.1 Statistics and Sampling Distributions"
           },
           "extra_videos": [],
           "keywords": [
@@ -645,8 +645,8 @@
           "rst_basename": "7-2-sampling-distribution-for-the-sample-mean",
           "video": {
             "anchor": "#039",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#039",
-            "title": "Sampling Distribution for Xˉ"
+            "url": "https://www.youtube.com/watch?v=TIOCX2hjXqw&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 7.2 Sampling Distribution for the Sample Mean"
           },
           "extra_videos": [],
           "keywords": [
@@ -663,8 +663,8 @@
           "rst_basename": "7-3-clt",
           "video": {
             "anchor": "#040",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#040",
-            "title": "CLT"
+            "url": "https://www.youtube.com/watch?v=l1vhy86sIVU&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 7.3 Central Limit Theorem"
           },
           "extra_videos": [],
           "keywords": [
@@ -682,8 +682,8 @@
           "rst_basename": "7-4-discret-rvs-and-clt",
           "video": {
             "anchor": "#041",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#041",
-            "title": "Discrete RVs & the CLT"
+            "url": "https://www.youtube.com/watch?v=U98siSK61oY&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 7.4 Discrete Random Variables and the CLT"
           },
           "extra_videos": [],
           "keywords": [
@@ -707,8 +707,8 @@
           "rst_basename": "8-1-experimental-and-sampling-designs",
           "video": {
             "anchor": "#042",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#042",
-            "title": "Experimental and Sampling Designs"
+            "url": "https://www.youtube.com/watch?v=_xh2xDZY2QU&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 8.1 Experimental and Sampling Designs"
           },
           "extra_videos": [],
           "keywords": [
@@ -724,8 +724,8 @@
           "rst_basename": "8-2-experimental-design-principles",
           "video": {
             "anchor": "#043",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#043",
-            "title": "Principles"
+            "url": "https://www.youtube.com/watch?v=5HeTfB4iw7o&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 8.2 Experimental Design Principles"
           },
           "extra_videos": [],
           "keywords": [
@@ -741,8 +741,8 @@
           "rst_basename": "8-3-basic-types-of-experimental-design",
           "video": {
             "anchor": "#044",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#044",
-            "title": "Basic Types"
+            "url": "https://www.youtube.com/watch?v=Q8TMVgib4pA&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 8.3 Basic Types of Experimental Designs"
           },
           "extra_videos": [],
           "keywords": [
@@ -759,8 +759,8 @@
           "rst_basename": "8-4-addressing-potential-flaws-in-experimental-design",
           "video": {
             "anchor": "#045",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#045",
-            "title": "Issues/Flaws"
+            "url": "https://www.youtube.com/watch?v=4lYAvS0xrMw&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 8.4 Experimental Design Issues"
           },
           "extra_videos": [],
           "keywords": [
@@ -778,8 +778,8 @@
           "rst_basename": "8-5-examples-of-experimental-design",
           "video": {
             "anchor": "#046",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#046",
-            "title": "Examples"
+            "url": "https://www.youtube.com/watch?v=ydPchpT9Hnk&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 8.5 Design Examples"
           },
           "extra_videos": [],
           "keywords": [
@@ -795,8 +795,8 @@
           "rst_basename": "8-6-sampling-design",
           "video": {
             "anchor": "#047",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#047",
-            "title": "Sampling Design"
+            "url": "https://www.youtube.com/watch?v=T0R2naBQqkM&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 8.6 Sampling Design"
           },
           "extra_videos": [],
           "keywords": [
@@ -811,8 +811,8 @@
           "rst_basename": "8-7-sampling-bias",
           "video": {
             "anchor": "#048",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#048",
-            "title": "Sampling Bias"
+            "url": "https://www.youtube.com/watch?v=M7OYNRifGtg&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 8.7 Sampling Bias"
           },
           "extra_videos": [],
           "keywords": [
@@ -834,8 +834,8 @@
           "rst_basename": "9-1-intro-statistical-inference",
           "video": {
             "anchor": "#049",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#049",
-            "title": "Introduction to Statistical Inference"
+            "url": "https://www.youtube.com/watch?v=P3Nyg84h0A8&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 7.1 Statistics and Sampling Distributions"
           },
           "extra_videos": [],
           "keywords": [
@@ -850,8 +850,8 @@
           "rst_basename": "9-2-ci-sigma-known",
           "video": {
             "anchor": "#051",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#051",
-            "title": "CI for μ (σ known)"
+            "url": "https://www.youtube.com/watch?v=eK7cWzaG0-0&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 7.1 Statistics and Sampling Distributions"
           },
           "extra_videos": [],
           "keywords": [
@@ -871,8 +871,8 @@
           "rst_basename": "9-3-precision-of-ci-and-sample-size-calculation",
           "video": {
             "anchor": "#050",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#050",
-            "title": "Precision & Sample Size"
+            "url": "https://www.youtube.com/watch?v=siP0lHZSjn8&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 7.1 Statistics and Sampling Distributions"
           },
           "extra_videos": [],
           "keywords": [
@@ -893,8 +893,8 @@
           "rst_basename": "9-4-cb-sigma-known",
           "video": {
             "anchor": "#052",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#052",
-            "title": "Confidence Bounds (σ known)"
+            "url": "https://www.youtube.com/watch?v=7bF1fBzg1cQ&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 7.1 Statistics and Sampling Distributions"
           },
           "extra_videos": [],
           "keywords": [
@@ -912,8 +912,8 @@
           "rst_basename": "9-5-ci-cb-sigma-unknown",
           "video": {
             "anchor": "#053",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#053",
-            "title": "CI/Bounds (σ unknown)"
+            "url": "https://www.youtube.com/watch?v=3ZhAnYsmILo&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 7.1 Statistics and Sampling Distributions"
           },
           "extra_videos": [],
           "keywords": [
@@ -937,24 +937,24 @@
           "rst_basename": "10-1-ht-errors-and-power",
           "video": {
             "anchor": "#054",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#054",
-            "title": "Errors & Power (overview)"
+            "url": "https://www.youtube.com/watch?v=ZQusNqSNSdY&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 10.1 Hypothesis Testing for the Mean of a Population and Power"
           },
           "extra_videos": [
             {
-              "anchor": "#055",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#055",
-              "title": "Type I/II & Power"
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=rc1OOsAohSw&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+              "title": "STAT 350 – Chapter 10.1.1 Type 1, Type 2 Error and Power"
             },
             {
-              "anchor": "#056",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#056",
-              "title": "Power Calculations"
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=pXRyQQt_v_I&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+              "title": "STAT 350 – Chapter 10.1.2 Power Calculations"
             },
             {
-              "anchor": "#057",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#057",
-              "title": "Sample Size Calculations"
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=umlrWPs7qlA&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+              "title": "STAT 350 – Chapter 10.1.3 Sample Size Calculations"
             }
           ],
           "keywords": [
@@ -974,8 +974,8 @@
           "rst_basename": "10-2-ht-for-mean-sigma-known",
           "video": {
             "anchor": "#058",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#058",
-            "title": "HT for μ (σ known)"
+            "url": "https://www.youtube.com/watch?v=vjzyQHJrHE0&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 10.2 Hypothesis Testing and Power for the Mean of a Population"
           },
           "extra_videos": [],
           "keywords": [
@@ -993,14 +993,14 @@
           "rst_basename": "10-3-ht-for-mean-sigma-unknown",
           "video": {
             "anchor": "#059",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#059",
-            "title": "HT & CI/CB (σ unknown)"
+            "url": "https://www.youtube.com/watch?v=oVXZ-UAhrwQ&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 10.3 Hypothesis Test and Confidence Interval-Bound"
           },
           "extra_videos": [
             {
-              "anchor": "#060",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#060",
-              "title": "Test Statistic (σ unknown)"
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=Qf1OChGzcQE&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+              "title": "STAT 350 – Chapter 10.3.1 Test Statistic when σ is Unknown"
             }
           ],
           "keywords": [
@@ -1018,16 +1018,10 @@
           "rst_basename": "10-4-pvalue-significance-conclusion",
           "video": {
             "anchor": "#061",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#061",
-            "title": "Tests of Significance & p-values"
+            "url": "https://www.youtube.com/watch?v=igQdAxeXEr8&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 10.4 What Is A Test of Significance"
           },
-          "extra_videos": [
-            {
-              "anchor": "#062",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#062",
-              "title": "Practical vs Statistical Significance"
-            }
-          ],
+          "extra_videos": [],
           "keywords": [
             "values",
             "statistical",
@@ -1052,8 +1046,8 @@
           "rst_basename": "11-1-ci-ht-two-samples",
           "video": {
             "anchor": "#063",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#063",
-            "title": "CI/CB & HT for Two Samples"
+            "url": "https://www.youtube.com/watch?v=bztTXSBCIVo&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 11.1 Confidence Interval and Hypothesis Testing for Two Samples or Treatments"
           },
           "extra_videos": [],
           "keywords": [
@@ -1073,8 +1067,8 @@
           "rst_basename": "11-2-comparing-two-means-independent-sigmas-known",
           "video": {
             "anchor": "#064",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#064",
-            "title": "Comparing Two Means (Independent, σ known)"
+            "url": "https://www.youtube.com/watch?v=OKJxoLTK9GY&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 11.2 Comparing Two Population Means Using Independent Samples"
           },
           "extra_videos": [],
           "keywords": [
@@ -1095,8 +1089,8 @@
           "rst_basename": "11-3-comparing-two-means-independent-pooled",
           "video": {
             "anchor": "#065",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#065",
-            "title": "Comparing Two Means (Independent, Pooled)"
+            "url": "https://www.youtube.com/watch?v=CuhPeUL6wEo&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 11.3 Comparing Two Population Means Using Independent Samples: Pooled Estimator"
           },
           "extra_videos": [],
           "keywords": [
@@ -1117,14 +1111,14 @@
           "rst_basename": "11-4-comparing-two-means-independent-unpooled",
           "video": {
             "anchor": "#066",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#066",
-            "title": "Comparing Two Means (Independent, Unequal Var)"
+            "url": "https://www.youtube.com/watch?v=875mJJL5hrQ&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 11.4 Comparing Two Population Means Using Independent Samples: No Equal Variance Assumption"
           },
           "extra_videos": [
             {
-              "anchor": "#067",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#067",
-              "title": "Unpooled Only (Welch)"
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=uzpqYPvmcYE&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+              "title": "STAT 350 – Chapter 11.4.1 Only Using the Unpooled Estimator"
             }
           ],
           "keywords": [
@@ -1147,8 +1141,8 @@
           "rst_basename": "11-5-mean-of-paired-differences-two-dependent-populations",
           "video": {
             "anchor": "#068",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#068",
-            "title": "Paired Samples"
+            "url": "https://www.youtube.com/watch?v=9qEfrrRcbRw&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 11.5 Comparing Two Population Means Using Paired Samples"
           },
           "extra_videos": [],
           "keywords": [
@@ -1177,8 +1171,8 @@
           "rst_basename": "12-1-intro-one-way-anova",
           "video": {
             "anchor": "#069",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#069",
-            "title": "One-Way ANOVA"
+            "url": "https://www.youtube.com/watch?v=FYgP2E9lre4&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 12.1 One-Way ANOVA"
           },
           "extra_videos": [],
           "keywords": [
@@ -1194,8 +1188,8 @@
           "rst_basename": "12-2-sources-of-variability",
           "video": {
             "anchor": "#070",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#070",
-            "title": "Model & Sources of Variability"
+            "url": "https://www.youtube.com/watch?v=BKEQadpmPzw&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 12.2 One-Way ANOVA Model and the Sources of Variability"
           },
           "extra_videos": [],
           "keywords": [
@@ -1213,14 +1207,14 @@
           "rst_basename": "12-3-f-test-and-relationship-to-t-test",
           "video": {
             "anchor": "#071",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#071",
-            "title": "F-test & Relation to Two-Sample t"
+            "url": "https://www.youtube.com/watch?v=wr-jFQm3DzM&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 12.3 One-Way Hypothesis Test and F-Test Statistic"
           },
           "extra_videos": [
             {
-              "anchor": "#072",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#072",
-              "title": "ANOVA vs Two-Sample t (Relationship)"
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=8hNoZPqspq0&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+              "title": "STAT 350 – Chapter 12.3.1 One-Way ANOVA and Two Independent Sample t-test Relationship"
             }
           ],
           "keywords": [
@@ -1241,8 +1235,8 @@
           "rst_basename": "12-4-multiple-comparison-procedures-family-wise-error-rates",
           "video": {
             "anchor": "#073",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#073",
-            "title": "Multiple Comparisons / FWER"
+            "url": "https://www.youtube.com/watch?v=9BK1PxNtNjc&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 12.4 Multiple Comparison Procedures and Family-Wise Error Rates"
           },
           "extra_videos": [],
           "keywords": [
@@ -1272,19 +1266,14 @@
           "rst_basename": "13-1-intro-to-lr-correlation-scatter-plots",
           "video": {
             "anchor": "#074",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#074",
-            "title": "Correlation & Simple Linear Regression"
+            "url": "https://www.youtube.com/watch?v=NfbWwbuUVEg&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 13.1 Correlation and Regression: Simple Linear Regression"
           },
           "extra_videos": [
             {
-              "anchor": "#075",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#075",
-              "title": "Scatter Plots"
-            },
-            {
-              "anchor": "#078",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#078",
-              "title": "Pearson r"
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=5wECoca89ls&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+              "title": "STAT 350 – Chapter 13.2 Scatter Plots"
             }
           ],
           "keywords": [
@@ -1303,14 +1292,19 @@
           "rst_basename": "13-2-simple-linear-regression",
           "video": {
             "anchor": "#076",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#076",
-            "title": "SLR Model"
+            "url": "https://www.youtube.com/watch?v=a9skiqjau8I&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 13.3 Simple Linear Regression Model"
           },
           "extra_videos": [
             {
-              "anchor": "#077",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#077",
-              "title": "SLR ANOVA Table & R2"
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=nD9hKHIaUIQ&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+              "title": "STAT 350 – Chapter 13.4 Simple Linear Regression ANOVA Table and Coefficient of Determination"
+            },
+            {
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=qSG28mV6fx4&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+              "title": "STAT 350 – Chapter 13.5 Sample Pearson Correlation Coefficient"
             }
           ],
           "keywords": [
@@ -1328,19 +1322,19 @@
           "rst_basename": "13-3-diagnostics-inference",
           "video": {
             "anchor": "#079",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#079",
-            "title": "Diagnostics for Assumptions"
+            "url": "https://www.youtube.com/watch?v=p8kRL-vUpVo&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 13.6 Diagnostics for Model Assumptions"
           },
           "extra_videos": [
             {
-              "anchor": "#080",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#080",
-              "title": "Inference — F-test"
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=mTQ3GU9rpys&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+              "title": "STAT 350 – Chapter 13.7 Simple Linear Regression Model Inference - F-test"
             },
             {
-              "anchor": "#081",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#081",
-              "title": "Inference — Slope & Intercept"
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=_XCCR_oXcL0&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+              "title": "STAT 350 – Chapter 13.8 Simple Linear Regression Model Inference - Slope and Intercept"
             }
           ],
           "keywords": [
@@ -1360,19 +1354,19 @@
           "rst_basename": "13-4-prediction-robustness",
           "video": {
             "anchor": "#082",
-            "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#082",
-            "title": "Prediction & Uncertainty (CIs/PIs)"
+            "url": "https://www.youtube.com/watch?v=zUyxH0AL530&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+            "title": "STAT 350 – Chapter 13.9 Prediction and Uncertainty - Confidence Intervals for the Mean Response at a Point/Prediction Intervals at a Point"
           },
           "extra_videos": [
             {
-              "anchor": "#083",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#083",
-              "title": "Robustness to Normality"
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=J8NtyRd48QU&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+              "title": "STAT 350 – Chapter 13.10 Robustness to Normality Assumptions"
             },
             {
-              "anchor": "#084",
-              "url": "https://treese41528.github.io/STAT350/Videos/video_viewer.html#084",
-              "title": "Prediction Example — Cetane Number"
+              "anchor": "",
+              "url": "https://www.youtube.com/watch?v=XiQd9bhOSl4&list=PLHKEwTHXfbagA3ybKLAcEJriGT-6k89c6",
+              "title": "STAT 350 – Chapter 13.11 Linear Regression Prediction Example - Cetane Number"
             }
           ],
           "keywords": [

@@ -41,25 +41,29 @@ def test_every_map_url_passes_its_own_allowlist(resolver):
 
 
 def test_video_attachments_handle_source_quirks(resolver):
-    # 9.2/9.3 anchors are swapped in the source — preserved verbatim
+    # primary videos keep the legacy viewer anchor for reference, including the
+    # swapped 9.2/9.3 anchors preserved verbatim from the source
     assert resolver.lookup_section("9.2").video.anchor == "#051"
     assert resolver.lookup_section("9.3").video.anchor == "#050"
-    # video 11.5 is Welch (belongs to section 11.4); video 11.6 is paired (11.5)
-    s114 = resolver.lookup_section("11.4")
-    anchors_114 = {s114.video.anchor} | {v.anchor for v in s114.extra_videos}
-    assert anchors_114 == {"#066", "#067"}
-    assert resolver.lookup_section("11.5").video.anchor == "#068"
-    # chapter-12 offset: video "12.4" (ANOVA vs t) must NOT sit on section 12.4
     assert resolver.lookup_section("12.4").video.anchor == "#073"
-    # sub-videos attach to parents by number
-    assert {v.anchor for v in resolver.lookup_section("6.4").extra_videos} == \
-        {"#033", "#034", "#035"}
+    # Welch sub-video rides section 11.4 as an extra (direct YouTube)
+    s114 = resolver.lookup_section("11.4")
+    assert len(s114.extra_videos) == 1
+    assert "npooled" in (s114.extra_videos[0].title or "")
+    # sub-videos 6.4.1–6.4.3 attach to 6.4
+    assert len(resolver.lookup_section("6.4").extra_videos) == 3
 
 
-def test_every_section_has_a_video(resolver):
+def test_every_section_has_a_direct_youtube_video(resolver):
+    # the Video Viewer's #anchors don't deep-link, so every section's primary
+    # video must be a DIRECT YouTube watch link (extracted from the rst embeds)
     for ch in resolver.map.chapters.values():
         for sec in ch.sections.values():
             assert sec.video is not None, f"section {sec.number} lost its video"
+            assert "youtube.com/watch?v=" in sec.video.url, \
+                f"section {sec.number} video is not a direct YouTube link: {sec.video.url}"
+            for v in sec.extra_videos:
+                assert "youtube.com/watch?v=" in v.url
 
 
 def test_url_for_rst_fallback_chain(resolver):
@@ -102,16 +106,18 @@ def test_webbook_underscore_path_filenames(resolver):
 
 
 def test_transcript_srt_filenames(resolver):
-    # real transcript naming from the gateway
+    # real transcript naming from the gateway; transcript hits now deep-link to
+    # the actual YouTube video, not the general Video Viewer
     hit = resolver.resolve_transcript(
         {"name": "STAT 350 -  Chapter 7.3 Central Limit Theorem CLT.srt"})
-    assert hit.section.number == "7.3" and hit.video_url
+    assert hit.section.number == "7.3"
+    assert "youtube.com/watch?v=" in hit.video_url
 
 
 def test_transcript_resolution(resolver):
     hit = resolver.resolve_transcript({"name": "lecture_7-3_transcript.vtt"})
     assert hit.section.number == "7.3"
-    assert hit.video_url and "#040" in hit.video_url
+    assert hit.video_url and "youtube.com/watch?v=" in hit.video_url
     miss = resolver.resolve_transcript({"name": "random_audio.vtt"})
     assert miss.url  # video home fallback
 
