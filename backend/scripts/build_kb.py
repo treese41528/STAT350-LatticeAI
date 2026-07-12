@@ -38,7 +38,12 @@ from app.config import load_settings  # noqa: E402
 DEFAULT_NAME = "STAT 350 Knowledge Base (SUMMER 2026)"
 DEFAULT_RST = "/mnt/c/CommonFiles/STAT_350_Website/rst_files_for_chatbot"
 DEFAULT_SYL = "/mnt/c/CommonFiles/Webbooks/STAT 350 Syllabus Info"
-PAUSE_S = 0.25          # gentle pacing between file-API calls
+# The server must PROCESS an upload before it can be linked into a KB
+# (RAGError docs: "File not yet finished processing"; resolution: "wait longer
+# after upload before linking"). Settle after upload, then link with backoff —
+# and on link failure retry the SAME file id, never re-upload.
+SETTLE_S = 1.0
+LINK_BACKOFFS = (1, 2, 4, 8, 15)
 OK, WARN, FAIL = "✅", "⚠️ ", "❌"
 
 
@@ -64,9 +69,21 @@ def categorize(files: list[Path]) -> dict[str, int]:
     return cats
 
 
+import re as _re
+
+_UUID_PREFIX = _re.compile(
+    r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}_", _re.I)
+
+
+def _clean(name: str) -> str:
+    """Server-side physical filenames carry a 'uuid_' prefix — strip it so
+    comparisons against local source names work."""
+    return _UUID_PREFIX.sub("", str(name))
+
+
 def linked_filenames(studio, kb_id: str) -> set[str]:
     """Filenames already linked to the KB (defensive: raw_response shape is
-    server-version dependent)."""
+    server-version dependent; both raw and uuid-stripped forms returned)."""
     try:
         raw = studio.get_knowledge_base(kb_id).raw_response or {}
     except Exception:
@@ -79,6 +96,7 @@ def linked_filenames(studio, kb_id: str) -> set[str]:
         for key in (item.get("filename"), meta.get("name"), item.get("name")):
             if key:
                 names.add(str(key))
+                names.add(_clean(key))
     return names
 
 
@@ -138,35 +156,80 @@ def main() -> int:
     if already:
         print(f"   {len(already)} files already linked — skipping duplicates")
 
+    # Orphan reuse: a previous failed run may have UPLOADED files that never got
+    # linked. Link the existing upload instead of re-uploading a duplicate.
+    uploaded_by_name: dict[str, str] = {}
+    try:
+        for fi in studio.list_files():
+            uploaded_by_name.setdefault(_clean(fi.filename), fi.id)  # first seen
+    except Exception as exc:
+        print(f"   {WARN} could not list existing uploads ({exc}) — "
+              "will upload fresh copies")
+
+    def link_with_backoff(file_id: str) -> tuple[bool, str]:
+        """Link the SAME file id with escalating waits — the usual failure is
+        'not yet processed', which only time fixes (re-uploading makes orphans)."""
+        last = ""
+        for attempt, wait in enumerate((0,) + LINK_BACKOFFS):
+            if wait:
+                time.sleep(wait)
+            try:
+                studio.add_file_to_knowledge_base(kb.id, file_id)
+                return True, ""
+            except Exception as exc:
+                last = f"{type(exc).__name__}: {exc}"
+        return False, last
+
     # ---- upload + link -------------------------------------------------------
-    done = failed = skipped = 0
+    done = failed = skipped = reused = 0
     failures: list[tuple[str, str]] = []
     for i, f in enumerate(files, 1):
         if f.name in already:
             skipped += 1
             continue
         try:
-            info = studio.upload_file(str(f))
-            time.sleep(PAUSE_S)
-            studio.add_file_to_knowledge_base(kb.id, info.id)
-            done += 1
-        except Exception as exc:                      # retry once
-            time.sleep(2)
-            try:
-                info = studio.upload_file(str(f))
-                time.sleep(PAUSE_S)
-                studio.add_file_to_knowledge_base(kb.id, info.id)
+            file_id = uploaded_by_name.get(f.name)
+            if file_id:
+                reused += 1
+            else:
+                try:
+                    file_id = studio.upload_file(str(f)).id
+                except Exception:
+                    time.sleep(2)                       # one upload retry
+                    file_id = studio.upload_file(str(f)).id
+                time.sleep(SETTLE_S)                    # let processing start
+            ok, err = link_with_backoff(file_id)
+            if ok:
                 done += 1
-            except Exception as exc2:
+            else:
                 failed += 1
-                failures.append((f.name, f"{type(exc2).__name__}: {exc2}"))
+                failures.append((f.name, err))
+        except Exception as exc:
+            failed += 1
+            failures.append((f.name, f"{type(exc).__name__}: {exc}"))
         if i % 10 == 0 or i == len(files):
-            print(f"   [{i:3}/{len(files)}] uploaded+linked={done} "
+            print(f"   [{i:3}/{len(files)}] linked={done} reused_upload={reused} "
                   f"skipped={skipped} failed={failed}")
-        time.sleep(PAUSE_S)
 
     for name, err in failures:
-        print(f"   {FAIL} {name}: {err[:120]}")
+        print(f"   {FAIL} {name}: {err[:140]}")
+
+    # ---- SERVER-SIDE verification (trust the KB, not our counters) -----------
+    time.sleep(3)
+    on_server = linked_filenames(studio, kb.id)
+    missing = [f.name for f in files if f.name not in on_server]
+    print(f"\nServer reports {len(on_server)} files linked; "
+          f"{len(files)} expected from sources.")
+    if missing:
+        print(f"{FAIL} {len(missing)} MISSING from the KB:")
+        for n in missing[:20]:
+            print(f"     {n}")
+        if len(missing) > 20:
+            print(f"     … and {len(missing) - 20} more")
+        print("   → re-run with --resume (it links existing uploads and only "
+              "uploads what's absent).")
+    else:
+        print(f"{OK} every source file is linked.")
 
     # ---- wait for indexing, then sanity-check retrieval -----------------------
     print("\nWaiting for server-side indexing…")
