@@ -432,16 +432,26 @@ def main() -> int:
         print(f"{OK if flat else WARN} retrieval sanity: {len(flat)} chunks for a "
               "CLT query" + ("" if flat else " — indexing may still be running; "
                              "retry the probe in a few minutes"))
+        # Is a SUMMER syllabus indexed and FINDABLE? Ask a natural summer-syllabus
+        # question and look for it in the top-k RANK (not a set) — every term's
+        # syllabus is near-identical, so a token like "SUMMER 2026" also pulls in
+        # other-term syllabi + the summer.rst webbook page. What matters is that
+        # the summer syllabus surfaces at all; the APP then pins the exact file
+        # via its (term, modality) filename filter, not raw ranking.
         payload = studio._http_post(
             "/api/v1/retrieval/query/collection",
-            json={"collection_names": [kb.id], "k": 5, "hybrid": False,
-                  "query": "STAT 350 SUMMER 2026 syllabus grading policy"}).json()
+            json={"collection_names": [kb.id], "k": 10, "hybrid": False,
+                  "query": "Summer 2026 syllabus grading policy and exam schedule"}).json()
         metas = payload.get("metadatas") or []
         mflat = metas[0] if metas and isinstance(metas[0], list) else metas
-        names = {str((m or {}).get("name") or "") for m in mflat}
-        hit = any("summer" in n.lower() and "syllab" in n.lower() for n in names)
-        print(f"{OK if hit else WARN} SUMMER syllabus retrievable: {hit} "
-              f"(top files: {sorted(names)[:3]})")
+        names = [str((m or {}).get("name") or "") for m in mflat]   # ORDERED
+        rank = next((i for i, n in enumerate(names)
+                     if "summer" in n.lower() and "syllab" in n.lower()), None)
+        if rank is not None:
+            print(f"{OK} SUMMER syllabus retrievable (rank {rank} of top 10).")
+        else:
+            print(f"{WARN} no SUMMER syllabus in the top 10 — is Syllabus_SUMMER_*.md "
+                  f"linked? top files: {names[:3]}")
     except Exception as exc:
         print(f"{WARN} sanity queries failed ({exc}) — retry via probe later")
 
