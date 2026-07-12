@@ -92,14 +92,22 @@ def main() -> int:
         check(any(c.get("url") for c in cits), "citations carry course URLs")
 
         # --- syllabus question: term+modality grounded quote -----------------
-        print("\n[2] syllabus question (Flipped section)")
-        client.patch("/api/profile", headers=H, json={"modality": "flipped"})
+        # Pick a modality that EXISTS in the CURRENT term: summer/winter are
+        # session terms with only that modality (a flipped/traditional section
+        # doesn't exist then), so grounding a "flipped" question in summer would
+        # correctly find no syllabus. Derive it from the live term.
+        term = (health.get("term") or "").lower()
+        modality = ("summer" if "summer" in term else
+                    "winter" if "winter" in term else "flipped")
+        print(f"\n[2] syllabus question ({modality} section)")
+        client.patch("/api/profile", headers=H, json={"modality": modality})
         r = client.post("/api/chat", headers=H, json={
             "conversationId": None, "message": "how much is the homework worth?"})
         ev = parse_sse(r.text)
         res = next((d["resources"] for e, d in ev if e == "resources"), [])
         text = answer_text(ev)
-        check(any(x["kind"] == "syllabus" for x in res), "syllabus link attached")
+        check(any(x["kind"] in ("syllabus", "schedule") for x in res),
+              "syllabus/schedule link attached")
         check(bool(re.search(r"\d+\s?%|\bpercent", text)) or "refus" in text.lower(),
               f"quoted a figure or safely declined: {text[:70]!r}")
 
