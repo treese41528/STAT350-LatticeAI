@@ -1,0 +1,195 @@
+.section {
+  padding: 0.8rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.55rem;
+}
+
+.text {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin-bottom: 0.6rem;
+}
+
+.themeRow {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.themeOption {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 40px;
+  padding: 0.35rem 0.9rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition:
+    border-color 0.13s ease,
+    background 0.13s ease;
+}
+
+.themeOption:hover {
+  border-color: var(--gold);
+}
+
+.themeOn {
+  border-color: var(--gold-aged);
+  background: var(--accent-tint-strong);
+}
+
+.confirmRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.confirmText {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--danger);
+}
+
+/* --- Use your own API key ------------------------------------------------ */
+
+.keyRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.keyInput {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  padding: 0.4rem 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+}
+
+.keyInput:focus-visible {
+  outline: none;
+  border-color: var(--gold-aged);
+  box-shadow: var(--focus-ring);
+}
+
+.keyActive {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.badgeOk {
+  color: var(--success);
+  background: rgba(30, 127, 79, 0.12);
+  border: 1px solid rgba(30, 127, 79, 0.3);
+}
+
+.badgeNote {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.keyError {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  color: var(--danger);
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.keyPrivacy {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin-top: 0.65rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.keyPrivacy svg {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  color: var(--gold-aged);
+}
+
+.howToggle {
+  margin-top: 0.6rem;
+  padding: 0;
+  font-size: 0.83rem;
+  font-weight: 700;
+  color: var(--link);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.howBox {
+  margin-top: 0.6rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.howStep {
+  font-size: 0.86rem;
+  color: var(--text);
+  margin: 0.4rem 0 0.25rem;
+}
+
+.howStep:first-child {
+  margin-top: 0;
+}
+
+.howList {
+  margin: 0 0 0.3rem;
+  padding-left: 1.15rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.howList a {
+  color: var(--link);
+  font-weight: 600;
+}

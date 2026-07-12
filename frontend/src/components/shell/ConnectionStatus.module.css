@@ -1,0 +1,49 @@
+.wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  cursor: default;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ok {
+  background: #10b981;
+  animation: statusPulse 2.4s ease infinite;
+}
+
+.busy {
+  background: var(--gold-rush);
+}
+
+.down {
+  background: #ef4444;
+}
+
+.text {
+  font-size: 0.78rem;
+  color: rgba(245, 242, 234, 0.75);
+}
+
+@keyframes statusPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (max-width: 600px) {
+  .text {
+    display: none;
+  }
+}

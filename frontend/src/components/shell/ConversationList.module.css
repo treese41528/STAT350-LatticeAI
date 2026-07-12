@@ -1,0 +1,155 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.25rem 0.6rem 1rem;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.empty {
+  padding: 1rem 1.1rem;
+  font-size: 0.85rem;
+  color: var(--text-faint);
+  line-height: 1.5;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.groupLabel {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding: 0.25rem 0.55rem;
+}
+
+.item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius);
+}
+
+.item:hover {
+  background: var(--surface-2);
+}
+
+.itemActive {
+  background: var(--accent-tint);
+}
+
+.itemActive:hover {
+  background: var(--accent-tint-strong);
+}
+
+.itemButton {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  border: none;
+  background: transparent;
+  padding: 0.45rem 0.55rem;
+  min-height: 44px;
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--radius);
+}
+
+.title {
+  width: 100%;
+  font-size: 0.87rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.time {
+  font-size: 0.72rem;
+  color: var(--text-faint);
+}
+
+.menuBtn {
+  opacity: 0;
+  flex-shrink: 0;
+  margin-right: 2px;
+}
+
+.item:hover .menuBtn,
+.item:focus-within .menuBtn,
+.itemActive .menuBtn {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .menuBtn {
+    opacity: 1;
+  }
+}
+
+.menu {
+  z-index: 65;
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-2);
+  padding: 0.3rem;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  background: transparent;
+  padding: 0.5rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.86rem;
+  cursor: pointer;
+  text-align: left;
+  min-height: 38px;
+}
+
+.menuItem:hover {
+  background: var(--surface-2);
+}
+
+.menuDanger {
+  color: var(--danger);
+}
+
+.menuDanger:hover {
+  background: var(--danger-bg);
+}
+
+.itemEditing {
+  padding: 0.25rem 0.35rem;
+}
+
+.renameInput {
+  width: 100%;
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.5rem;
+  font-size: 0.87rem;
+  background: var(--surface);
+}
+
+.confirmActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}

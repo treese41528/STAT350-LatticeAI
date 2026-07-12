@@ -1,0 +1,28 @@
+# /etc/systemd/system/stat350-tutor.service
+#
+# EXACTLY ONE WORKER — the SDK rate limiter is in-process state and the
+# gateway silently drops bursts; multiple workers would each run their own
+# limiter and requests would vanish under load.
+
+[Unit]
+Description=STAT 350 Tutor (FastAPI, single worker)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=stat350
+Group=stat350
+WorkingDirectory=/opt/stat350-tutor/backend
+EnvironmentFile=/etc/stat350-tutor/env
+ExecStart=/opt/stat350-tutor/venv/bin/uvicorn app.main:app \
+    --host 127.0.0.1 --port 8100 --workers 1
+Restart=always
+RestartSec=3
+TimeoutStopSec=30
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/stat350-tutor/backend/data /opt/stat350-tutor/backend/logs /opt/stat350-tutor/backend/traces
+
+[Install]
+WantedBy=multi-user.target

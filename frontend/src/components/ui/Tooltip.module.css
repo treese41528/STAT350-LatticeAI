@@ -1,0 +1,27 @@
+.content {
+  z-index: 70;
+  background: var(--black);
+  color: #f5f2ea;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius-sm);
+  max-width: 260px;
+  box-shadow: var(--shadow-2);
+  animation: tipIn 0.12s ease;
+}
+
+.arrow {
+  fill: var(--black);
+}
+
+@keyframes tipIn {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

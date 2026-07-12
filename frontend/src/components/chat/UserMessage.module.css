@@ -1,0 +1,21 @@
+.row {
+  display: flex;
+  justify-content: flex-end;
+  margin: 1.1rem 0;
+}
+
+.bubble {
+  max-width: min(85%, 640px);
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg);
+  background: var(--accent-tint-strong);
+  border: 1px solid var(--gold);
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  line-height: 1.55;
+}
+
+[data-theme="dark"] .bubble {
+  background: var(--accent-tint);
+  border-color: var(--gold-aged);
+}

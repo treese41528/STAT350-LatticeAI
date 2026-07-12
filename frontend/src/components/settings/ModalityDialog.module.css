@@ -1,0 +1,53 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 52px;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 0.13s ease,
+    background 0.13s ease;
+}
+
+.option:hover {
+  border-color: var(--gold);
+}
+
+.optionOn {
+  border-color: var(--gold-aged);
+  background: var(--accent-tint);
+}
+
+.optionLabel {
+  display: block;
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.optionHint {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.check {
+  color: var(--gold-aged);
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .check {
+  color: var(--gold);
+}

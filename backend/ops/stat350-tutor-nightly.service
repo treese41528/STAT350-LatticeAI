@@ -1,0 +1,11 @@
+# /etc/systemd/system/stat350-tutor-nightly.service
+[Unit]
+Description=STAT 350 Tutor nightly rollup + retention purge
+
+[Service]
+Type=oneshot
+User=stat350
+WorkingDirectory=/opt/stat350-tutor/backend
+EnvironmentFile=/etc/stat350-tutor/env
+ExecStart=/opt/stat350-tutor/venv/bin/python -m app.jobs rollup
+ExecStart=/opt/stat350-tutor/venv/bin/python -m app.jobs purge

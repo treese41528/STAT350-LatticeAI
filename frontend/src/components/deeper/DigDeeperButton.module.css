@@ -1,0 +1,13 @@
+.button {
+  color: var(--gold-aged);
+  border-color: var(--accent-tint-strong);
+}
+
+[data-theme="dark"] .button {
+  color: var(--gold-dust);
+}
+
+.button:hover:not(:disabled) {
+  border-color: var(--gold);
+  background: var(--accent-tint);
+}

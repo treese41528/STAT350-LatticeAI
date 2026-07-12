@@ -1,0 +1,9 @@
+# /etc/systemd/system/stat350-tutor-backup.service
+[Unit]
+Description=STAT 350 Tutor DB backup
+
+[Service]
+Type=oneshot
+User=stat350
+Environment=BACKEND_DIR=/opt/stat350-tutor/backend
+ExecStart=/opt/stat350-tutor/backend/ops/backup.sh

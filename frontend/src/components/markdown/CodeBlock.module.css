@@ -1,0 +1,48 @@
+.wrapper {
+  margin: 0.85rem 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.2rem 0.4rem 0.2rem 0.85rem;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.lang {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.plain,
+.shiki :global(pre) {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  line-height: 1.55;
+  background: transparent !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.plain code {
+  font-family: inherit;
+}
+
+/* Shiki dual themes: light values are inline; dark comes from CSS vars. */
+[data-theme="dark"] .shiki :global(pre),
+[data-theme="dark"] .shiki :global(pre) :global(span) {
+  color: var(--shiki-dark) !important;
+  background-color: transparent !important;
+}

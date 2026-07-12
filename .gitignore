@@ -46,3 +46,12 @@ Thumbs.db
 # Backups
 backups/
 *.bak
+
+# build_kb.py local link manifest (per-machine run state)
+backend/scripts/.build_kb_state.json
+
+# answer-judge generated report (regenerate with: eval.py judge)
+backend/data/answer_eval_report.json
+
+# syllabus store local fallback cache (synced from Supabase at runtime)
+backend/data/syllabi_cache/

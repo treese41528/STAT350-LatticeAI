@@ -1,0 +1,18 @@
+.view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+}
+
+.banners {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0 1rem;
+}
+
+.banners:not(:empty) {
+  padding-bottom: 0.5rem;
+}

@@ -1,0 +1,53 @@
+.activeUp {
+  color: var(--success) !important;
+  background: rgba(30, 127, 79, 0.12) !important;
+}
+
+.activeDown {
+  color: var(--danger) !important;
+  background: var(--danger-bg) !important;
+}
+
+.upPopover {
+  z-index: 55;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-2);
+  padding: 0.75rem 0.9rem;
+  width: min(320px, calc(100vw - 2rem));
+}
+
+.upTitle {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.tagRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.tag {
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease;
+}
+
+.tag:hover {
+  border-color: var(--gold);
+}
+
+.tagOn {
+  background: var(--accent-tint-strong);
+  border-color: var(--gold-aged);
+  font-weight: 600;
+}

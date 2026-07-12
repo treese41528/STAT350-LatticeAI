@@ -1,0 +1,77 @@
+.shell {
+  display: grid;
+  grid-template-areas:
+    "topbar topbar"
+    "sidebar main";
+  grid-template-rows: var(--topbar-h) 1fr;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  height: 100dvh;
+  overflow: hidden;
+  transition: grid-template-columns 0.18s ease;
+}
+
+.sidebarClosed {
+  grid-template-columns: 0 1fr;
+}
+
+.sidebar {
+  grid-area: sidebar;
+  min-height: 0;
+  overflow: hidden;
+  width: var(--sidebar-w);
+}
+
+.sidebarHidden {
+  visibility: hidden;
+}
+
+.main {
+  grid-area: main;
+  min-height: 0;
+  min-width: 0;
+}
+
+.scrim {
+  position: fixed;
+  inset: var(--topbar-h) 0 0 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+  animation: scrimIn 0.15s ease;
+}
+
+@keyframes scrimIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 899px) {
+  .shell,
+  .sidebarClosed {
+    grid-template-areas:
+      "topbar"
+      "main";
+    grid-template-columns: 1fr;
+  }
+
+  .sidebarDrawer {
+    position: fixed;
+    z-index: 45;
+    top: var(--topbar-h);
+    bottom: 0;
+    left: 0;
+    width: min(var(--sidebar-w), 85vw);
+    box-shadow: var(--shadow-3);
+    transform: translateX(0);
+    transition: transform 0.2s ease, visibility 0.2s;
+    visibility: visible;
+  }
+
+  .sidebarDrawer.sidebarHidden {
+    transform: translateX(-102%);
+    visibility: hidden;
+  }
+}
