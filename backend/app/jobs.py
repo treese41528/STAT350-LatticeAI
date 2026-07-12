@@ -16,8 +16,7 @@ from sqlalchemy import delete, func, select, update
 
 from .config import load_settings
 from .db import models as m
-from .db.base import Base
-from .db.engine import make_engine, make_session_factory
+from .db.engine import ensure_schema, make_engine, make_session_factory
 
 
 def _day_bounds(day: datetime) -> tuple[datetime, datetime]:
@@ -28,7 +27,7 @@ def _day_bounds(day: datetime) -> tuple[datetime, datetime]:
 def cmd_rollup(args) -> int:
     settings = load_settings()
     engine = make_engine(settings)
-    Base.metadata.create_all(engine)
+    ensure_schema(engine)
     sf = make_session_factory(engine)
     day = (datetime.now(timezone.utc) - timedelta(days=1)) \
         if not args.date else \

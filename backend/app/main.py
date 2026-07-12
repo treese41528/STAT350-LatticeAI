@@ -22,8 +22,7 @@ from .byok import GatewayPool
 from .api.deps import AppDeps
 from .config import Settings, load_settings
 from .course_map.resolver import CourseMapResolver
-from .db.base import Base
-from .db.engine import make_engine, make_session_factory
+from .db.engine import ensure_schema, make_engine, make_session_factory
 from .gateway import Gateway
 from .identity import DeviceCookieIdentity
 from .overload import Overload
@@ -38,7 +37,7 @@ def build_deps(settings: Settings) -> AppDeps:
     backend = settings.backend_dir
     resolver = CourseMapResolver.from_file(backend / "data" / "course_map.json")
     engine = make_engine(settings)
-    Base.metadata.create_all(engine)
+    ensure_schema(engine)   # create_all + add any columns an older DB is missing
     session_factory = make_session_factory(engine)
     traces_dir = settings.resolve_path(settings.logging.dir) / ".." / "traces"
     traces_dir = traces_dir.resolve()

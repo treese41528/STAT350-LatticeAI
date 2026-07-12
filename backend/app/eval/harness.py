@@ -197,8 +197,8 @@ def cmd_run(args) -> int:
             print(line)
 
     engine = make_engine(settings)
-    from ..db.base import Base
-    Base.metadata.create_all(engine)
+    from ..db.engine import ensure_schema
+    ensure_schema(engine)
     session_factory = make_session_factory(engine)
     with session_factory() as session:
         session.add(m.EvalRun(
