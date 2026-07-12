@@ -74,11 +74,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
         from .syllabus import term_for_date
         derived = term_for_date(datetime.now(timezone.utc).date())
-        if settings.course.term and settings.course.term.lower() != derived.lower():
+        if settings.course.auto_term:
+            logger.info("course.auto_term is on — current term derived from date: %r",
+                        derived)
+        elif settings.course.term and settings.course.term.lower() != derived.lower():
             logger.warning(
                 "config course.term=%r but today's date suggests %r — confirm "
                 "the term is correct so syllabus answers ground in the right "
-                "semester.", settings.course.term, derived)
+                "semester (or set course.auto_term: true).", settings.course.term,
+                derived)
         if settings.api_key:
             try:
                 import anyio

@@ -25,13 +25,30 @@ How the pieces fit:
   NOT baked into the code. Config wins; a modality omitted there falls back to
   `course_map.json`.
 
+**What actually changes each semester** (and how little you must touch):
+
+| Item | Changes? | Maintenance |
+|---|---|---|
+| Schedule links (`StudentSchedule-*.html`) | No — same URL, updated in place | none |
+| `course.term` | ~4×/year | **none if `auto_term: true`** (derived from date) |
+| Syllabus PDF links (year in filename) | when you republish | update opportunistically; a stale one is *dropped* under auto_term and never breaks answers (the KB grounds the content) |
+| Syllabus in the knowledge collection | yes — you upload it | unavoidable (it's the authoring you do anyway) |
+
+The only truly required step is **uploading the new term's syllabus to the
+knowledge collection** — that's where quoting is grounded. To be fully
+hands-off on the term, set `course.auto_term: true`; then the current term is
+derived from the date every request (no restart, no edit), and any configured
+PDF link that doesn't match the new term is suppressed rather than shown wrong.
+
 **To add a new term (e.g. FALL 2026):**
 1. Upload the new syllabi to the knowledge collection, named with the season,
-   year, and modality (e.g. `Syllabus_FALL_2026_Flipped.md`).
-2. In `backend/config.yaml`: set `course.term: "FALL 2026"` and update the
-   `course.syllabi.<modality>.syllabus_pdf` / `schedule_url` links to the new
-   term's files.
-3. `python backend/scripts/probe_gateway.py` — probe #10 reports whether the
+   year, and modality (e.g. `Syllabus_FALL_2026_Flipped.md`). **(required)**
+2. Term: with `auto_term: true`, nothing to do. Otherwise set
+   `course.term: "FALL 2026"`.
+3. Syllabus PDF links: update `course.syllabi.<modality>.syllabus_pdf` when you
+   publish the new PDFs (schedules rarely change). Optional — answers stay
+   correct without it.
+4. `python backend/scripts/probe_gateway.py` — probe #10 reports whether the
    **current term's** syllabus is retrievable for each modality (confirms the KB
    upload + filename are recognized).
 

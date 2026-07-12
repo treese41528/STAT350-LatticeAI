@@ -78,20 +78,38 @@ def select_syllabus_passages(passages, term: str, modality: str | None) -> list:
     return [p for p in passages if syllabus_matches(_source_name(p), term, modality)]
 
 
+def resolve_current_term(settings) -> str:
+    """The authoritative current term. Derived from today's date when
+    `course.auto_term` is on (hands-off across semesters); otherwise the pinned
+    `course.term`."""
+    if getattr(settings.course, "auto_term", False):
+        from datetime import datetime, timezone
+        return term_for_date(datetime.now(timezone.utc).date())
+    return settings.course.term
+
+
 def resolve_syllabus_links(settings, resolver, modality: str | None):
     """Current-term (label, syllabus_pdf, schedule_url) for a modality.
 
     Config `course.syllabi` is authoritative (updated each term); falls back to
-    the baked course_map.json. Returns None if neither has the modality.
+    the baked course_map.json. Under auto_term, a configured PDF whose URL
+    doesn't match the current term is dropped (schedule + KB grounding remain),
+    so a rolled-over term never links last term's PDF. Returns None if neither
+    config nor course_map has the modality.
     """
     m = (modality or "").strip().lower()
     if not m:
         return None
+    term = resolve_current_term(settings)
     cfg = settings.course.syllabi.get(m)
     # use the config entry if it has EITHER link (a term whose PDF isn't
     # published yet can still offer the schedule)
     if cfg is not None and (cfg.syllabus_pdf or cfg.schedule_url):
-        return cfg.label or m.title(), cfg.syllabus_pdf, cfg.schedule_url
+        pdf = cfg.syllabus_pdf
+        if (pdf and getattr(settings.course, "auto_term", False)
+                and not syllabus_matches(pdf, term, m)):
+            pdf = ""   # stale link under auto_term — don't point at the wrong term
+        return cfg.label or m.title(), pdf, cfg.schedule_url
     syl = resolver.syllabus_for(m)
     if syl is not None:
         return syl.label, syl.syllabus_pdf, syl.schedule_url

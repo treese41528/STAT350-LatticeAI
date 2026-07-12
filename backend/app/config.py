@@ -25,6 +25,10 @@ class SyllabusLinkCfg(BaseModel):
 class CourseCfg(BaseModel):
     name: str = "STAT 350"
     term: str = ""
+    # When true, the current term is derived from today's date (no per-semester
+    # edit). `term` above is then only a fallback/label. Leave false to pin the
+    # term explicitly (a startup warning fires if it looks stale).
+    auto_term: bool = False
     welcome: str = ""
     starter_questions: list[str] = Field(default_factory=list)
     max_message_chars: int = 4000

@@ -21,7 +21,8 @@ from .prompt_builder import build_messages
 from .retrieve import RetrievalResult, retrieve
 from .rewrite import build_retrieval_query
 from .router import Route, route
-from ..syllabus import resolve_syllabus_links, select_syllabus_passages
+from ..syllabus import (resolve_current_term, resolve_syllabus_links,
+                        select_syllabus_passages)
 
 SMALLTALK_REPLY = (
     "Hi! I'm the STAT 350 tutor. I answer from the course webbook and lecture "
@@ -371,7 +372,7 @@ async def _grounded_answer(ctx: TurnContext, r: Route, seq: int,
     cfg = deps.settings.retrieval
 
     syllabus_mode = r.intent == "syllabus_content"
-    term = deps.settings.course.term
+    term = resolve_current_term(deps.settings)
     syllabus_cards = _syllabus_cards(deps, ctx.modality) if syllabus_mode else []
 
     if syllabus_mode:

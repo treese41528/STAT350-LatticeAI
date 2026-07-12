@@ -22,12 +22,13 @@ class ProfilePatch(BaseModel):
 
 @router.get("/api/config")
 async def config(request: Request):
+    from ..syllabus import resolve_current_term
     deps = get_deps(request)
     state = deps.overload.state(deps.llm_queue.depth)
     course = deps.settings.course
     return {
         "courseName": course.name,
-        "term": course.term,
+        "term": resolve_current_term(deps.settings),
         "welcome": course.welcome.strip(),
         "starterQuestions": course.starter_questions,
         "modalities": ["flipped", "traditional", "indy", "online", "winter",
@@ -49,6 +50,7 @@ async def health(request: Request):
     elif deps.overload.state(deps.llm_queue.depth).level > 0:
         status = "degraded"
     from .. import __version__
+    from ..syllabus import resolve_current_term
     try:
         import genai_studio
         sdk_version = genai_studio.__version__
@@ -58,7 +60,8 @@ async def health(request: Request):
         "status": status,
         "version": __version__,
         "sdkVersion": sdk_version,
-        "term": deps.settings.course.term,
+        "term": resolve_current_term(deps.settings),
+        "autoTerm": deps.settings.course.auto_term,
         "queueDepth": deps.llm_queue.depth,
         "telemetryQueue": deps.recorder.depth,
         "telemetryDropped": deps.recorder.dropped,

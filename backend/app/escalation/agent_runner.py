@@ -25,6 +25,7 @@ from genai_studio.agents.tools.http import make_http_get
 from ..api.deps import AppDeps
 from ..db import models as m
 from ..grounding.citations import lint_links
+from ..syllabus import resolve_current_term
 from .tools import make_course_tools
 
 TOOL_LABELS = {
@@ -56,8 +57,10 @@ def build_agent(deps: AppDeps, trace_path: str) -> Agent:
     return Agent(
         client=client,
         tools=[kb_search,
-               *make_course_tools(deps.resolver, term=deps.settings.course.term,
-                                  syllabi=deps.settings.course.syllabi),
+               *make_course_tools(
+                   deps.resolver,
+                   term=resolve_current_term(deps.settings),
+                   syllabi=deps.settings.course.syllabi),
                calculator,
                fetch_course_page],
         model=model,

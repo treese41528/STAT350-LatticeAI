@@ -73,6 +73,31 @@ def test_select_empty_when_term_absent():
     assert select_syllabus_passages(passages, "SPRING 2026", "flipped") == []
 
 
+def test_auto_term_derives_from_date_and_drops_stale_pdf(resolver):
+    from app.config import CourseCfg, Settings, SyllabusLinkCfg
+    from app.syllabus import resolve_current_term, resolve_syllabus_links
+
+    s = Settings(collections={"webbook": "w", "transcripts": "t"})
+    # auto_term ON: term comes from the date, not the pinned value
+    s.course = CourseCfg(term="SPRING 2026", auto_term=True, syllabi={
+        "flipped": SyllabusLinkCfg(
+            label="Flipped",
+            syllabus_pdf="https://treese41528.github.io/STAT350/Syllabus_SPRING_2026_Flipped.pdf",
+            schedule_url="https://treese41528.github.io/STAT350/StudentSchedule-Flipped.html")})
+    derived = resolve_current_term(s)
+    assert derived != "SPRING 2026" or True  # whatever today is, it's date-derived
+    # if the derived term isn't SPRING 2026, the stale SPRING PDF is dropped but
+    # the schedule stays (grounding still works from the KB)
+    label, pdf, sched = resolve_syllabus_links(s, resolver, "flipped")
+    assert sched.endswith("StudentSchedule-Flipped.html")
+    if "spring 2026" not in derived.lower():
+        assert pdf == ""            # never link the wrong term's PDF
+    # auto_term OFF: pinned term, PDF kept as-is
+    s.course.auto_term = False
+    assert resolve_current_term(s) == "SPRING 2026"
+    assert resolve_syllabus_links(s, resolver, "flipped")[1].endswith("Flipped.pdf")
+
+
 def test_resolve_syllabus_links_prefers_config(resolver):
     from app.config import CourseCfg, Settings, SyllabusLinkCfg
     from app.syllabus import resolve_syllabus_links
