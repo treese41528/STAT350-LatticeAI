@@ -50,22 +50,26 @@ python3 -m venv ~/venvs/stat350-tutor
 cd frontend && npm ci && cd ..
 # (Production/CI: `pip install -e backend` uses the pinned git SDK from pyproject.)
 
-# 2. secrets (real answers need a gateway key; without it, degraded mode)
-export GENAI_STUDIO_API_KEY=...          # GenAI Studio → Settings → Account → API Keys
+# 2. secrets — put them in a gitignored .env (see DEPLOY.md); real answers need
+#    a gateway key, without it the app runs in degraded mode
+export GENAI_STUDIO_API_KEY=sk-...        # GenAI Studio → Settings → Account → API Keys
 
 # 3. run it
-./run.sh dev      # hot reload: uvicorn :8100 + Vite :5173 (browse :5173)
-./run.sh serve    # build the SPA + one uvicorn worker at :8100  (default)
+./run.sh dev            # hot reload: uvicorn :8100 + Vite :5173 (browse :5173)
+./run.sh serve          # build the SPA + one uvicorn worker at :8100  (default)
+./run.sh serve 9000     # ...on a port you choose  (also: --port 9000, or PORT=9000)
 ```
 
-Before trusting a fresh deployment, run the gateway probes and evals — see
-[`TESTING.md`](./TESTING.md).
+To ship it to students, see **[`DEPLOY.md`](./DEPLOY.md)** (Cloudflare Tunnel /
+reverse proxy). Before trusting a fresh deployment, run the gateway probes and
+evals — see [`TESTING.md`](./TESTING.md).
 
 ## Layout
 
 ```
 STAT350-LatticeAI/
-├── run.sh                     # start backend + frontend (dev | serve)
+├── run.sh                     # start backend + frontend (dev | serve [PORT])
+├── DEPLOY.md                  # production deploy (Cloudflare Tunnel / reverse proxy)
 ├── TESTING.md                 # the full test pyramid + semester-rollover guide
 ├── backend/                   # FastAPI app
 │   ├── config.yaml            # all tunables (term, syllabus links, thresholds, limits)
@@ -90,7 +94,8 @@ STAT350-LatticeAI/
 
 `backend/config.yaml` holds every non-secret tunable; secrets come from the
 environment (`GENAI_STUDIO_API_KEY`, `STAT350_SECRET_KEY`, `ADMIN_TOKEN`,
-`EXPORT_SALT`). Highlights:
+`EXPORT_SALT`) — keep them in a gitignored `.env` (see [`DEPLOY.md`](./DEPLOY.md)),
+never in a tracked file. Highlights:
 
 - **`course.term`** — the current semester. Grounds syllabus answers; a startup
   warning fires if it looks stale. **Update it each semester.**
@@ -118,12 +123,17 @@ reports the running app + SDK versions.
 
 ## Deployment
 
+See **[`DEPLOY.md`](./DEPLOY.md)** for the step-by-step guide (Cloudflare Tunnel,
+`.env` secrets, the streaming check, keeping it running). The essentials:
+
 Run **exactly one uvicorn worker** — the SDK's rate limiter is in-process state
 and the gateway silently drops bursts, so multiple workers would each pace
-independently and lose requests. `backend/ops/` has the systemd unit, nightly
-rollup/purge + backup timers, and logrotate config. Terminate TLS and serve at a
-reverse proxy; **disable response buffering for `/api/chat`** so SSE actually
-streams (verify with `curl -N`).
+independently and lose requests (`run.sh serve` already enforces `--workers 1`).
+`backend/ops/` has the systemd unit, nightly rollup/purge + backup timers, and
+logrotate config. Terminate TLS and serve behind a tunnel or reverse proxy;
+**disable response buffering for `/api/chat`** so SSE actually streams (verify
+with `curl -N`). The database **self-heals additive schema on startup** — a new
+nullable telemetry column is added automatically, no manual migration.
 
 ## Data collection & privacy
 
@@ -144,5 +154,7 @@ Purdue-CAS seam for later. Exports are pseudonymized and content-free by default
 
 ## Testing
 
-See [`TESTING.md`](./TESTING.md) — unit (backend 67, frontend 61), a real-browser
-frontend smoke, gateway probes, retrieval evals, and a full-backend live smoke.
+See [`TESTING.md`](./TESTING.md) — unit (backend 87, frontend 65), a real-browser
+frontend smoke, gateway probes, retrieval evals **plus an LLM-judge answer eval**
+(`scripts/eval.py judge` grades generated answers on a six-dimension rubric), and
+a full-backend live smoke.
