@@ -22,7 +22,11 @@ const CONFIG = {
     "How do I make a QQ plot in R and read it?",
   ],
   modalities: ["flipped", "traditional", "indy", "online", "winter", "summer"],
-  features: { digDeeper: true, byok: true },
+  // byok is hidden for now to match the disabled prod flag (backend config.yaml
+  // byok.enabled: false — RCAC has no public KB sharing yet). Flip to true to
+  // develop/preview the "use your own key" UI; the mock still serves
+  // /api/key/validate and emits suggestOwnKey so it works when re-enabled.
+  features: { digDeeper: true, byok: false },
   maxMessageChars: 4000,
 };
 

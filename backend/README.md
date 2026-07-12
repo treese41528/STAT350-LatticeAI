@@ -64,6 +64,16 @@ python backend/scripts/eval.py run       # golden set → thresholds (any python
 
 ## Bring-your-own-key (BYOK)
 
+> **Disabled for now** (`byok.enabled: false`). RCAC's GenAI Studio has no
+> public/all-users sharing for a knowledge collection — only per-user grants,
+> which don't scale to a class — so a student key can't read the course KB in
+> `retrieval: own` mode. The whole feature (Settings panel, queue nudge,
+> `/api/key/validate`) is hidden behind the config flag until RCAC adds sharing
+> (then `retrieval: own`) or we accept partial relief (`retrieval: shared`,
+> which works with no KB sharing). The `kb_access_probe.py` script settles which
+> — run it with a student/TA key. Everything below is wired and tested; flip the
+> flag to switch it back on.
+
 The class API key allows only ~20 requests/min shared across all students, so
 at peak the queue backs up. Students can optionally paste their **own** free
 GenAI Studio key in Settings; the tutor then answers on their key — their own
