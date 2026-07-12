@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from app.config import RetrievalCfg, ThresholdsCfg
 from app.grounding.citations import (catalog_card_for, extract_markers,
-                                     lint_links, validate_markers)
+                                     lint_links, normalize_markers,
+                                     validate_markers)
 from app.grounding.retrieve import retrieve
 from app.grounding.rewrite import build_retrieval_query
 from app.grounding.router import route
@@ -184,6 +185,18 @@ def test_extract_and_validate_markers(resolver):
     assert extract_markers(text) == [1, 7]
     ok, bad = validate_markers(text, rr.passages)
     assert ok == [1] and bad == [7]
+
+
+def test_normalize_markers_folds_openai_citations():
+    # gpt-oss sometimes emits OpenAI file-citation style; fold it to plain [n]
+    assert normalize_markers("the mean is normal [1†L7-L12] for large n") == \
+        "the mean is normal [1] for large n"
+    assert normalize_markers("see [2†source] and [3†L1-L4]") == "see [2] and [3]"
+    assert normalize_markers("cite 【1†syllabus.md†L5】 here") == "cite [1] here"
+    # plain markers and non-citation brackets are untouched
+    assert normalize_markers("already [1] and [2][3] fine") == "already [1] and [2][3] fine"
+    # after normalizing, the markers actually validate as [n]
+    assert extract_markers(normalize_markers("x [4†L1-L9] y")) == [4]
 
 
 def test_lint_links_removes_unknown_urls(resolver):

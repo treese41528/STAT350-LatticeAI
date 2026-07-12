@@ -185,12 +185,14 @@ async def test_syllabus_content_grounds_in_correct_term_and_modality(deps):
     events = await _collect(run_turn(ctx, seq=0))
     names = [e for e, _ in events]
     assert "citations" in names and names[-1] == "done"
-    # exactly one citation survived the term+modality filter
+    # exactly one citation survived the term+modality filter (this — not the
+    # query wording — is what enforces the right term+section)
     cits = dict(events)["citations"]["citations"]
     assert len(cits) == 1
-    # the query was biased with BOTH term and modality
+    # the query is biased toward syllabus CONTENT, not the term/modality name (a
+    # session modality like "summer" would otherwise collide with summer.rst)
     call_q = deps.gateway.retrieval_calls[0][0].lower()
-    assert "spring 2026" in call_q and "flipped" in call_q
+    assert "syllabus" in call_q
     # authoritative SPRING 2026 Flipped syllabus + schedule cards attached
     resources = dict(events)["resources"]["resources"]
     assert {"syllabus", "schedule"} <= {r["kind"] for r in resources}

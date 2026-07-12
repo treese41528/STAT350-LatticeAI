@@ -16,7 +16,7 @@ from ..concurrency import aiter_sync, run_sync
 from ..db import models as m
 from ..queueing import QueueFullError
 from .citations import (catalog_card_for, citations_payload, lint_links,
-                        resources_payload, validate_markers)
+                        normalize_markers, resources_payload, validate_markers)
 from .prompt_builder import build_messages
 from .retrieve import RetrievalResult, retrieve
 from .rewrite import build_retrieval_query
@@ -401,13 +401,24 @@ async def _grounded_answer(ctx: TurnContext, r: Route, seq: int,
     rewritten = build_retrieval_query(ctx.history, ctx.message)
 
     if syllabus_mode and ctx.modality:
-        # Ground in the correct (term, modality): bias the query, retrieve
-        # broadly, then keep ONLY passages whose filename matches this term +
-        # section. If none match, tier falls to no_evidence and we link the
-        # authoritative PDF — never quote the wrong term.
-        rewritten = f"STAT 350 {term} {ctx.modality} section syllabus — {rewritten}"
+        # Ground in the correct (term, modality): retrieve broadly, then keep
+        # ONLY passages whose filename matches this term + section. If none
+        # match, tier falls to no_evidence and we link the authoritative PDF —
+        # never quote the wrong term.
+        #
+        # Bias the query toward syllabus CONTENT, not the term/modality name:
+        # a session modality ("summer"/"winter") otherwise collides with the
+        # webbook's summer.rst / winter.rst pages and buries the real syllabus
+        # below k. `_restrict_to_syllabus` does the (term, modality) picking, so
+        # the query only needs to surface syllabus files at all.
+        rewritten = f"{rewritten} — STAT 350 syllabus grading policy and course logistics"
+        # Retrieve DEEP: a syllabus is one long file and its policy chunks —
+        # especially the markdown grading TABLE — embed weakly and rank low
+        # (~30th). The (term, modality) filter then keeps only that file's chunks
+        # (a handful), so a deep pull is cheap and gets the policy/weights chunk
+        # into context instead of just an intro paragraph.
         syl_cfg = cfg.model_copy(update={
-            "k_webbook": max(cfg.k_webbook, 14), "max_passages": 14,
+            "k_webbook": max(cfg.k_webbook, 40), "max_passages": 40,
             "min_transcript_slots": 0})
         rr: RetrievalResult = await run_sync(
             retrieve, ctx.retrieval_gateway, deps.resolver, rewritten, syl_cfg,
@@ -495,7 +506,7 @@ async def _grounded_answer(ctx: TurnContext, r: Route, seq: int,
                                latency_ms=int((time.monotonic() - t_start) * 1000),
                                ttft_ms=ttft_ms)
 
-    raw_text = "".join(chunks)
+    raw_text = normalize_markers("".join(chunks))   # fold stray [n†…] citations
     final_text, removed = lint_links(raw_text, deps.resolver)
     flags: dict = {"linted": bool(removed)}
     if rr.tier == "caveat":

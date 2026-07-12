@@ -21,6 +21,20 @@ _CATALOG_CODE_RE = re.compile(r"\bSTAT\s*(41600|41700|51200|51400|42000|51300)\b
 
 REMOVED_PLACEHOLDER = "[link removed — see Sources]"
 
+# gpt-oss:120b occasionally slips into OpenAI file-citation style — [1†L7-L12]
+# or 【1†source】 — despite the prompt's "[1]" instruction. Rewrite those to our
+# plain [n] form so they resolve to citation chips instead of rendering as
+# broken literal text.
+_DAGGER_MARKER_RE = re.compile(r"\[(\d{1,2})†[^\]]*\]")
+_CJK_MARKER_RE = re.compile(r"【\s*(\d{1,2})†?[^】]*】")
+
+
+def normalize_markers(text: str) -> str:
+    """Fold stray OpenAI-style file citations into our plain `[n]` markers."""
+    text = _DAGGER_MARKER_RE.sub(r"[\1]", text)
+    text = _CJK_MARKER_RE.sub(r"[\1]", text)
+    return text
+
 
 def extract_markers(text: str) -> list[int]:
     seen: set[int] = set()

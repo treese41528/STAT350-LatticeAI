@@ -94,10 +94,11 @@ def cmd_run(args) -> int:
     miss_lines: list[str] = []
 
     for i, q in enumerate(questions, 1):
-        # mirror the pipeline: syllabus questions retrieve with a modality bias
+        # mirror the pipeline: syllabus questions bias toward syllabus CONTENT
+        # (not the modality name, which collides with webbook summer/winter pages)
         query = q["question"]
         if q.get("modality") and q.get("type") == "syllabus":
-            query = f"STAT 350 {q['modality']} section syllabus — {query}"
+            query = f"{query} — STAT 350 syllabus grading policy and course logistics"
         rr = retrieve(gateway, resolver, query, cfg)
         top = rr.top_distance
         if q.get("out_of_scope"):
