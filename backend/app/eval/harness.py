@@ -1,7 +1,8 @@
-"""Retrieval-quality eval harness.
+"""Eval harness — retrieval quality AND answer quality.
 
     python backend/scripts/eval.py run     [--golden data/golden_questions.yaml] [--k 8]
     python backend/scripts/eval.py replay  [--since 2026-08-01] [--sample 300]
+    python backend/scripts/eval.py judge   [--golden data/golden_syllabus.yaml] [--limit 20]
 
 `run` scores the professor-authored golden set (hit@k, MRR, per-chapter,
 distance distributions) and STORES an eval_runs row — retrieval quality over
@@ -12,8 +13,15 @@ suggested strong/weak thresholds from the observed distance distributions.
 the current index and reports the score-distribution shift vs. what was
 logged: the regression gate before flipping any KB/chunking change.
 
-Both are paced through the shared RateLimiter (sequential; ~3s/query at
-rpm=18). Requires GENAI_STUDIO_API_KEY.
+`judge` GENERATES the grounded answer for each question (the exact text a
+student gets) and has an independent LLM judge score it on six rubric
+dimensions (correctness, grounded, citations, scope, pedagogy, addressed) —
+this measures whether the tutor is any GOOD, not just whether retrieval hit.
+See `app/eval/judge.py`.
+
+All arms are paced through the shared RateLimiter (sequential; `run`/`replay`
+~3s/query, `judge` ~13s/question — it adds a generation + a judge call).
+Requires GENAI_STUDIO_API_KEY.
 """
 
 from __future__ import annotations
@@ -260,6 +268,108 @@ def cmd_replay(args) -> int:
     return 0
 
 
+def _print_judge_report(s: dict) -> None:
+    from .judge import DIMENSIONS
+    print("\n===== ANSWER-JUDGE RESULTS =====")
+    if not s.get("n"):
+        print(f"no answers judged ({s.get('errors', 0)} errors).")
+        return
+    print(f"judged: {s['n']}   errors: {s['errors']}   "
+          f"mean score: {s['mean_score']:.3f} (0-1)")
+    v = s["verdicts"]
+    print(f"verdicts: pass {v['pass']} / borderline {v['borderline']} / fail {v['fail']}"
+          f"   refusals: {s['refusals']}")
+    dm = s["dimension_means"]
+    print("by dimension (mean of 0-2):")
+    print("  " + "   ".join(f"{d}={dm[d]:.2f}" for d in DIMENSIONS))
+    weakest = min(dm, key=dm.get)
+    print(f"  weakest: {weakest} ({dm[weakest]:.2f})")
+    pc = s["per_chapter_mean"]
+    if len(pc) > 1:
+        print("by chapter (mean score): " + "  ".join(
+            f"{c}={pc[c]:.2f}" + ("*" if pc[c] < 0.6 else "")
+            for c in sorted(pc, key=lambda c: (c == "?", c.zfill(2)))))
+    print(f"\n----- {len(s['worst'])} WEAKEST ANSWERS -----")
+    for w in s["worst"]:
+        mod = f" [{w['modality']}]" if w.get("modality") else ""
+        print(f"  [{w['verdict']:10} {w['score']:.2f}] {w['question']}{mod}")
+        print(f"       issue: {w['issue']}")
+
+
+def cmd_judge(args) -> int:
+    import json
+
+    from .judge import (DIMENSIONS, JudgedItem, build_judge, generate_answer,
+                        judge_answer, overall_score, summarize)
+
+    settings = load_settings()
+    if not settings.api_key:
+        print("GENAI_STUDIO_API_KEY not set — cannot run the live answer-judge.")
+        return 2
+    resolver = CourseMapResolver.from_file(
+        settings.backend_dir / "data" / "course_map.json")
+    gateway = Gateway(settings)
+    gateway.resolve_collections()
+    tutor_core = (settings.backend_dir / "prompts" / "tutor_core.md").read_text(
+        encoding="utf-8")
+
+    golden = yaml.safe_load(settings.resolve_path(args.golden).read_text(encoding="utf-8"))
+    questions = golden["questions"]
+    if args.limit:
+        questions = questions[: args.limit]
+    judge_model = args.judge_model or settings.gateway.model
+    print(f"Answer-judge: {len(questions)} questions (version "
+          f"{golden.get('version', '?')})   judge model = {judge_model}")
+
+    judge = build_judge(gateway, settings, model=args.judge_model)
+
+    items: list = []
+    detail: list = []
+    errors = 0
+    for i, q in enumerate(questions, 1):
+        try:
+            ar = generate_answer(gateway, resolver, settings, tutor_core, q)
+        except Exception as exc:                                   # noqa: BLE001
+            errors += 1
+            print(f"  [{i:3}/{len(questions)}] gen-error {type(exc).__name__}: {exc}")
+            continue
+        v = judge_answer(judge, q, ar)
+        if v is None:
+            errors += 1
+            print(f"  [{i:3}/{len(questions)}] judge-error (no verdict) — "
+                  f"{q['question'][:50]}")
+            continue
+        score = overall_score(v)
+        items.append(JudgedItem(
+            question=q["question"], chapter=q.get("chapter"), kind=ar.kind,
+            modality=ar.modality, refused=ar.refused, tier=ar.tier,
+            verdict=v, score=score, answer=ar.answer))
+        dims = " ".join(f"{d[:4]}={getattr(v, d)}" for d in DIMENSIONS)
+        flag = "" if v.verdict == "pass" else f"  <-- {v.verdict}: {v.main_issue}"
+        print(f"  [{i:3}/{len(questions)}] {v.verdict:10} {score:.2f}  {dims}{flag}")
+        detail.append({
+            "question": q["question"], "type": q.get("type"),
+            "chapter": q.get("chapter"), "modality": ar.modality, "kind": ar.kind,
+            "refused": ar.refused, "tier": ar.tier, "score": round(score, 3),
+            "verdict": v.verdict, "main_issue": v.main_issue,
+            "dimensions": {d: getattr(v, d) for d in DIMENSIONS},
+            "expected_answer": q.get("expected_answer"),
+            "hallucinated_markers": ar.hallucinated_markers, "answer": ar.answer})
+
+    summary = summarize(items, errors=errors)
+    _print_judge_report(summary)
+
+    if args.out:
+        out_path = settings.resolve_path(args.out)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(json.dumps(
+            {"version": golden.get("version"), "judge_model": judge_model,
+             "summary": summary, "items": detail}, indent=2), encoding="utf-8")
+        print(f"\nWrote {len(detail)} judged answers → {out_path}")
+
+    return 0 if summary.get("mean_score", 0.0) >= args.gate else 1
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(prog="eval.py")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -274,6 +384,20 @@ def main(argv=None) -> int:
     p_rep.add_argument("--since", default=None)
     p_rep.add_argument("--sample", type=int, default=300)
     p_rep.set_defaults(fn=cmd_replay)
+    p_judge = sub.add_parser("judge",
+                             help="LLM-judge the GENERATED answers (quality, not retrieval)")
+    p_judge.add_argument("--golden", default="data/golden_syllabus.yaml",
+                         help="question set; golden_syllabus.yaml has reference answers")
+    p_judge.add_argument("--limit", type=int, default=0,
+                         help="judge only the first N questions (0 = all)")
+    p_judge.add_argument("--judge-model", default=None,
+                         help="judge model (default: the tutor model; a different "
+                              "model reduces self-preference bias)")
+    p_judge.add_argument("--out", default="data/answer_eval_report.json",
+                         help="write per-answer detail JSON here ('' to skip)")
+    p_judge.add_argument("--gate", type=float, default=0.0,
+                         help="exit nonzero if the mean score falls below this")
+    p_judge.set_defaults(fn=cmd_judge)
     args = parser.parse_args(argv)
     return args.fn(args)
 

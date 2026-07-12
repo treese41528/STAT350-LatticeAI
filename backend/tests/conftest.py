@@ -24,6 +24,13 @@ def settings(tmp_path):
     s.db.url = f"sqlite:///{tmp_path}/test.db"
     s.secret_key = "test-secret"
     s.admin_token = "test-admin-token"
+    # Pin the deployment fields the professor edits each semester so tests are
+    # deterministic regardless of the live config.yaml: a fixed term (the
+    # syllabus/pipeline tests assume SPRING 2026) and BYOK enabled (the BYOK
+    # tests exercise the feature even when it's disabled in production).
+    s.course.auto_term = False
+    s.course.term = "SPRING 2026"
+    s.byok.enabled = True
     return s
 
 
