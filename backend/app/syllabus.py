@@ -76,3 +76,21 @@ def _source_name(passage) -> str:
 def select_syllabus_passages(passages, term: str, modality: str | None) -> list:
     """Keep only passages from the current-term, this-section syllabus."""
     return [p for p in passages if syllabus_matches(_source_name(p), term, modality)]
+
+
+def resolve_syllabus_links(settings, resolver, modality: str | None):
+    """Current-term (label, syllabus_pdf, schedule_url) for a modality.
+
+    Config `course.syllabi` is authoritative (updated each term); falls back to
+    the baked course_map.json. Returns None if neither has the modality.
+    """
+    m = (modality or "").strip().lower()
+    if not m:
+        return None
+    cfg = settings.course.syllabi.get(m)
+    if cfg and cfg.syllabus_pdf:
+        return cfg.label or m.title(), cfg.syllabus_pdf, cfg.schedule_url
+    syl = resolver.syllabus_for(m)
+    if syl is not None:
+        return syl.label, syl.syllabus_pdf, syl.schedule_url
+    return None

@@ -16,12 +16,22 @@ from pydantic import BaseModel, Field
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 
 
+class SyllabusLinkCfg(BaseModel):
+    label: str = ""
+    syllabus_pdf: str = ""
+    schedule_url: str = ""
+
+
 class CourseCfg(BaseModel):
     name: str = "STAT 350"
     term: str = ""
     welcome: str = ""
     starter_questions: list[str] = Field(default_factory=list)
     max_message_chars: int = 4000
+    # Per-term syllabus + schedule links, keyed by modality. Update these + the
+    # `term` field each semester — nothing else changes. A modality absent here
+    # falls back to course_map.json.
+    syllabi: dict[str, SyllabusLinkCfg] = Field(default_factory=dict)
 
 
 class GatewayCfg(BaseModel):

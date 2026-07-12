@@ -20,12 +20,16 @@ def _src(title: str, url: str | None, snippet: str = "") -> Source:
     return Source(id=url or title, title=title, url=url, snippet=snippet[:200])
 
 
-def make_course_tools(resolver: CourseMapResolver, term: str = "") -> list:
+def make_course_tools(resolver: CourseMapResolver, term: str = "",
+                      syllabi: dict | None = None) -> list:
     """Build the course-structure tool set bound to the resolver.
 
     `term` is the authoritative current term (config `course.term`); it grounds
     syllabus/date answers so the agent never quotes a different semester.
+    `syllabi` is config `course.syllabi` (per-term links), preferred over the
+    baked course_map for syllabus/schedule links.
     """
+    syllabi = syllabi or {}
 
     @tool(name="get_current_term",
           description="Get the current academic term (semester) and today's "
@@ -97,14 +101,22 @@ def make_course_tools(resolver: CourseMapResolver, term: str = "") -> list:
           description="Get syllabus PDF + schedule page for a section modality: "
                       "'flipped', 'traditional', 'indy', 'online', or 'winter'.")
     def get_syllabus_and_schedule(modality: str) -> ToolResult:
-        syl = resolver.syllabus_for(modality)
-        if syl is None:
-            return ToolResult(content="Modalities: flipped, traditional, indy, "
-                                      "online, winter.")
+        m = (modality or "").strip().lower()
+        cfg = syllabi.get(m)
+        if cfg is not None and getattr(cfg, "syllabus_pdf", ""):
+            label, pdf, sched = (cfg.label or m.title(), cfg.syllabus_pdf,
+                                 cfg.schedule_url)
+        else:
+            syl = resolver.syllabus_for(m)
+            if syl is None:
+                return ToolResult(content="Modalities: flipped, traditional, "
+                                          "indy, online, winter.")
+            label, pdf, sched = syl.label, syl.syllabus_pdf, syl.schedule_url
+        suffix = f" for {term}" if term else ""
         return ToolResult(
-            content=f"{syl.label}: syllabus and schedule linked.",
-            sources=[_src(f"Syllabus — {syl.label}", syl.syllabus_pdf),
-                     _src(f"Schedule — {syl.label}", syl.schedule_url)])
+            content=f"{label}{suffix}: syllabus and schedule linked.",
+            sources=[_src(f"Syllabus — {label}", pdf),
+                     _src(f"Schedule — {label}", sched)])
 
     @tool(name="get_exam_info",
           description="Get exam coverage: 1, 2, or 'final'.")

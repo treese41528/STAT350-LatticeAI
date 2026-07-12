@@ -1,4 +1,45 @@
-# Testing the STAT 350 Tutor — full build
+# Running & testing the STAT 350 Tutor
+
+## Start it (dev or prod-like)
+
+```bash
+./run.sh dev      # hot reload: uvicorn :8100 + Vite :5173 (proxies /api). Browse :5173.
+./run.sh serve    # build SPA + one uvicorn worker serving app+API at :8100. (default)
+# GENAI_STUDIO_API_KEY for real answers; without it, degraded (deterministic) mode.
+```
+
+## Rolling over to a new semester (syllabus grounding)
+
+Syllabus answers are grounded in **`config.course.term`** + the student's section.
+How the pieces fit:
+
+- **Which syllabus to QUOTE** — `app/syllabus.py` filters retrieved passages by
+  *filename*: it keeps a passage only if its source filename contains the term's
+  season + year AND a token for the student's modality (`flipped`, `in-person`,
+  `online`, `winter`, `summer`). This is **substring/token matching, not fuzzy
+  edit-distance**, so it's robust to naming variants (`Syllabus_SPRING_2026_Flipped.md`,
+  `SyllabusSPRING_2026_In-Person.md`, `STAT_350_SUMMER_2026_Syllabus.md` all work).
+  If no current-term/section passage is found, the tutor **links the official PDF
+  instead of quoting a wrong term** — it never guesses.
+- **Which PDF/schedule to LINK** — from `config.course.syllabi` (per modality),
+  NOT baked into the code. Config wins; a modality omitted there falls back to
+  `course_map.json`.
+
+**To add a new term (e.g. FALL 2026):**
+1. Upload the new syllabi to the knowledge collection, named with the season,
+   year, and modality (e.g. `Syllabus_FALL_2026_Flipped.md`).
+2. In `backend/config.yaml`: set `course.term: "FALL 2026"` and update the
+   `course.syllabi.<modality>.syllabus_pdf` / `schedule_url` links to the new
+   term's files.
+3. `python backend/scripts/probe_gateway.py` — probe #10 reports whether the
+   **current term's** syllabus is retrievable for each modality (confirms the KB
+   upload + filename are recognized).
+
+A new *modality* (e.g. an evening section) also needs a one-line entry added to
+`MODALITY_TOKENS` in `app/syllabus.py`. A startup warning fires if `course.term`
+looks stale for today's date.
+
+# Testing the full build
 
 The test pyramid, from "no key needed" to "full stack against the real gateway".
 All commands assume the project venv at `~/venvs/stat350-tutor` (the `scripts/*.py`

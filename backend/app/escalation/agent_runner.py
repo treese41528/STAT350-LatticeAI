@@ -56,7 +56,8 @@ def build_agent(deps: AppDeps, trace_path: str) -> Agent:
     return Agent(
         client=client,
         tools=[kb_search,
-               *make_course_tools(deps.resolver, term=deps.settings.course.term),
+               *make_course_tools(deps.resolver, term=deps.settings.course.term,
+                                  syllabi=deps.settings.course.syllabi),
                calculator,
                fetch_course_page],
         model=model,

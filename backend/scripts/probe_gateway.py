@@ -138,6 +138,15 @@ def main() -> int:
             print(f"{OK} syllabus chunks retrievable. Filenames:")
             for n in sorted(set(syl)):
                 print(f"     {n}")
+            # does THIS term's syllabus appear? (confirms a new-term upload is
+            # recognized by the (term, modality) filename filter)
+            from app.syllabus import syllabus_matches
+            term = settings.course.term
+            for mod in ("flipped", "traditional", "online"):
+                found = any(syllabus_matches(n, term, mod) for n in syl)
+                mark = OK if found else WARN
+                print(f"   {mark} current term {term!r} / {mod}: "
+                      f"{'found' if found else 'NOT found in top-5'}")
             has_modality = any(re.search(r"flip|person|online|winter|summer", n, re.I)
                                for n in syl)
             if has_modality:

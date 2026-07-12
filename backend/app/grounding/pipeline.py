@@ -21,7 +21,7 @@ from .prompt_builder import build_messages
 from .retrieve import RetrievalResult, retrieve
 from .rewrite import build_retrieval_query
 from .router import Route, route
-from ..syllabus import select_syllabus_passages
+from ..syllabus import resolve_syllabus_links, select_syllabus_passages
 
 SMALLTALK_REPLY = (
     "Hi! I'm the STAT 350 tutor. I answer from the course webbook and lecture "
@@ -80,17 +80,18 @@ def _restrict_to_syllabus(rr: RetrievalResult, term: str, modality: str,
 
 
 def _syllabus_cards(deps, modality: str | None) -> list[dict]:
-    if not modality:
+    links = resolve_syllabus_links(deps.settings, deps.resolver, modality)
+    if links is None:
         return []
-    syl = deps.resolver.syllabus_for(modality)
-    if syl is None:
-        return []
-    return [
-        {"kind": "syllabus", "title": f"Syllabus — {syl.label}",
-         "url": syl.syllabus_pdf, "meta": "Official — authoritative"},
-        {"kind": "schedule", "title": f"Schedule — {syl.label}",
-         "url": syl.schedule_url, "meta": None},
-    ]
+    label, pdf, schedule = links
+    cards = []
+    if pdf:
+        cards.append({"kind": "syllabus", "title": f"Syllabus — {label}",
+                      "url": pdf, "meta": "Official — authoritative"})
+    if schedule:
+        cards.append({"kind": "schedule", "title": f"Schedule — {label}",
+                      "url": schedule, "meta": None})
+    return cards
 
 
 class TurnContext:
@@ -277,21 +278,22 @@ async def _deterministic_turn(ctx: TurnContext, r: Route, seq: int,
                          "or the Final?")
 
     elif r.intent == "syllabus_schedule":
-        if r.needs_modality:
-            lines.append(MODALITY_PROMPT)
+        links = resolve_syllabus_links(deps.settings, resolver, ctx.modality) \
+            if not r.needs_modality else None
+        if links is not None:
+            label, pdf, schedule = links
+            lines.append(f"Here are the official documents for your section "
+                         f"(**{label}**) — the syllabus PDF and the schedule "
+                         f"page below always have the authoritative dates and "
+                         f"policies.")
+            if pdf:
+                cards.append({"kind": "syllabus", "title": f"Syllabus — {label}",
+                              "url": pdf, "meta": None})
+            if schedule:
+                cards.append({"kind": "schedule", "title": f"Schedule — {label}",
+                              "url": schedule, "meta": None})
         else:
-            syl = resolver.syllabus_for(ctx.modality or "")
-            if syl:
-                lines.append(f"Here are the official documents for your section "
-                             f"(**{syl.label}**) — the syllabus PDF and the "
-                             f"schedule page below always have the authoritative "
-                             f"dates and policies.")
-                cards.append({"kind": "syllabus", "title": f"Syllabus — {syl.label}",
-                              "url": syl.syllabus_pdf, "meta": None})
-                cards.append({"kind": "schedule", "title": f"Schedule — {syl.label}",
-                              "url": syl.schedule_url, "meta": None})
-            else:
-                lines.append(MODALITY_PROMPT)
+            lines.append(MODALITY_PROMPT)
 
     else:  # resource_lookup
         sections = r.sections[:3]

@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => {
         ? undefined
         : {
             "/api": {
-              target: "http://localhost:8100",
+              target: process.env.VITE_API_TARGET || "http://localhost:8100",
               changeOrigin: true,
             },
           },

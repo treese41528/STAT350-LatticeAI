@@ -71,3 +71,22 @@ def test_select_empty_when_term_absent():
     # then links the authoritative PDF instead of quoting a wrong term)
     passages = [_p("Syllabus_FALL_2025_Flipped.md"), _p("Syllabus_SPRING_2025_Flipped.md")]
     assert select_syllabus_passages(passages, "SPRING 2026", "flipped") == []
+
+
+def test_resolve_syllabus_links_prefers_config(resolver):
+    from app.config import CourseCfg, Settings, SyllabusLinkCfg
+    from app.syllabus import resolve_syllabus_links
+
+    s = Settings(collections={"webbook": "w", "transcripts": "t"})
+    # config (new term) beats the baked course_map
+    s.course = CourseCfg(term="FALL 2026", syllabi={
+        "flipped": SyllabusLinkCfg(
+            label="Flipped",
+            syllabus_pdf="https://treese41528.github.io/STAT350/Syllabus_FALL_2026_Flipped.pdf",
+            schedule_url="https://treese41528.github.io/STAT350/StudentSchedule-Flipped.html")})
+    label, pdf, sched = resolve_syllabus_links(s, resolver, "flipped")
+    assert "FALL_2026" in pdf                    # config link, not SPRING 2026
+    # a modality absent from config falls back to course_map
+    fb = resolve_syllabus_links(s, resolver, "online")
+    assert fb is not None and "SPRING_2026" in fb[1]  # course_map fallback
+    assert resolve_syllabus_links(s, resolver, None) is None
