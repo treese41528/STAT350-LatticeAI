@@ -38,7 +38,8 @@ TOOL_LABELS = {
     "get_exam_info": "Checking exam coverage…",
     "get_r_resources": "Finding R resources…",
     "calculator": "Computing…",
-    "fetch_course_page": "Reading a course page…",
+    "http_get": "Reading a course page…",
+    "get_current_term": "Checking the current term…",
 }
 
 _SENTINEL = object()
@@ -52,8 +53,8 @@ def build_agent(deps: AppDeps, trace_path: str) -> Agent:
     kb_search = make_kb_search_tool(
         deps.gateway.studio, list(deps.gateway.kb_ids.values()),
         k=4, rate_limiter=deps.gateway.limiter)
-    fetch_course_page = make_http_get(
-        allow_hosts=["treese41528.github.io"], name="fetch_course_page")
+    # restricted to the course site; the SDK names this tool "http_get"
+    fetch_course_page = make_http_get(allow_hosts=["treese41528.github.io"])
     return Agent(
         client=client,
         tools=[kb_search,

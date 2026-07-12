@@ -291,17 +291,51 @@ def main() -> int:
                     "smaller/non-reasoning model for the default path.")
     except Exception as exc:
         print(f"{FAIL} chat failed: {exc}")
+    # Diagnose WHY native tool-calling is on/off (not just true/false): send a
+    # forced-tool request and inspect the raw response.
+    probe_tool = {"type": "function", "function": {
+        "name": "_probe", "description": "Probe tool. Call it with done=true.",
+        "parameters": {"type": "object", "properties": {"done": {"type": "boolean"}},
+                       "required": ["done"]}}}
     try:
-        from genai_studio.agents.client import GenAIStudioClient
-        client = GenAIStudioClient(gw.studio,
-                                   default_model=settings.gateway.model,
-                                   rate_limiter=gw.limiter)
-        native = client.probe_native_tools()
-        print(f"{OK if native else WARN} native tool-calling: {native}"
-              + ("" if native else "  (escalation agent will use ReAct "
-                                   "fallback — works, but more steps)"))
+        gw.limiter.acquire()
+        raw = gw.studio.chat_raw(
+            [{"role": "user", "content": "Call the _probe tool with done=true."}],
+            model=settings.gateway.model, tools=[probe_tool],
+            tool_choice="auto", max_tokens=64)
+        msg = raw.choices[0].message
+        tcs = getattr(msg, "tool_calls", None)
+        content = getattr(msg, "content", None) or ""
+        if tcs:
+            print(f"{OK} native tool-calling: the gateway returned structured "
+                  "tool_calls — escalation uses native tools.")
+        else:
+            fin = getattr(raw.choices[0], "finish_reason", None)
+            print(f"{WARN} native tool-calling: NO structured tool_calls "
+                  f"(finish_reason={fin}). The model answered in TEXT despite the "
+                  "tools param, so the gateway (Open WebUI → LiteLLM → Ollama) "
+                  "isn't surfacing this model's tool calls in OpenAI format.")
+            print(f"     content[:160]: {content[:160]!r}")
+            try:
+                from genai_studio.agents.client import _tool_calls_from_text
+                if _tool_calls_from_text(content):
+                    print(f"{OK} …but the SDK can recover a text-form tool call "
+                          "from the content — the ReAct fallback will work.")
+            except Exception:
+                pass
+            print("     Impact: the DEFAULT (grounded answer) path uses NO tools, "
+                  "so it's unaffected. Only 'dig deeper' uses tools, via ReAct "
+                  "(text-based) — works, just more steps.")
+            SUGGESTIONS.append(
+                "Native tool-calling off for gpt-oss:120b. For more reliable "
+                "'dig deeper', set escalation.model to a native-tool-capable "
+                "model (e.g. llama3.3:latest / qwen2.5) while keeping "
+                "gpt-oss:120b for the default answers.")
     except Exception as exc:
-        print(f"{WARN} tool probe failed: {exc}")
+        print(f"{FAIL} the tools request was REJECTED by the gateway: "
+              f"{type(exc).__name__}: {exc}")
+        print("     → this model/gateway won't accept the OpenAI 'tools' param; "
+              "escalation falls back to ReAct (text tool calls).")
 
     # ---- 7 & 9: manual checks ---------------------------------------------------
     h("7 & 9. Manual checks")
