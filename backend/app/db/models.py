@@ -75,6 +75,8 @@ class Message(Base):
     # rag_answer | refusal | resource_lookup | smalltalk | escalation
     answer_kind: Mapped[str | None] = mapped_column(String(24))
     intent: Mapped[str | None] = mapped_column(String(32))  # router output
+    # whether the student used their OWN key (a bool ONLY — never the key)
+    used_own_key: Mapped[bool | None] = mapped_column(Boolean)
     request_id: Mapped[str | None] = mapped_column(String(36), index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, index=True)
 

@@ -28,9 +28,12 @@ async def deps(settings, resolver, tmp_path):
     sf = make_session_factory(engine)
     recorder = Recorder(sf, traces_dir=tmp_path / "traces")
     await recorder.start()
+    from app.byok import GatewayPool
+    fake_gw = FakeGateway()
     d = AppDeps(
         settings=settings, resolver=resolver,
-        gateway=FakeGateway(), recorder=recorder, session_factory=sf,
+        gateway=fake_gw, gateway_pool=GatewayPool(settings, fake_gw),
+        recorder=recorder, session_factory=sf,
         llm_queue=LlmQueue(settings.gateway.max_concurrent_llm),
         user_limiter=UserLimiter(settings.limits, settings.escalation),
         overload=Overload(settings.degradation),

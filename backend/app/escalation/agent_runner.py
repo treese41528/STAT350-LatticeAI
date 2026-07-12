@@ -45,14 +45,14 @@ TOOL_LABELS = {
 _SENTINEL = object()
 
 
-def build_agent(deps: AppDeps, trace_path: str) -> Agent:
+def build_agent(deps: AppDeps, trace_path: str, gateway=None) -> Agent:
     esc = deps.settings.escalation
     model = esc.model or deps.settings.gateway.model
-    client = GenAIStudioClient(deps.gateway.studio, default_model=model,
-                               rate_limiter=deps.gateway.limiter)
+    gw = gateway or deps.gateway                 # student's own key when provided
+    client = GenAIStudioClient(gw.studio, default_model=model,
+                               rate_limiter=gw.limiter)
     kb_search = make_kb_search_tool(
-        deps.gateway.studio, list(deps.gateway.kb_ids.values()),
-        k=4, rate_limiter=deps.gateway.limiter)
+        gw.studio, list(gw.kb_ids.values()), k=4, rate_limiter=gw.limiter)
     # restricted to the course site; the SDK names this tool "http_get"
     fetch_course_page = make_http_get(allow_hosts=["treese41528.github.io"])
     return Agent(
@@ -75,7 +75,8 @@ def build_agent(deps: AppDeps, trace_path: str) -> Agent:
 async def run_escalation(deps: AppDeps, *, question: str, context_hint: str,
                          user_row_id: str, conversation_id: str,
                          source_message_id: str, seq: int,
-                         trigger: str) -> AsyncIterator[tuple[str, dict]]:
+                         trigger: str, gateway=None,
+                         uses_own_key: bool = False) -> AsyncIterator[tuple[str, dict]]:
     run_id = str(uuid.uuid4())
     result_msg_id = str(uuid.uuid4())
     traces_dir = deps.traces_dir
@@ -92,7 +93,7 @@ async def run_escalation(deps: AppDeps, *, question: str, context_hint: str,
         f"{question}\n\n(Context: the quick answer attempt said: "
         f"{context_hint[:400]})")
 
-    agent = build_agent(deps, trace_path)
+    agent = build_agent(deps, trace_path, gateway=gateway)
     cancel = Cancel()
     budget = Budget(max_tokens=esc.max_tokens, max_tool_calls=esc.max_tool_calls)
 
@@ -231,7 +232,8 @@ async def run_escalation(deps: AppDeps, *, question: str, context_hint: str,
         completion_tokens=getattr(usage, "completion_tokens", None),
         total_tokens=getattr(usage, "total_tokens", None),
         latency_ms=latency_ms, finish_reason="stop",
-        answer_kind="escalation", intent="dig_deeper"))
+        answer_kind="escalation", intent="dig_deeper",
+        used_own_key=uses_own_key))
     deps.recorder.emit(m.Escalation(
         id=run_id, message_id=source_message_id, trigger=trigger,
         model=esc.model or deps.settings.gateway.model, steps=steps,

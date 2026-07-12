@@ -13,7 +13,7 @@ from ..concurrency import run_sync
 from ..db import models as m
 from ..grounding.pipeline import TurnContext, run_turn
 from ..identity import Identity
-from .deps import AppDeps, get_deps, require_identity
+from .deps import AppDeps, get_byok_key, get_deps, require_identity
 from .sse import sse_response
 
 router = APIRouter()
@@ -120,6 +120,19 @@ async def chat(request: Request, response: Response, body: ChatRequest,
 
     setup = await run_sync(setup_turn, deps, identity, body)
 
+    # bring-your-own-key: if the student sent a well-formed key and BYO is on,
+    # this turn runs on THEIR gateway (own RPM budget, no shared queue).
+    byok = get_byok_key(request)
+    turn_gw = retrieval_gw = deps.gateway
+    uses_own_key = False
+    if byok and deps.gateway_ready:
+        turn_gw = deps.gateway_pool.for_key(byok)
+        uses_own_key = True
+        # config controls whether retrieval also uses the student key (needs the
+        # collection shared) or stays on the class key (works if it's private)
+        retrieval_gw = turn_gw if deps.settings.byok.retrieval == "own" \
+            else deps.gateway
+
     state = deps.overload.state(deps.llm_queue.depth)
     ctx = TurnContext(
         deps,
@@ -128,10 +141,14 @@ async def chat(request: Request, response: Response, body: ChatRequest,
         history=setup.history,
         message=body.message,
         modality=setup.modality,
-        shrink=state.shrink,
-        escalation_enabled=state.escalation_enabled and deps.settings.escalation.enabled,
+        shrink=state.shrink and not uses_own_key,
+        escalation_enabled=deps.settings.escalation.enabled and (
+            uses_own_key or state.escalation_enabled),
+        gateway=turn_gw,
+        retrieval_gateway=retrieval_gw,
+        uses_own_key=uses_own_key,
     )
-    ctx.reject = state.reject
+    ctx.reject = state.reject and not uses_own_key
 
     # copy the identity cookie (set by require_identity) onto the SSE response
     stream = sse_response(run_turn(ctx, setup.next_seq))

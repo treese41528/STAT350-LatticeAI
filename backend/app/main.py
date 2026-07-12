@@ -17,7 +17,8 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from .api import admin as admin_api
-from .api import chat, conversations, deeper, feedback, meta
+from .api import chat, conversations, deeper, feedback, key, meta
+from .byok import GatewayPool
 from .api.deps import AppDeps
 from .config import Settings, load_settings
 from .course_map.resolver import CourseMapResolver
@@ -41,10 +42,12 @@ def build_deps(settings: Settings) -> AppDeps:
     session_factory = make_session_factory(engine)
     traces_dir = settings.resolve_path(settings.logging.dir) / ".." / "traces"
     traces_dir = traces_dir.resolve()
+    shared_gateway = Gateway(settings)
     return AppDeps(
         settings=settings,
         resolver=resolver,
-        gateway=Gateway(settings),
+        gateway=shared_gateway,
+        gateway_pool=GatewayPool(settings, shared_gateway),
         recorder=Recorder(session_factory,
                           traces_dir if settings.logging.chat_traces else None),
         session_factory=session_factory,
@@ -116,6 +119,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(conversations.router)
     app.include_router(feedback.router)
     app.include_router(meta.router)
+    app.include_router(key.router)
     app.include_router(admin_api.router)
 
     # ---- SPA static serving (frontend build output) --------------------------

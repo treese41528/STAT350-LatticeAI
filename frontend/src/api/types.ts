@@ -40,7 +40,7 @@ export interface Resource {
 
 export type SSEEvent =
   | { event: "meta"; data: { conversationId: string; messageId: string; title?: string } }
-  | { event: "queue"; data: { position: number; etaSeconds?: number } }
+  | { event: "queue"; data: { position: number; etaSeconds?: number; suggestOwnKey?: boolean } }
   | { event: "status"; data: { stage: string; label: string } }
   | { event: "citations"; data: { citations: Citation[] } }
   | { event: "resources"; data: { resources: Resource[] } }
@@ -90,6 +90,6 @@ export interface AppConfig {
   welcome: string;
   starterQuestions: string[];
   modalities: Modality[];
-  features: { digDeeper: boolean };
+  features: { digDeeper: boolean; byok?: boolean };
   maxMessageChars: number;
 }

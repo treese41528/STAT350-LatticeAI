@@ -16,6 +16,22 @@ export function getConfig(): Promise<AppConfig> {
   return apiJson<AppConfig>("/api/config");
 }
 
+export interface KeyValidation {
+  authOk: boolean;
+  retrievalOk: boolean;
+  usable: boolean;
+  message: string;
+}
+
+/** Validate a student's own key. The key rides the X-GenAI-Key header via
+ *  apiFetch — never a request body — and is never stored server-side. */
+export function validateKey(key: string): Promise<KeyValidation> {
+  return apiJson<KeyValidation>("/api/key/validate", {
+    method: "POST",
+    headers: { "X-GenAI-Key": key },
+  });
+}
+
 export function getHealth(): Promise<HealthStatus> {
   return apiJson<HealthStatus>("/api/health");
 }

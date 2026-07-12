@@ -11,7 +11,7 @@ from ..db import models as m
 from ..escalation.agent_runner import run_escalation
 from ..identity import Identity
 from .chat import _get_or_create_user
-from .deps import get_deps, require_identity
+from .deps import get_byok_key, get_deps, require_identity
 from .sse import sse_response
 
 router = APIRouter()
@@ -22,13 +22,22 @@ async def dig_deeper(message_id: str, request: Request, response: Response,
                      identity: Identity = Depends(require_identity)):
     deps = get_deps(request)
 
+    byok = get_byok_key(request)
+    esc_gateway = deps.gateway
+    uses_own_key = False
+    if byok and deps.gateway_ready:
+        esc_gateway = deps.gateway_pool.for_key(byok)
+        uses_own_key = True
+
     state = deps.overload.state(deps.llm_queue.depth)
-    if not (deps.settings.escalation.enabled and state.escalation_enabled
-            and deps.gateway_ready):
+    # a student on their own key can dig deeper even when it's shed under load
+    if not (deps.settings.escalation.enabled and deps.gateway_ready
+            and (uses_own_key or state.escalation_enabled)):
         raise HTTPException(status_code=503, detail={
             "error": {"code": "escalation_disabled",
                       "message": "Dig deeper is paused right now (high demand). "
-                                 "Try again in a few minutes.",
+                                 "Try again in a few minutes, or add your own API "
+                                 "key in Settings to skip the line.",
                       "retryable": True}})
 
     verdict = deps.user_limiter.check_escalation(identity.user_id)
@@ -88,6 +97,8 @@ async def dig_deeper(message_id: str, request: Request, response: Response,
         source_message_id=message_id,
         seq=info["seq"],
         trigger=trigger,
+        gateway=esc_gateway,
+        uses_own_key=uses_own_key,
     ))
     # carry any identity cookie minted by require_identity onto the SSE response
     for header, value in response.headers.items():

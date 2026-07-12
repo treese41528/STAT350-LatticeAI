@@ -34,6 +34,10 @@ export interface StreamState {
   messageId: string | null;
   queuePosition: number | null;
   queueEtaSeconds: number | null;
+  /** Server hint on a queue event: the shared class key is busy and this
+   *  student would skip the line with their own key. Drives the QueueBanner
+   *  nudge. Never set for students already on their own key. */
+  suggestOwnKey: boolean;
   stages: StreamStage[];
   abort: AbortController | null;
   /** Set when this stream is a "dig deeper" run for an existing message. */
@@ -52,6 +56,7 @@ const IDLE_STREAM: StreamState = {
   messageId: null,
   queuePosition: null,
   queueEtaSeconds: null,
+  suggestOwnKey: false,
   stages: [],
   abort: null,
   deeperSourceId: null,
@@ -378,7 +383,7 @@ export const useChatStore = create<ChatState>()((set, get) => ({
       }
 
       case "queue": {
-        const { position, etaSeconds } = e.data;
+        const { position, etaSeconds, suggestOwnKey } = e.data;
         const prev = get().stream.queuePosition;
         set((state) => ({
           stream: {
@@ -386,6 +391,9 @@ export const useChatStore = create<ChatState>()((set, get) => ({
             phase: state.stream.deeperSourceId ? "deeper" : "queued",
             queuePosition: position,
             queueEtaSeconds: etaSeconds ?? null,
+            // latch on once suggested — a later queue tick without the hint
+            // shouldn't yank the nudge away mid-wait.
+            suggestOwnKey: state.stream.suggestOwnKey || suggestOwnKey === true,
           },
         }));
         if (prev !== position) announce(`You're number ${position} in line`);

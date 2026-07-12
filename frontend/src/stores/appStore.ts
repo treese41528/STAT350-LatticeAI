@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import * as api from "../api/client";
 import type { HealthStatus } from "../api/client";
+import { trackEvent } from "../api/events";
+import { clearOwnKey as clearStoredKey, ownKeyActive, saveOwnKey } from "../lib/apiKey";
 import type { AppConfig, Modality } from "../api/types";
 
 export const MODALITY_LABELS: Record<Modality, string> = {
@@ -22,6 +24,8 @@ const FALLBACK_CONFIG: AppConfig = {
   maxMessageChars: 4000,
 };
 
+export type OwnKeyStatus = "none" | "validating" | "active" | "invalid";
+
 interface AppState {
   config: AppConfig;
   configLoaded: boolean;
@@ -30,12 +34,19 @@ interface AppState {
   profileLoaded: boolean;
   health: HealthStatus | null;
   online: boolean;
+  ownKey: { status: OwnKeyStatus; message: string };
+  /** Shared open-state for the Settings dialog so any component (e.g. the
+   *  queue nudge) can open it, not just the sidebar footer button. */
+  settingsOpen: boolean;
 
   loadConfig: () => Promise<void>;
   loadProfile: () => Promise<void>;
   setModality: (m: Modality | null) => Promise<void>;
   refreshHealth: () => Promise<void>;
   setOnline: (online: boolean) => void;
+  validateOwnKey: (key: string) => Promise<boolean>;
+  clearOwnKey: () => void;
+  setSettingsOpen: (open: boolean) => void;
 }
 
 export const useAppStore = create<AppState>()((set) => ({
@@ -46,6 +57,8 @@ export const useAppStore = create<AppState>()((set) => ({
   profileLoaded: false,
   health: null,
   online: typeof navigator === "undefined" ? true : navigator.onLine,
+  ownKey: { status: ownKeyActive() ? "active" : "none", message: "" },
+  settingsOpen: false,
 
   loadConfig: async () => {
     try {
@@ -74,6 +87,39 @@ export const useAppStore = create<AppState>()((set) => ({
       set({ modality: prev });
     }
   },
+
+  validateOwnKey: async (key) => {
+    set({ ownKey: { status: "validating", message: "" } });
+    try {
+      const res = await api.validateKey(key.trim());
+      if (res.usable) {
+        saveOwnKey(key.trim(), true);
+        trackEvent("own_key_set");
+        set({ ownKey: { status: "active", message: res.message } });
+        return true;
+      }
+      clearStoredKey(); // never store an unusable key
+      set({ ownKey: { status: "invalid", message: res.message } });
+      return false;
+    } catch (e) {
+      clearStoredKey();
+      set({
+        ownKey: {
+          status: "invalid",
+          message: e instanceof Error ? e.message : "Couldn't validate the key.",
+        },
+      });
+      return false;
+    }
+  },
+
+  clearOwnKey: () => {
+    clearStoredKey();
+    trackEvent("own_key_removed");
+    set({ ownKey: { status: "none", message: "" } });
+  },
+
+  setSettingsOpen: (open) => set({ settingsOpen: open }),
 
   refreshHealth: async () => {
     try {

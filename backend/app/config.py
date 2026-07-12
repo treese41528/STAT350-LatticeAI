@@ -117,6 +117,16 @@ class AdminCfg(BaseModel):
     enabled: bool = True
 
 
+class ByokCfg(BaseModel):
+    # Let students supply their own GenAI Studio key for their own RPM budget.
+    enabled: bool = True
+    # "own": the student key does retrieval + chat + escalation (needs the
+    # collection shared to students). "shared": retrieval stays on the class
+    # key, only the chat/escalation LLM call uses the student key (works even
+    # if the collection is private, but retrieval still spends the shared RPM).
+    retrieval: str = "own"
+
+
 class Settings(BaseModel):
     course: CourseCfg = CourseCfg()
     gateway: GatewayCfg = GatewayCfg()
@@ -129,6 +139,7 @@ class Settings(BaseModel):
     db: DbCfg = DbCfg()
     logging: LoggingCfg = LoggingCfg()
     admin: AdminCfg = AdminCfg()
+    byok: ByokCfg = ByokCfg()
 
     # --- secrets / env-only ---
     api_key: str | None = None          # GENAI_STUDIO_API_KEY

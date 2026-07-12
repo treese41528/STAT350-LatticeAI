@@ -29,22 +29,35 @@ class GatewayError(RuntimeError):
 
 
 class Gateway:
-    def __init__(self, settings: Settings):
+    def __init__(self, settings: Settings, *, api_key: str | None = None,
+                 kb_ids: dict[str, str] | None = None, label: str = "shared"):
         self.settings = settings
+        # per-instance limiter: each API key is its own ~20 RPM bucket, so a
+        # student's own key gets an independent budget from the shared one.
         self.limiter = RateLimiter(rpm=settings.gateway.rpm)
         self._studio: GenAIStudio | None = None
+        # `api_key` overrides settings.api_key (bring-your-own-key gateways).
+        self._api_key = api_key
+        self.label = label  # "shared" | "byok" — never the key itself
         # display name -> knowledge-base id, filled by resolve_collections()
-        self.kb_ids: dict[str, str] = {}
+        # (per-key gateways reuse the shared IDs — collections are the owner's).
+        self.kb_ids: dict[str, str] = dict(kb_ids) if kb_ids else {}
+
+    @classmethod
+    def for_key(cls, settings: Settings, api_key: str,
+                kb_ids: dict[str, str]) -> "Gateway":
+        return cls(settings, api_key=api_key, kb_ids=kb_ids, label="byok")
 
     @property
     def studio(self) -> GenAIStudio:
         """Lazy so the app can boot (degraded) without an API key in dev."""
         if self._studio is None:
-            if not self.settings.api_key:
+            key = self._api_key or self.settings.api_key
+            if not key:
                 raise GatewayError(
                     "GENAI_STUDIO_API_KEY is not set — gateway unavailable.")
             self._studio = GenAIStudio(
-                api_key=self.settings.api_key,
+                api_key=key,
                 base_url=self.settings.gateway.base_url,
                 timeout=self.settings.gateway.timeout_s,
                 connect_timeout=self.settings.gateway.connect_timeout_s,

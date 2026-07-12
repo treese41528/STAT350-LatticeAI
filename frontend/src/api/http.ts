@@ -1,4 +1,5 @@
 import { getDeviceId } from "../lib/identity";
+import { getOwnKey, ownKeyActive } from "../lib/apiKey";
 
 /**
  * Single choke point for ALL network requests (REST and SSE).
@@ -54,6 +55,15 @@ export async function toApiError(res: Response): Promise<ApiError> {
 export async function apiFetch(path: string, init: RequestInit = {}): Promise<Response> {
   const headers = new Headers(init.headers);
   headers.set("X-Device-Id", getDeviceId());
+  // attach the student's own key ONLY once validated as usable (never send an
+  // unusable key — it would degrade their answers). The header is not set at
+  // all otherwise, so requests fall back to the shared class key.
+  // A caller-supplied X-GenAI-Key (key validation) always wins — never clobber
+  // the key being tested with a previously-stored one.
+  if (!headers.has("X-GenAI-Key") && ownKeyActive()) {
+    const k = getOwnKey();
+    if (k) headers.set("X-GenAI-Key", k);
+  }
   if (init.body != null && typeof init.body === "string" && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }

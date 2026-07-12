@@ -210,6 +210,13 @@ export const ShieldIcon = (p: IconProps) => (
   </svg>
 );
 
+export const KeyIcon = (p: IconProps) => (
+  <svg {...base(p)}>
+    <circle cx="7.5" cy="15.5" r="4.5" />
+    <path d="M10.7 12.3 21 2m-4 4 3 3m-6-1 3 3" />
+  </svg>
+);
+
 export const SearchOffIcon = (p: IconProps) => (
   <svg {...base(p)}>
     <circle cx="11" cy="11" r="8" />

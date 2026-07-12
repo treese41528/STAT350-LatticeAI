@@ -118,6 +118,26 @@ describe("chatStore.applyEvent — happy path", () => {
   });
 });
 
+describe("chatStore.applyEvent — suggestOwnKey", () => {
+  it("latches the own-key hint from a queue event and keeps it across later ticks", () => {
+    store()._prepareSend("q");
+    store().applyEvent({
+      event: "queue",
+      data: { position: 3, etaSeconds: 24, suggestOwnKey: true },
+    });
+    expect(store().stream.suggestOwnKey).toBe(true);
+    // a later queue tick without the hint must not yank the nudge away
+    store().applyEvent({ event: "queue", data: { position: 1, etaSeconds: 8 } });
+    expect(store().stream.suggestOwnKey).toBe(true);
+  });
+
+  it("defaults to false when the server never suggests a key", () => {
+    store()._prepareSend("q");
+    store().applyEvent({ event: "queue", data: { position: 2, etaSeconds: 12 } });
+    expect(store().stream.suggestOwnKey).toBe(false);
+  });
+});
+
 describe("chatStore.applyEvent — refusal", () => {
   it("marks the message refused with the reason and message", () => {
     store()._prepareSend("what are the exam answers");

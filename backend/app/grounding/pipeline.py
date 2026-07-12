@@ -100,7 +100,8 @@ class TurnContext:
 
     def __init__(self, deps, *, user_row_id: str, conversation_id: str,
                  history: list[dict], message: str, modality: str | None,
-                 shrink: bool, escalation_enabled: bool):
+                 shrink: bool, escalation_enabled: bool,
+                 gateway=None, retrieval_gateway=None, uses_own_key: bool = False):
         self.deps = deps
         self.user_row_id = user_row_id
         self.conversation_id = conversation_id
@@ -110,6 +111,11 @@ class TurnContext:
         self.shrink = shrink
         self.escalation_enabled = escalation_enabled
         self.reject = False
+        # gateway for the LLM call (student's own key when they bring one);
+        # retrieval_gateway may stay on the shared key (config byok.retrieval).
+        self.gateway = gateway or deps.gateway
+        self.retrieval_gateway = retrieval_gateway or self.gateway
+        self.uses_own_key = uses_own_key
         self.request_id = str(uuid.uuid4())
         self.user_msg_id = str(uuid.uuid4())
         self.assistant_msg_id = str(uuid.uuid4())
@@ -130,7 +136,7 @@ def _persist_assistant(ctx: TurnContext, seq: int, *, content: str,
         seq=seq + 1, role="assistant", content=content,
         model=ctx.deps.settings.gateway.model, latency_ms=latency_ms,
         ttft_ms=ttft_ms, finish_reason=finish_reason, answer_kind=answer_kind,
-        intent=intent, request_id=ctx.request_id))
+        intent=intent, used_own_key=ctx.uses_own_key, request_id=ctx.request_id))
 
 
 def _persist_retrieval(ctx: TurnContext, rr: RetrievalResult,
@@ -221,6 +227,13 @@ async def run_turn(ctx: TurnContext, seq: int) -> AsyncIterator[tuple[str, dict]
             scope="app", error_type="gateway_unavailable",
             request_id=ctx.request_id, user_id=ctx.user_row_id,
             conversation_id=ctx.conversation_id))
+        return
+
+    # Students on their OWN key bypass the shared queue and the overload ladder
+    # entirely — they're spending their own budget, not the shared one.
+    if ctx.uses_own_key:
+        async for ev in _grounded_answer(ctx, r, seq, t_start):
+            yield ev
         return
 
     try:
@@ -350,7 +363,12 @@ async def _queued_grounded_answer(ctx: TurnContext, r: Route, seq: int,
             await asyncio.wait({enter_task}, timeout=0.25)
             while not pos_q.empty():
                 pos = pos_q.get_nowait()
-                yield "queue", {"position": pos, "etaSeconds": pos * 8}
+                # while waiting on the shared key, nudge the student to use
+                # their own key to skip the line
+                suggest = (ctx.deps.settings.byok.enabled
+                           and not ctx.uses_own_key and pos >= 2)
+                yield "queue", {"position": pos, "etaSeconds": pos * 8,
+                                "suggestOwnKey": suggest}
         await enter_task  # propagates QueueFullError
         entered = True
         async for ev in _grounded_answer(ctx, r, seq, t_start):
@@ -392,12 +410,12 @@ async def _grounded_answer(ctx: TurnContext, r: Route, seq: int,
             "k_webbook": max(cfg.k_webbook, 14), "max_passages": 14,
             "min_transcript_slots": 0})
         rr: RetrievalResult = await run_sync(
-            retrieve, deps.gateway, deps.resolver, rewritten, syl_cfg,
+            retrieve, ctx.retrieval_gateway, deps.resolver, rewritten, syl_cfg,
             shrink=False, single_call=False)
         _restrict_to_syllabus(rr, term, ctx.modality, cfg.higher_is_better)
     else:
         rr = await run_sync(
-            retrieve, deps.gateway, deps.resolver, rewritten, cfg,
+            retrieve, ctx.retrieval_gateway, deps.resolver, rewritten, cfg,
             shrink=ctx.shrink, single_call=getattr(cfg, "single_call", False))
     rid = _persist_retrieval(ctx, rr, raw_query, rewritten)
 
@@ -448,7 +466,7 @@ async def _grounded_answer(ctx: TurnContext, r: Route, seq: int,
     finish_reason = "stop"
     t_llm = time.monotonic()
     try:
-        async for delta in aiter_sync(lambda: deps.gateway.stream_chat(
+        async for delta in aiter_sync(lambda: ctx.gateway.stream_chat(
                 messages, max_tokens=max_tokens)):
             if ttft_ms is None:
                 ttft_ms = int((time.monotonic() - t_llm) * 1000)

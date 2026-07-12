@@ -9,6 +9,7 @@ from pathlib import Path
 from fastapi import HTTPException, Request, Response
 from sqlalchemy.orm import Session, sessionmaker
 
+from ..byok import GatewayPool
 from ..config import Settings
 from ..course_map.resolver import CourseMapResolver
 from ..gateway import Gateway
@@ -18,12 +19,15 @@ from ..queueing import LlmQueue
 from ..ratelimit import UserLimiter
 from ..telemetry.recorder import Recorder
 
+BYOK_HEADER = "X-GenAI-Key"
+
 
 @dataclass
 class AppDeps:
     settings: Settings
     resolver: CourseMapResolver
     gateway: Gateway
+    gateway_pool: GatewayPool
     recorder: Recorder
     session_factory: sessionmaker[Session]
     llm_queue: LlmQueue
@@ -34,6 +38,17 @@ class AppDeps:
     escalation_prompt: str
     traces_dir: Path
     gateway_ready: bool = False   # collections resolved (needs API key)
+
+
+def get_byok_key(request: Request) -> str | None:
+    """The caller's own API key from the header, if BYO is enabled and the value
+    is well-formed. Never logged."""
+    deps: AppDeps = request.app.state.deps
+    if not deps.settings.byok.enabled:
+        return None
+    from ..byok import valid_key_format
+    raw = (request.headers.get(BYOK_HEADER) or "").strip()
+    return raw if valid_key_format(raw) else None
 
 
 def get_deps(request: Request) -> AppDeps:

@@ -36,6 +36,7 @@ async def config(request: Request):
         "features": {
             "digDeeper": (deps.settings.escalation.enabled
                           and state.escalation_enabled and deps.gateway_ready),
+            "byok": deps.settings.byok.enabled and deps.gateway_ready,
         },
         "maxMessageChars": course.max_message_chars,
     }

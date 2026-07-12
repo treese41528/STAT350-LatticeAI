@@ -26,6 +26,7 @@ ALLOWED_UI_EVENTS = {
     "resource_card_click", "citation_click", "dig_deeper_click", "copy_answer",
     "suggested_question_click", "conversation_new", "conversation_delete",
     "overload_shown", "queue_wait_shown", "client_error",
+    "own_key_set", "own_key_removed", "own_key_validated", "own_key_suggested",
 }
 
 

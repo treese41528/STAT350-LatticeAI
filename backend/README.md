@@ -62,6 +62,27 @@ python backend/scripts/eval.py run       # golden set → thresholds (any python
 - Legacy `conversations.db`: scrub IPs before archiving —
   `python scripts/scrub_legacy_db.py path/to/conversations.db`.
 
+## Bring-your-own-key (BYOK)
+
+The class API key allows only ~20 requests/min shared across all students, so
+at peak the queue backs up. Students can optionally paste their **own** free
+GenAI Studio key in Settings; the tutor then answers on their key — their own
+rate bucket, skipping the shared queue. Configured under `byok:` in
+`config.yaml` (`enabled`, and `retrieval: own|shared`).
+
+- The student key rides the `X-GenAI-Key` request header only. It lives in the
+  browser's `localStorage` and transient server RAM (an LRU `GatewayPool` of
+  per-key `Gateway` instances). It is **never** written to the DB, logs,
+  telemetry, or traces, and never echoed back — `messages.used_own_key` stores
+  a bool only. `redact()`/`key_hash()` guard anything log-bound.
+- `POST /api/key/validate` checks a key (auth + a real retrieval probe) and
+  returns `{authOk, retrievalOk, usable, message}`; the SPA only attaches a key
+  to requests once it validates as **usable**, so a bad key never degrades
+  answers. `retrieval: shared` keeps retrieval on the class key when the course
+  collections aren't shared to student accounts (then `usable` needs only auth).
+- BYO turns bypass the shared queue, overload shedding, and dig-deeper
+  load-shedding — they spend the student's own budget, not the class's.
+
 ## Architecture invariants (do not break)
 
 1. The model **never** writes URLs; the app attaches links from
@@ -69,8 +90,10 @@ python backend/scripts/eval.py run       # golden set → thresholds (any python
 2. The student chat path **never awaits a DB write** — telemetry rides
    `Recorder.emit()` (single writer, strict FIFO; emission order must respect
    FK dependencies: user msg → retrieval → assistant msg → citations).
-3. Everything outbound is paced by the **one** shared `RateLimiter`
-   (`gateway.py`) — chat, retrieval, escalation. Never create a second client.
+3. Everything outbound on the **shared** class key is paced by the one shared
+   `RateLimiter` (`gateway.py`) — chat, retrieval, escalation. The only
+   sanctioned second client is a per-student BYOK `Gateway` (its own limiter +
+   quota), minted by `GatewayPool.for_key()`; never add another on the class key.
 4. `citations`/`resources` SSE events are sent **before** `token`s;
    `done.finalText` (post-lint) is canonical and the SPA swaps it in.
 5. Contract lives in `frontend/src/api/types.ts` — change it and the API

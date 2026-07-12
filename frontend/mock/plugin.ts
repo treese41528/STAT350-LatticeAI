@@ -22,7 +22,7 @@ const CONFIG = {
     "How do I make a QQ plot in R and read it?",
   ],
   modalities: ["flipped", "traditional", "indy", "online", "winter", "summer"],
-  features: { digDeeper: true },
+  features: { digDeeper: true, byok: true },
   maxMessageChars: 4000,
 };
 
@@ -329,8 +329,10 @@ function streamAnswer(
         title: conv?.title,
       }),
   ]);
-  steps.push([200, () => sse.send("queue", { position: 2, etaSeconds: 6 })]);
-  steps.push([700, () => sse.send("queue", { position: 1, etaSeconds: 3 })]);
+  // suggestOwnKey mirrors the backend: nudge students toward their own key
+  // while they wait on the shared class key.
+  steps.push([200, () => sse.send("queue", { position: 2, etaSeconds: 6, suggestOwnKey: true })]);
+  steps.push([700, () => sse.send("queue", { position: 1, etaSeconds: 3, suggestOwnKey: true })]);
   steps.push([500, () => sse.ping()]);
 
   if (opts.deeper) {
@@ -416,6 +418,24 @@ export function mockApiPlugin(): Plugin {
 
           if (url === "/api/health" && method === "GET") {
             sendJson(res, 200, { status: "ok", queueDepth: 0 });
+            return;
+          }
+
+          if (url === "/api/key/validate" && method === "POST") {
+            await readBody(req);
+            // The key rides the X-GenAI-Key header — never a body. This mock
+            // accepts any plausibly-formatted key; a too-short one "fails auth".
+            const key = (req.headers["x-genai-key"] as string | undefined) ?? "";
+            const authOk = key.trim().length >= 20;
+            const retrievalOk = authOk;
+            sendJson(res, 200, {
+              authOk,
+              retrievalOk,
+              usable: authOk && retrievalOk,
+              message: authOk
+                ? "Your key works and can read the course materials."
+                : "That key didn't authenticate. Double-check you copied the whole key.",
+            });
             return;
           }
 
