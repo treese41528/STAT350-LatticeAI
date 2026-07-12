@@ -43,8 +43,24 @@ DEFAULT_SYL = "/mnt/c/CommonFiles/Webbooks/STAT 350 Syllabus Info"
 # after upload before linking"). Settle after upload, then link with backoff —
 # and on link failure retry the SAME file id, never re-upload.
 SETTLE_S = 1.0
-LINK_BACKOFFS = (1, 2, 4, 8, 15)
+LINK_BACKOFFS = (2, 4, 8, 15)
+# Pace EVERY file operation — this gateway responds to bursts by hanging or
+# dropping requests, which looks like a frozen script.
+PACE_S = 0.75
+# KB file ops should fail fast, not sit on the chat client's 120s timeout: one
+# hung call x backoff attempts is otherwise ~10 minutes of apparent freeze.
+KB_TIMEOUT_S = 30
 OK, WARN, FAIL = "✅", "⚠️ ", "❌"
+
+
+def make_studio(settings):
+    """A dedicated client for KB ops with a SHORT timeout (the Gateway's 120s
+    chat timeout turns one hung link call into minutes of silence)."""
+    from genai_studio import GenAIStudio
+    return GenAIStudio(api_key=settings.api_key,
+                       base_url=settings.gateway.base_url,
+                       timeout=KB_TIMEOUT_S, connect_timeout=15,
+                       validate_model=False)
 
 
 def collect_files(rst_dir: Path, syl_dir: Path) -> list[Path]:
@@ -133,8 +149,7 @@ def main() -> int:
     if not settings.api_key:
         print("GENAI_STUDIO_API_KEY not set.")
         return 2
-    from app.gateway import Gateway
-    studio = Gateway(settings).studio
+    studio = make_studio(settings)
 
     # ---- find-or-create the KB (idempotent) ---------------------------------
     existing = {kb.name: kb for kb in studio.list_knowledge_bases()}
@@ -166,12 +181,15 @@ def main() -> int:
         print(f"   {WARN} could not list existing uploads ({exc}) — "
               "will upload fresh copies")
 
-    def link_with_backoff(file_id: str) -> tuple[bool, str]:
+    def link_with_backoff(file_id: str, fname: str) -> tuple[bool, str]:
         """Link the SAME file id with escalating waits — the usual failure is
-        'not yet processed', which only time fixes (re-uploading makes orphans)."""
+        'not yet processed', which only time fixes (re-uploading makes orphans).
+        Prints while waiting so a slow file never looks like a freeze."""
         last = ""
-        for attempt, wait in enumerate((0,) + LINK_BACKOFFS):
+        for wait in (0,) + LINK_BACKOFFS:
             if wait:
+                print(f"      … {fname}: waiting {wait}s for server processing "
+                      f"({last[:80]})", flush=True)
                 time.sleep(wait)
             try:
                 studio.add_file_to_knowledge_base(kb.id, file_id)
@@ -183,6 +201,7 @@ def main() -> int:
     # ---- upload + link -------------------------------------------------------
     done = failed = skipped = reused = 0
     failures: list[tuple[str, str]] = []
+    t0 = time.monotonic()
     for i, f in enumerate(files, 1):
         if f.name in already:
             skipped += 1
@@ -198,21 +217,23 @@ def main() -> int:
                     time.sleep(2)                       # one upload retry
                     file_id = studio.upload_file(str(f)).id
                 time.sleep(SETTLE_S)                    # let processing start
-            ok, err = link_with_backoff(file_id)
+            ok, err = link_with_backoff(file_id, f.name)
             if ok:
                 done += 1
             else:
                 failed += 1
                 failures.append((f.name, err))
+                print(f"   {FAIL} {f.name}: {err[:140]}", flush=True)
         except Exception as exc:
             failed += 1
             failures.append((f.name, f"{type(exc).__name__}: {exc}"))
-        if i % 10 == 0 or i == len(files):
+            print(f"   {FAIL} {f.name}: {type(exc).__name__}: {exc}", flush=True)
+        if i % 5 == 0 or i == len(files):
+            mins = (time.monotonic() - t0) / 60
             print(f"   [{i:3}/{len(files)}] linked={done} reused_upload={reused} "
-                  f"skipped={skipped} failed={failed}")
-
-    for name, err in failures:
-        print(f"   {FAIL} {name}: {err[:140]}")
+                  f"skipped={skipped} failed={failed}  ({mins:.1f} min)",
+                  flush=True)
+        time.sleep(PACE_S)      # pace EVERY iteration — bursts hang this gateway
 
     # ---- SERVER-SIDE verification (trust the KB, not our counters) -----------
     time.sleep(3)

@@ -38,8 +38,8 @@ def main() -> int:
     if not settings.api_key:
         print("GENAI_STUDIO_API_KEY not set.")
         return 2
-    from app.gateway import Gateway
-    studio = Gateway(settings).studio
+    from build_kb import make_studio
+    studio = make_studio(settings)
 
     kbs = {kb.name: kb for kb in studio.list_knowledge_bases()}
     if args.name not in kbs:
