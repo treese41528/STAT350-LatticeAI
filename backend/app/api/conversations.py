@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select
 
 from ..concurrency import run_sync
 from ..db import models as m
@@ -130,8 +130,21 @@ async def delete_conversation(cid: str, request: Request,
 
     def work():
         with deps.session_factory() as session:
-            _, convo = _own_conversation(session, deps, identity, cid)
-            session.delete(convo)
+            _own_conversation(session, deps, identity, cid)   # 404 if not the caller's
+            # FKs are enforced (PRAGMA foreign_keys=ON), so delete children before
+            # parents: a real conversation accretes retrieval_events + citations
+            # (+ maybe feedback/escalations) that reference its messages, and a
+            # bare `session.delete(convo)` would fail the FK constraint — that's
+            # why deleting a single conversation silently failed in the UI.
+            msg_ids = [r[0] for r in session.execute(
+                select(m.Message.id).where(m.Message.conversation_id == cid)).all()]
+            if msg_ids:
+                session.execute(delete(m.Citation).where(m.Citation.message_id.in_(msg_ids)))
+                session.execute(delete(m.Feedback).where(m.Feedback.message_id.in_(msg_ids)))
+                session.execute(delete(m.Escalation).where(m.Escalation.message_id.in_(msg_ids)))
+            session.execute(delete(m.RetrievalEvent).where(m.RetrievalEvent.conversation_id == cid))
+            session.execute(delete(m.Message).where(m.Message.conversation_id == cid))
+            session.execute(delete(m.Conversation).where(m.Conversation.id == cid))
             session.commit()
 
     await run_sync(work)

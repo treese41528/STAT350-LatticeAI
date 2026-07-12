@@ -127,6 +127,48 @@ def test_conversation_crud_and_isolation(client, device_id):
     assert client.get("/api/conversations", headers=_h(device_id)).json() == []
 
 
+def test_delete_conversation_with_dependent_rows(client, device_id):
+    # A real (concept) conversation accretes retrieval_events + citations (+
+    # feedback/escalations) that FK its messages. Deleting it must cascade past
+    # those constraints, not fail — the "single delete does nothing in the UI"
+    # bug (a bare session.delete(convo) hit a FOREIGN KEY failure and rolled back).
+    from sqlalchemy import select as _select
+
+    from app.db import models as m
+
+    r = client.post("/api/chat", headers=_h(device_id),
+                    json={"conversationId": None, "message": "link to worksheet 3"})
+    cid = re.search(r'"conversationId": "([^"]+)"', r.text).group(1)
+    detail = _wait_for_messages(client, _h(device_id), cid, 2)
+    aid = next(mm["id"] for mm in detail["messages"] if mm["role"] == "assistant")
+    uid_msg = next(mm["id"] for mm in detail["messages"] if mm["role"] == "user")
+
+    deps = client.app.state.deps
+    with deps.session_factory() as s:
+        user_id = s.get(m.Conversation, cid).user_id
+        s.add(m.RetrievalEvent(id="re-del", request_id="rq", conversation_id=cid,
+                               question_message_id=uid_msg, raw_query="q",
+                               k_requested=6, collections_queried={}, results=[]))
+        s.flush()   # parent must exist before children reference retrieval_event_id
+        s.add(m.Citation(message_id=aid, marker=1, retrieval_event_id="re-del"))
+        s.add(m.Feedback(message_id=aid, user_id=user_id, rating=1))
+        s.add(m.Escalation(id="esc-del", message_id=aid, retrieval_event_id="re-del",
+                           trigger="user_dig_deeper"))
+        s.commit()
+
+    # the DELETE must now succeed (was a 500/FK failure before the fix)
+    assert client.delete(f"/api/conversations/{cid}",
+                         headers=_h(device_id)).status_code == 204
+    # and leave no orphaned rows behind
+    with deps.session_factory() as s:
+        assert s.get(m.Conversation, cid) is None
+        assert s.execute(_select(m.RetrievalEvent).where(
+            m.RetrievalEvent.conversation_id == cid)).first() is None
+        assert s.execute(_select(m.Citation).where(
+            m.Citation.message_id == aid)).first() is None
+        assert s.get(m.Escalation, "esc-del") is None
+
+
 def test_feedback_flow(client, device_id):
     r = client.post("/api/chat", headers=_h(device_id),
                     json={"conversationId": None, "message": "link to worksheet 3"})
