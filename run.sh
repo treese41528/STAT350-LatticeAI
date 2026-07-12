@@ -14,6 +14,22 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Auto-load secrets from .env (repo root, gitignored) so you don't have to
+# export them by hand. Copy .env.example -> .env and fill it in. A var already
+# set in your shell wins (only unset ones are filled); values are NOT executed.
+if [[ -f "$ROOT/.env" ]]; then
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    line="${line%$'\r'}"                          # tolerate Windows/WSL CRLF
+    [[ "$line" =~ ^[[:space:]]*(#|$) ]] && continue
+    [[ "$line" != *=* ]] && continue
+    key="${line%%=*}"; val="${line#*=}"
+    key="${key//[[:space:]]/}"
+    val="${val#[\"\']}"; val="${val%[\"\']}"       # strip one layer of quotes
+    [[ -z "${!key:-}" ]] && export "$key=$val"
+  done < "$ROOT/.env"
+fi
+
 VENV="${STAT350_VENV:-$HOME/venvs/stat350-tutor}"
 PY="$VENV/bin/python"
 UVICORN="$VENV/bin/uvicorn"
