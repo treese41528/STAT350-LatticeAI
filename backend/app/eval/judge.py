@@ -217,9 +217,14 @@ def build_judge(gateway: Gateway, settings: Settings, model: str | None = None):
 def _passage_block(ar: AnswerRun, limit: int = 8) -> str:
     if not ar.passages:
         return "(none — retrieval found nothing)"
+    # Show the FULL passage text — exactly what the tutor's prompt saw
+    # (prompt_builder._passage_block uses p.text.strip(), untruncated). An
+    # earlier 800-char cap made the judge grade grounding against LESS than the
+    # tutor had, producing false "ungrounded" verdicts when the supporting text
+    # sat later in a chunk (e.g. a list at char 1400 of a 2300-char passage).
     return "\n\n".join(
         f"[{p.n}] ({p.collection}; {(p.meta or {}).get('name') or (p.meta or {}).get('source') or '?'})"
-        f"\n{p.text[:800]}"
+        f"\n{p.text.strip()}"
         for p in ar.passages[:limit])
 
 
