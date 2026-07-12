@@ -9,6 +9,7 @@ export const MODALITY_LABELS: Record<Modality, string> = {
   indy: "Traditional (Indianapolis)",
   online: "Asynchronous Online",
   winter: "Winter Session",
+  summer: "Summer Session",
 };
 
 const FALLBACK_CONFIG: AppConfig = {
@@ -16,7 +17,7 @@ const FALLBACK_CONFIG: AppConfig = {
   term: "",
   welcome: "Ask me anything about STAT 350 — I'll help you reason it out.",
   starterQuestions: [],
-  modalities: ["flipped", "traditional", "indy", "online", "winter"],
+  modalities: ["flipped", "traditional", "indy", "online", "winter", "summer"],
   features: { digDeeper: false },
   maxMessageChars: 4000,
 };

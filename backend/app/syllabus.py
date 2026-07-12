@@ -88,7 +88,9 @@ def resolve_syllabus_links(settings, resolver, modality: str | None):
     if not m:
         return None
     cfg = settings.course.syllabi.get(m)
-    if cfg and cfg.syllabus_pdf:
+    # use the config entry if it has EITHER link (a term whose PDF isn't
+    # published yet can still offer the schedule)
+    if cfg is not None and (cfg.syllabus_pdf or cfg.schedule_url):
         return cfg.label or m.title(), cfg.syllabus_pdf, cfg.schedule_url
     syl = resolver.syllabus_for(m)
     if syl is not None:

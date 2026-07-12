@@ -11,6 +11,7 @@ const MODALITY_HINTS: Partial<Record<Modality, string>> = {
   indy: "In-person lectures in Indianapolis",
   online: "Fully asynchronous",
   winter: "Condensed winter term (always online)",
+  summer: "Condensed summer term (always online)",
 };
 
 /** Section picker — used for syllabus/schedule answers tailored to you. */

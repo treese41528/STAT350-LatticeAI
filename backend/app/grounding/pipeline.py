@@ -40,8 +40,8 @@ REFUSAL_MESSAGE = (
 MODALITY_PROMPT = (
     "Which section of STAT 350 are you enrolled in? **Flipped**, **Traditional "
     "Lecture**, **Traditional Lecture (Indianapolis)**, **Asynchronous Online**, "
-    "or **Winter Session**? I'll pull the right syllabus and schedule. (You can "
-    "also set this once in Settings.)"
+    "**Winter Session**, or **Summer Session**? I'll pull the right syllabus and "
+    "schedule. (You can also set this once in Settings.)"
 )
 
 OVERLOAD_MESSAGE = (
@@ -282,10 +282,9 @@ async def _deterministic_turn(ctx: TurnContext, r: Route, seq: int,
             if not r.needs_modality else None
         if links is not None:
             label, pdf, schedule = links
-            lines.append(f"Here are the official documents for your section "
-                         f"(**{label}**) — the syllabus PDF and the schedule "
-                         f"page below always have the authoritative dates and "
-                         f"policies.")
+            lines.append(f"Here's the official information for your section "
+                         f"(**{label}**) — the link(s) below are the "
+                         f"authoritative source for dates and policies.")
             if pdf:
                 cards.append({"kind": "syllabus", "title": f"Syllabus — {label}",
                               "url": pdf, "meta": None})

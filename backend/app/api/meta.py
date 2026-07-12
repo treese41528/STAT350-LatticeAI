@@ -16,7 +16,8 @@ router = APIRouter()
 
 
 class ProfilePatch(BaseModel):
-    modality: Literal["flipped", "traditional", "indy", "online", "winter"] | None
+    modality: Literal["flipped", "traditional", "indy", "online", "winter",
+                      "summer"] | None
 
 
 @router.get("/api/config")
@@ -29,7 +30,8 @@ async def config(request: Request):
         "term": course.term,
         "welcome": course.welcome.strip(),
         "starterQuestions": course.starter_questions,
-        "modalities": ["flipped", "traditional", "indy", "online", "winter"],
+        "modalities": ["flipped", "traditional", "indy", "online", "winter",
+                       "summer"],
         "features": {
             "digDeeper": (deps.settings.escalation.enabled
                           and state.escalation_enabled and deps.gateway_ready),

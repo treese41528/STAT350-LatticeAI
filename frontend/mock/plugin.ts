@@ -21,7 +21,7 @@ const CONFIG = {
     "What does the Central Limit Theorem actually claim?",
     "How do I make a QQ plot in R and read it?",
   ],
-  modalities: ["flipped", "traditional", "indy", "online", "winter"],
+  modalities: ["flipped", "traditional", "indy", "online", "winter", "summer"],
   features: { digDeeper: true },
   maxMessageChars: 4000,
 };

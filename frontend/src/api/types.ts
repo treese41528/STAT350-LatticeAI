@@ -12,7 +12,7 @@
  * must replace the streamed content in the store.
  */
 
-export type Modality = "flipped" | "traditional" | "indy" | "online" | "winter";
+export type Modality = "flipped" | "traditional" | "indy" | "online" | "winter" | "summer";
 
 export interface Citation {
   n: number;

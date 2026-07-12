@@ -18,7 +18,7 @@ from .sse import sse_response
 
 router = APIRouter()
 
-MODALITIES = {"flipped", "traditional", "indy", "online", "winter"}
+MODALITIES = {"flipped", "traditional", "indy", "online", "winter", "summer"}
 
 
 class ClientState(BaseModel):
