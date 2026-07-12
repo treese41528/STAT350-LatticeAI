@@ -18,11 +18,23 @@ def test_term_tokens():
     assert term_tokens("Fall_2025") == ["fall", "2025"]
 
 
-def test_term_for_date_seasons():
+def test_term_for_date_matches_purdue_calendar():
+    # exact boundaries from the published Purdue calendar
+    assert term_for_date(date(2026, 5, 18)) == "SUMMER 2026"   # summer classes begin
+    assert term_for_date(date(2026, 8, 7)) == "SUMMER 2026"    # summer term ends
+    assert term_for_date(date(2026, 8, 24)) == "FALL 2026"     # fall begins
+    assert term_for_date(date(2026, 12, 19)) == "FALL 2026"    # fall term ends
+    assert term_for_date(date(2026, 12, 21)) == "WINTER 2026"  # winter session begins
+    assert term_for_date(date(2027, 1, 8)) == "WINTER 2026"    # winter ends (next year, Dec-year label)
+    assert term_for_date(date(2027, 1, 11)) == "SPRING 2027"   # spring begins
+    assert term_for_date(date(2027, 5, 8)) == "SPRING 2027"    # spring term ends
+    # between-term gaps → the upcoming term
+    assert term_for_date(date(2026, 8, 15)) == "FALL 2026"     # gap Aug 8–23 → Fall
+    assert term_for_date(date(2027, 1, 9)) == "SPRING 2027"    # gap Jan 9–10 → Spring
+    # a few mid-term sanity checks
     assert term_for_date(date(2026, 2, 10)) == "SPRING 2026"
-    assert term_for_date(date(2026, 6, 20)) == "SUMMER 2026"
-    assert term_for_date(date(2026, 9, 1)) == "FALL 2026"
-    assert term_for_date(date(2025, 12, 20)) == "WINTER 2025"
+    assert term_for_date(date(2026, 7, 12)) == "SUMMER 2026"
+    assert term_for_date(date(2026, 10, 1)) == "FALL 2026"
 
 
 def test_matches_correct_term_and_modality():

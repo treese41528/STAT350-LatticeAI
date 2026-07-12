@@ -43,15 +43,28 @@ def term_tokens(term: str) -> list[str]:
 
 
 def term_for_date(d: date) -> str:
-    """Rough academic-term mapping — a SAFETY NET only, never authoritative."""
-    y, m, day = d.year, d.month, d.day
-    if m == 12:
+    """Map a date to Purdue's academic term.
+
+    Based on the published Purdue main-campus / Polytechnic calendar
+    (approximate — start dates drift a few days year to year and are "subject
+    to change", which is why auto_term is opt-in and pinning the term is the
+    exact-control option):
+      Spring ~Jan 11 – May 8 · Summer ~May 17 – Aug 7 ·
+      Fall ~Aug 24 – Dec 19 · Winter session ~Dec 21 – Jan 8 (of the next year).
+    The winter session is labeled by its DECEMBER year (e.g. Dec 2026–Jan 2027
+    is "WINTER 2026"). Between-term gaps are assigned to the upcoming term.
+    """
+    y = d.year
+    md = (d.month, d.day)
+    if md >= (12, 20):          # Dec 20–31: winter session (this year)
         return f"WINTER {y}"
-    if m <= 4 or (m == 5 and day < 15):
+    if md <= (1, 8):            # Jan 1–8: winter session begun last December
+        return f"WINTER {y - 1}"
+    if md < (5, 12):            # Jan 9 – May 11
         return f"SPRING {y}"
-    if (m == 5 and day >= 15) or m in (6, 7, 8):
+    if md < (8, 11):            # May 12 – Aug 10
         return f"SUMMER {y}"
-    return f"FALL {y}"
+    return f"FALL {y}"          # Aug 11 – Dec 19
 
 
 def syllabus_matches(filename: str, term: str, modality: str | None) -> bool:

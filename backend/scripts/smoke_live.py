@@ -117,18 +117,29 @@ def main() -> int:
 
         # --- dig deeper (escalation agent) -----------------------------------
         print("\n[4] dig deeper (escalation)")
+        import time
         r = client.post("/api/chat", headers=H, json={
             "conversationId": None, "message": "When do I pool variances vs use Welch?"})
         ev = parse_sse(r.text)
         mid = next((d["messageId"] for e, d in ev if e == "meta"), None)
         if mid:
-            rd = client.post(f"/api/messages/{mid}/deeper", headers=H)
+            # the assistant message is persisted by the async recorder; retry
+            # /deeper until it exists (a real user click is always well after this)
+            rd = None
+            for _ in range(15):
+                rd = client.post(f"/api/messages/{mid}/deeper", headers=H)
+                if rd.status_code != 404:
+                    break
+                time.sleep(0.3)
             evd = parse_sse(rd.text)
             statuses = [d.get("label") for e, d in evd if e == "status"]
+            err = next((d for e, d in evd if e == "error"), None)
             dtext = answer_text(evd)
-            check(any(e == "done" for e, _ in evd) or rd.status_code in (429, 503),
-                  f"escalation completed or was gated ({len(dtext)} chars, "
-                  f"{len(statuses)} status events)")
+            ok = any(e == "done" for e, _ in evd) or rd.status_code in (429, 503)
+            detail = (f"error: {err.get('message')}" if err else
+                      f"{len(dtext)} chars, {len(statuses)} status events, "
+                      f"http {rd.status_code}")
+            check(ok, f"escalation completed or was gated ({detail})")
         else:
             check(False, "no messageId to escalate")
 
