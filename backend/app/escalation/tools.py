@@ -8,17 +8,39 @@ path. Tools can't hallucinate — they read course_map.json.
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 from genai_studio.agents import Source, ToolResult, tool
 
 from ..course_map.resolver import CourseMapResolver
+from ..syllabus import term_for_date
 
 
 def _src(title: str, url: str | None, snippet: str = "") -> Source:
     return Source(id=url or title, title=title, url=url, snippet=snippet[:200])
 
 
-def make_course_tools(resolver: CourseMapResolver) -> list:
-    """Build the course-structure tool set bound to the resolver."""
+def make_course_tools(resolver: CourseMapResolver, term: str = "") -> list:
+    """Build the course-structure tool set bound to the resolver.
+
+    `term` is the authoritative current term (config `course.term`); it grounds
+    syllabus/date answers so the agent never quotes a different semester.
+    """
+
+    @tool(name="get_current_term",
+          description="Get the current academic term (semester) and today's "
+                      "date — use this to ground any syllabus, schedule, or "
+                      "deadline answer in the right semester.")
+    def get_current_term() -> ToolResult:
+        today = datetime.now(timezone.utc).date()
+        derived = term_for_date(today)
+        current = term or derived
+        note = ""
+        if term and term.lower() != derived.lower():
+            note = (f" (config term {term!r} differs from the date-derived "
+                    f"{derived!r} — trust the configured term)")
+        return ToolResult(content=f"Current term: {current}. "
+                                  f"Today: {today.isoformat()}.{note}")
 
     @tool(name="get_lecture_url",
           description="Get the course-website lecture page (and video) for a "
@@ -102,6 +124,6 @@ def make_course_tools(resolver: CourseMapResolver) -> list:
         return ToolResult(content="R/RStudio guides and function reference hub.",
                           sources=[_src("R & RStudio guides", url)])
 
-    return [get_lecture_url, get_chapter_overview, get_worksheet,
-            get_simulation, get_syllabus_and_schedule, get_exam_info,
-            get_r_resources]
+    return [get_current_term, get_lecture_url, get_chapter_overview,
+            get_worksheet, get_simulation, get_syllabus_and_schedule,
+            get_exam_info, get_r_resources]

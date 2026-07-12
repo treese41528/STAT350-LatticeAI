@@ -21,6 +21,7 @@ from .prompt_builder import build_messages
 from .retrieve import RetrievalResult, retrieve
 from .rewrite import build_retrieval_query
 from .router import Route, route
+from ..syllabus import select_syllabus_passages
 
 SMALLTALK_REPLY = (
     "Hi! I'm the STAT 350 tutor. I answer from the course webbook and lecture "
@@ -56,6 +57,26 @@ SYLLABUS_FALLBACK = (
     "me the exact policy you're after (grading weights, make-up exams, "
     "deadlines…), I can try again."
 )
+
+
+def _restrict_to_syllabus(rr: RetrievalResult, term: str, modality: str,
+                          higher_is_better: bool) -> None:
+    """Keep only current-term, this-section syllabus passages, in place. If none
+    survive, tier becomes no_evidence so the caller links the official PDF."""
+    kept = select_syllabus_passages(rr.passages, term, modality)
+    for i, p in enumerate(kept, start=1):
+        p.n = i
+    rr.passages = kept
+    rr.per_collection_counts = {"webbook": len(kept), "transcript": 0}
+    if not kept:
+        rr.tier = "no_evidence"
+        rr.top_distance = rr.mean_distance = None
+        return
+    scores = [p.distance for p in kept if p.distance is not None]
+    rr.top_distance = (max(scores) if higher_is_better else min(scores)) if scores else None
+    rr.mean_distance = sum(scores) / len(scores) if scores else None
+    # a filename match is authoritative grounding, so treat it as strong
+    rr.tier = "strong"
 
 
 def _syllabus_cards(deps, modality: str | None) -> list[dict]:
@@ -349,6 +370,7 @@ async def _grounded_answer(ctx: TurnContext, r: Route, seq: int,
     cfg = deps.settings.retrieval
 
     syllabus_mode = r.intent == "syllabus_content"
+    term = deps.settings.course.term
     syllabus_cards = _syllabus_cards(deps, ctx.modality) if syllabus_mode else []
 
     if syllabus_mode:
@@ -357,13 +379,24 @@ async def _grounded_answer(ctx: TurnContext, r: Route, seq: int,
         yield "status", {"stage": "retrieving", "label": "Searching course materials…"}
     raw_query = ctx.message
     rewritten = build_retrieval_query(ctx.history, ctx.message)
+
     if syllabus_mode and ctx.modality:
-        # bias retrieval toward THIS section's syllabus (the collection holds
-        # every modality's near-identical syllabus)
-        rewritten = f"STAT 350 {ctx.modality} section syllabus — {rewritten}"
-    rr: RetrievalResult = await run_sync(
-        retrieve, deps.gateway, deps.resolver, rewritten, cfg,
-        shrink=ctx.shrink, single_call=getattr(cfg, "single_call", False))
+        # Ground in the correct (term, modality): bias the query, retrieve
+        # broadly, then keep ONLY passages whose filename matches this term +
+        # section. If none match, tier falls to no_evidence and we link the
+        # authoritative PDF — never quote the wrong term.
+        rewritten = f"STAT 350 {term} {ctx.modality} section syllabus — {rewritten}"
+        syl_cfg = cfg.model_copy(update={
+            "k_webbook": max(cfg.k_webbook, 14), "max_passages": 14,
+            "min_transcript_slots": 0})
+        rr: RetrievalResult = await run_sync(
+            retrieve, deps.gateway, deps.resolver, rewritten, syl_cfg,
+            shrink=False, single_call=False)
+        _restrict_to_syllabus(rr, term, ctx.modality, cfg.higher_is_better)
+    else:
+        rr = await run_sync(
+            retrieve, deps.gateway, deps.resolver, rewritten, cfg,
+            shrink=ctx.shrink, single_call=getattr(cfg, "single_call", False))
     rid = _persist_retrieval(ctx, rr, raw_query, rewritten)
 
     if rr.error and not rr.passages:
@@ -402,6 +435,7 @@ async def _grounded_answer(ctx: TurnContext, r: Route, seq: int,
     messages = build_messages(
         deps.tutor_core, rr.passages, ctx.history, ctx.message,
         modality=ctx.modality, caveat=rr.tier == "caveat", syllabus=syllabus_mode,
+        term=term if syllabus_mode else None,
         history_window=deps.settings.generation.history_window)
 
     gen_cfg = deps.settings.generation

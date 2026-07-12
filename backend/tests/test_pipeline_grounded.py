@@ -160,28 +160,37 @@ async def test_caveat_tier_flags_done(deps):
     assert dict(events)["done"]["flags"].get("caveat") is True
 
 
-async def test_syllabus_content_quotes_and_biases_by_modality(deps):
+async def test_syllabus_content_grounds_in_correct_term_and_modality(deps):
+    # retrieval returns Flipped (right), Online (wrong modality), and a FALL
+    # syllabus (wrong term). Only the SPRING-2026 Flipped passage must survive.
     deps.gateway = FakeGateway(
         retrieval_payloads={
-            "kb-web": webbook_payload(
-                ("Syllabus_SPRING_2026_Flipped.md",
-                 "Homework (including computer assignments) is 24% of the grade.", 0.82)),
+            "kb-web": {
+                "documents": [["Homework is 24% of the grade. (SPRING 2026 Flipped)",
+                               "Homework is 24% of the grade. (SPRING 2026 Online)",
+                               "Homework is 30% of the grade. (FALL 2025 Flipped)"]],
+                "distances": [[0.83, 0.85, 0.86]],
+                "metadatas": [[{"name": "Syllabus_SPRING_2026_Flipped.md"},
+                               {"name": "Syllabus_SPRING_2026_Online.md"},
+                               {"name": "Syllabus_FALL_2025_Flipped.md"}]],
+            },
         },
-        stream_chunks=["Homework is **24%** of your grade [1]. Confirm on your "
-                       "section's official syllabus (linked)."])
+        stream_chunks=["Homework is **24%** of your grade [1]."])
     ctx = TurnContext(deps, user_row_id="u1", conversation_id="c1", history=[],
                       message="how much is the homework worth?", modality="flipped",
                       shrink=False, escalation_enabled=True)
     events = await _collect(run_turn(ctx, seq=0))
     names = [e for e, _ in events]
     assert "citations" in names and names[-1] == "done"
-    # retrieval query was biased toward the Flipped syllabus
-    assert any("flipped" in call[0].lower() and "syllabus" in call[0].lower()
-               for call in deps.gateway.retrieval_calls)
-    # the authoritative syllabus + schedule cards are attached
+    # exactly one citation survived the term+modality filter
+    cits = dict(events)["citations"]["citations"]
+    assert len(cits) == 1
+    # the query was biased with BOTH term and modality
+    call_q = deps.gateway.retrieval_calls[0][0].lower()
+    assert "spring 2026" in call_q and "flipped" in call_q
+    # authoritative SPRING 2026 Flipped syllabus + schedule cards attached
     resources = dict(events)["resources"]["resources"]
-    kinds = {r["kind"] for r in resources}
-    assert "syllabus" in kinds and "schedule" in kinds
+    assert {"syllabus", "schedule"} <= {r["kind"] for r in resources}
     assert any("SPRING" in r["url"] and "Flipped" in r["url"]
                for r in resources if r["kind"] == "syllabus")
     await deps.recorder.stop()
@@ -189,6 +198,26 @@ async def test_syllabus_content_quotes_and_biases_by_modality(deps):
         msg = session.scalar(select(m.Message).where(m.Message.role == "assistant"))
         assert msg.intent == "syllabus_content"
     await deps.recorder.start()
+
+
+async def test_syllabus_falls_back_to_link_when_term_absent(deps):
+    # only a FALL syllabus is retrievable; a SPRING student must NOT be quoted
+    # a wrong-term figure — instead we link the official PDF.
+    deps.gateway = FakeGateway(
+        retrieval_payloads={
+            "kb-web": webbook_payload(
+                ("Syllabus_FALL_2025_Flipped.md", "Homework is 30% (FALL).", 0.86)),
+        },
+        stream_chunks=["should not be reached"])
+    ctx = TurnContext(deps, user_row_id="u1", conversation_id="c1", history=[],
+                      message="how much is the homework worth?", modality="flipped",
+                      shrink=False, escalation_enabled=True)
+    events = await _collect(run_turn(ctx, seq=0))
+    names = [e for e, _ in events]
+    assert "refusal" in names             # no current-term match -> fallback
+    assert deps.gateway.chat_calls == []  # never quoted the wrong term
+    resources = dict(events)["resources"]["resources"]
+    assert any(r["kind"] == "syllabus" for r in resources)  # links the real PDF
 
 
 async def test_syllabus_content_asks_modality_when_unknown(deps):

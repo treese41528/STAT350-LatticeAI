@@ -55,7 +55,9 @@ def build_agent(deps: AppDeps, trace_path: str) -> Agent:
         allow_hosts=["treese41528.github.io"], name="fetch_course_page")
     return Agent(
         client=client,
-        tools=[kb_search, *make_course_tools(deps.resolver), calculator,
+        tools=[kb_search,
+               *make_course_tools(deps.resolver, term=deps.settings.course.term),
+               calculator,
                fetch_course_page],
         model=model,
         system=deps.escalation_prompt,

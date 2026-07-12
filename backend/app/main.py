@@ -67,6 +67,18 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         deps = build_deps(settings)
         app.state.deps = deps
         await deps.recorder.start()
+        # warn if the configured term looks stale for today's date (a syllabus
+        # is quoted for course.term; a forgotten rollover would ground answers
+        # in the wrong semester)
+        from datetime import datetime, timezone
+
+        from .syllabus import term_for_date
+        derived = term_for_date(datetime.now(timezone.utc).date())
+        if settings.course.term and settings.course.term.lower() != derived.lower():
+            logger.warning(
+                "config course.term=%r but today's date suggests %r — confirm "
+                "the term is correct so syllabus answers ground in the right "
+                "semester.", settings.course.term, derived)
         if settings.api_key:
             try:
                 import anyio

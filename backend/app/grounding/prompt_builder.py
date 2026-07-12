@@ -12,13 +12,14 @@ CAVEAT_INSTRUCTION = (
 )
 
 SYLLABUS_INSTRUCTION = (
-    "\n\nSYLLABUS MODE: The student is asking about course policy or logistics. "
-    "Quote the specific figure or rule from the passages (e.g. a grade weight, "
-    "a make-up rule, a deadline) and cite it [n]. Policies can differ by "
-    "section, so always tell the student to confirm against their section's "
-    "official syllabus and schedule — their links are shown as resources — and "
-    "for exact dates defer to that syllabus. Do not state a policy the passages "
-    "don't support."
+    "\n\nSYLLABUS MODE: The student is asking about course policy or logistics "
+    "for the {term} term. The passages above are ONLY from this term's {term} "
+    "syllabus for their section — quote the specific figure or rule from them "
+    "(e.g. a grade weight, a make-up rule, a deadline) and cite it [n]. Point "
+    "spreads and policies change between terms and sections, so tell the student "
+    "to confirm against their section's official syllabus and schedule (linked "
+    "as resources) and defer to it for exact dates. Do not state a policy the "
+    "passages don't support, and never quote figures from a different term."
 )
 
 
@@ -33,7 +34,7 @@ def _passage_block(passages: list[Passage]) -> str:
 def build_messages(tutor_core: str, passages: list[Passage],
                    history: list[dict], user_message: str, *,
                    modality: str | None = None, caveat: bool = False,
-                   syllabus: bool = False,
+                   syllabus: bool = False, term: str | None = None,
                    history_window: int = 10) -> list[dict]:
     system = tutor_core
     if modality:
@@ -43,7 +44,7 @@ def build_messages(tutor_core: str, passages: list[Passage],
     if caveat:
         system += CAVEAT_INSTRUCTION
     if syllabus:
-        system += SYLLABUS_INSTRUCTION
+        system += SYLLABUS_INSTRUCTION.format(term=term or "current")
 
     messages: list[dict] = [{"role": "system", "content": system}]
     for turn in history[-history_window:]:

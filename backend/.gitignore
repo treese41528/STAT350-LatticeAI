@@ -1,6 +1,8 @@
 __pycache__/
 *.pyc
 .env
+data/*.db
+data/*.db-*
 data/tutor.db*
 data/kb_file_index.json
 logs/
