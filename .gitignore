@@ -46,3 +46,6 @@ Thumbs.db
 # Backups
 backups/
 *.bak
+
+# build_kb.py local link manifest (per-machine run state)
+backend/scripts/.build_kb_state.json
