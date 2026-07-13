@@ -42,6 +42,22 @@ _FRUSTRATION_RE = re.compile(
     r"|i'?m\s+(?:so\s+)?(?:done|lost|overwhelmed|stressed(?:\s+out)?|frustrated|struggling|dying|drowning)"
     r")[\s!.?]*$", re.I)
 
+# Disengagement / quitting signals — high-precision, searched anywhere in the
+# message (these phrases almost never occur in a genuine stats question). Kept
+# tight so real questions ("how do I quit R?", "should I drop outliers?") don't
+# trip it. Robust coverage of subtler tone is a job for the LLM triage, not regex.
+_DISENGAGEMENT_RE = re.compile(
+    r"\b(?:"
+    r"drop(?:ping)?\s+out\b"
+    r"|withdraw(?:ing)?\s+from\s+(?:the\s+)?(?:class|course|university|school|program)"
+    r"|leav(?:e|ing)\s+(?:the\s+)?(?:university|school|college|program)"
+    r"|quit(?:ting)?\s+(?:school|college|university)"
+    r"|give\s+up\s+on\s+(?:school|college|university|my\s+degree)"
+    r"|thinking\s+of\s+(?:quitting|leaving|dropping\s+out)"
+    r"|i(?:'m|\s+am)?\s+(?:want(?:ing)?\s+to\s+|going\s+to\s+|gonna\s+)?quit(?:ting)?"
+    r"\b(?!\s+(?:r\b|rstudio|the\s+session|out\s+of))"
+    r")", re.I)
+
 _SYLLABUS_RE = re.compile(
     r"\b(syllabus|schedule|deadline|due date|office hours?|grading|grade breakdown|"
     r"late\s+(work|policy|homework|assignment|submission)|polic(y|ies)|attendance|"
@@ -99,8 +115,9 @@ def route(message: str, resolver: CourseMapResolver,
     if _SMALLTALK_RE.match(msg):
         return Route(intent="smalltalk")
 
-    # Venting with no question -> empathetic canned reply, no retrieval/resources.
-    if _FRUSTRATION_RE.match(msg):
+    # Venting or disengagement/quitting with no question -> warm empathy path
+    # (no retrieval, no resource cards, and the reply never congratulates).
+    if _FRUSTRATION_RE.match(msg) or _DISENGAGEMENT_RE.search(msg):
         return Route(intent="frustration")
 
     exam_m = _EXAM_RE.search(msg)

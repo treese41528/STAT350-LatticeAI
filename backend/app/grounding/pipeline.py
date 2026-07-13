@@ -37,24 +37,33 @@ FRUSTRATION_REPLY = (
     "clicking, and we'll take it one step at a time."
 )
 
-# Used for an ADAPTIVE (non-canned) reply to venting; FRUSTRATION_REPLY is the
-# graceful fallback when the gateway is down or the app is shedding load.
+# Used for an ADAPTIVE (non-canned) reply to venting/discouragement;
+# FRUSTRATION_REPLY is the graceful fallback when the gateway is down or the app
+# is shedding load.
 EMPATHY_PROMPT = (
-    "You are a warm, encouraging STAT 350 tutor. The student is venting "
-    "frustration, not asking a specific question. Reply in 2-3 sentences: "
-    "acknowledge how they feel genuinely and specifically (do NOT sound scripted "
-    "or generic), reassure them that getting stuck is a normal part of learning "
-    "statistics, and gently invite them to tell you what they're working on or "
-    "which idea isn't clicking so you can help. Do NOT explain statistics "
-    "unprompted, do NOT lecture, and do NOT include any links, citations, or "
-    "bracketed numbers."
+    "You are a warm, grounded STAT 350 tutor. The student is venting, "
+    "discouraged, or saying they might quit or leave school — they are NOT "
+    "asking a statistics question. Reply in 2-4 short sentences, plain and "
+    "human (no bullet points):\n"
+    "1. Acknowledge how they feel genuinely and specifically. Do NOT "
+    "congratulate them — phrases like \"done with stats\" usually mean fed up, "
+    "not finished — and do NOT sound cheery or scripted.\n"
+    "2. If they mention quitting, dropping out, leaving school, or a big "
+    "academic decision, gently encourage them to talk it through with their "
+    "academic advisor, who can look at their whole situation. You are a course "
+    "tutor, not a counselor: point them to real people, and do NOT give life or "
+    "career advice or try to talk them into or out of anything.\n"
+    "3. Offer to help with the statistics if that's part of what's weighing on "
+    "them, and invite them to say what's been hardest.\n"
+    "Do NOT explain statistics unprompted, do NOT lecture, and never include "
+    "links, citations, or bracketed numbers."
 )
 
 REFUSAL_MESSAGE = (
     "I couldn't find anything in the STAT 350 course materials that covers "
     "this, so I won't guess. If you think it should be covered, try rephrasing "
     "with the terms the course uses — or use \"Dig deeper\" and I'll search "
-    "harder. The closest material I do have is linked below."
+    "harder."
 )
 
 MODALITY_PROMPT = (
@@ -549,10 +558,12 @@ async def _grounded_answer(ctx: TurnContext, r: Route, seq: int,
 
     # ---- weak retrieval → honest refusal, LLM call skipped -------------------
     if rr.tier == "no_evidence":
-        cards = syllabus_cards + resources_payload(
-            rr.passages, deps.resolver, extra_sections=r.sections[:3])
-        if cards:
-            yield "resources", {"resources": cards}
+        # Nothing relevant was found, so DON'T attach "closest sections" — random
+        # cards on an off-topic or emotional message ("should I work at
+        # McDonald's?") are noise. Only the syllabus fallback (authoritative PDF)
+        # earns a card.
+        if syllabus_cards:
+            yield "resources", {"resources": syllabus_cards}
         # for syllabus questions, point them at the authoritative PDF rather
         # than a bare refusal
         msg = (SYLLABUS_FALLBACK if syllabus_mode and syllabus_cards

@@ -29,6 +29,16 @@ def test_route_frustration_vs_real_question(resolver):
                 "what the heck is a p-value?",
                 "how do I compute the variance?"]:
         assert route(msg, resolver).intent == "concept_question", msg
+
+    # disengagement / quitting -> empathy path (no congratulations, no cards)
+    for msg in ["I quit!", "I'm dropping out", "maybe I'll leave university",
+                "I am just done with stats and maybe will leave university",
+                "thinking of quitting school", "I might drop out"]:
+        assert route(msg, resolver).intent == "frustration", msg
+    # superficially-similar REAL questions must not be caught as disengagement
+    for msg in ["how do I quit R?", "should I drop outliers?",
+                "how do I drop my lowest quiz?"]:
+        assert route(msg, resolver).intent != "frustration", msg
     assert route("what's on exam 2?", resolver).intent == "exam_info"
     assert route("give me the link to worksheet 5", resolver).intent == "resource_lookup"
     assert route("where is the CLT video", resolver).intent == "resource_lookup"
