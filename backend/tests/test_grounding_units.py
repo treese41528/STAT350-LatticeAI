@@ -224,3 +224,17 @@ def test_catalog_card_only_with_banner(resolver):
     assert card and card["kind"] == "catalog" and "41600" in card["title"]
     assert "catalog.purdue.edu" in card["url"]
     assert catalog_card_for("Plain answer mentioning STAT 41600", resolver) is None
+
+
+def test_catalog_card_stat418_next_course(resolver):
+    # STAT 350 is a direct prerequisite of STAT 41800 (Tim's course); the tutor
+    # should surface it as the go-deeper course, and the app attaches its site.
+    banner = (">>> BEYOND STAT 350 SCOPE: Enrichment for curious learners; "
+              "not required for this course. <<<\nBootstrap CIs are covered in "
+              "STAT 41800.")
+    card = catalog_card_for(banner, resolver)
+    assert card and card["kind"] == "catalog"
+    assert "41800" in card["title"] and "Computational Methods" in card["title"]
+    assert card["url"].startswith(
+        "https://treese41528.github.io/ComputationalDataScience")
+    assert resolver.is_allowed_url(card["url"])

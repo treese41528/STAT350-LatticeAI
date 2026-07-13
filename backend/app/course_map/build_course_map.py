@@ -332,6 +332,20 @@ def build(prompt_text: str) -> dict:
         topics = [t.strip() for t in cm.group(1).split(",")]
         catalog.append({"code": cm.group(2), "title": cm.group(3),
                         "url": cm.group(4), "topics": topics})
+    # STAT 41800 (Tim's course) isn't in the legacy system_prompt.txt GO-DEEPER
+    # block; add it explicitly so a regenerated map keeps it. STAT 350 is a direct
+    # prerequisite, so it's the natural next course. Its number is also hard-coded
+    # in grounding/citations.py:_CATALOG_CODE_RE — keep the two in sync.
+    catalog.insert(0, {
+        "code": "STAT 41800",
+        "title": "Computational Methods in Data Science",
+        "url": "https://treese41528.github.io/ComputationalDataScience/Website/index.html",
+        "topics": ["Monte Carlo simulation", "maximum likelihood estimation",
+                   "generalized linear models", "multiple and multivariate linear models",
+                   "bootstrap and resampling", "permutation tests", "cross-validation",
+                   "Bayesian inference", "MCMC and credible intervals",
+                   "large language models in data science"],
+    })
 
     # ---- hubs -----------------------------------------------------------------
     def hub(pattern: str) -> str:

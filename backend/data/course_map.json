@@ -1686,6 +1686,23 @@
   },
   "catalog_courses": [
     {
+      "code": "STAT 41800",
+      "title": "Computational Methods in Data Science",
+      "url": "https://treese41528.github.io/ComputationalDataScience/Website/index.html",
+      "topics": [
+        "Monte Carlo simulation",
+        "maximum likelihood estimation",
+        "generalized linear models",
+        "multiple and multivariate linear models",
+        "bootstrap and resampling",
+        "permutation tests",
+        "cross-validation",
+        "Bayesian inference",
+        "MCMC and credible intervals",
+        "large language models in data science"
+      ]
+    },
+    {
       "code": "STAT 41600",
       "title": "Probability",
       "url": "https://catalog.purdue.edu/preview_course_nopop.php?catoid=15&coid=156945",

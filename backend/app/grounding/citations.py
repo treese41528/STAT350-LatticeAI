@@ -17,7 +17,7 @@ _MARKER_RE = re.compile(r"\[(\d{1,2})\]")
 # (which matches schemes case-insensitively) renders it as a live link.
 _URL_RE = re.compile(r"https?://[^\s)\]>\"']+", re.IGNORECASE)
 _BEYOND_RE = re.compile(r">>>\s*BEYOND STAT 350 SCOPE.*?<<<", re.S)
-_CATALOG_CODE_RE = re.compile(r"\bSTAT\s*(41600|41700|51200|51400|42000|51300)\b")
+_CATALOG_CODE_RE = re.compile(r"\bSTAT\s*(41600|41700|41800|51200|51400|42000|51300)\b")
 
 REMOVED_PLACEHOLDER = "[link removed — see Sources]"
 
