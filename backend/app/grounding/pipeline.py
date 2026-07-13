@@ -62,15 +62,14 @@ EMPATHY_PROMPT = (
 # One-shot triage, run ONLY when retrieval already found nothing (so it costs a
 # tiny call only on the rare weird messages, never on real stats questions).
 TRIAGE_PROMPT = (
-    "You route a student's message for a STAT 350 (intro statistics) tutor. The "
-    "course search already found NO relevant material. Classify the message into "
-    "exactly one label:\n"
-    "STATS — a statistics or STAT 350 question (even if oddly phrased, advanced, "
-    "or beyond this course's materials).\n"
+    "You route a student's message for a STAT 350 (intro statistics) tutor. "
+    "Classify the message into exactly one label:\n"
+    "STATS — a statistics or STAT 350 question (even if oddly phrased, rude, "
+    "advanced, or beyond this course's materials).\n"
     "VENTING — expressing frustration, discouragement, or that they might quit or "
     "leave school; not really a question.\n"
     "OFFTOPIC — a personal, life, or unrelated question that isn't about "
-    "statistics (e.g. career or life advice).\n"
+    "statistics content (e.g. career plans, jobs, majors, life advice).\n"
     "Answer with ONLY one word: STATS, VENTING, or OFFTOPIC."
 )
 
@@ -79,8 +78,11 @@ OFFTOPIC_PROMPT = (
     "off-subject question, not statistics. You are the STAT 350 tutor. In 1-3 "
     "warm, brief sentences: gently let them know that's outside what you can help "
     "with as their stats tutor, without being cold or preachy, and offer to help "
-    "if any part of it touches the course. Do NOT answer the off-topic question, "
-    "do NOT give life or career advice, and include no links or citations."
+    "if any part of it touches the course. If they shared a career goal or "
+    "aspiration (e.g. becoming a biostatistician), warmly acknowledge it and "
+    "suggest their academic advisor or career services as the right people to "
+    "plan it with. Do NOT answer the off-topic question yourself, do NOT give "
+    "life or career advice, and include no links or citations."
 )
 
 OFFTOPIC_REPLY = (
@@ -276,8 +278,12 @@ async def _triage_weak(ctx: TurnContext) -> str:
                 {"role": "user", "content": ctx.message[:1000]}]
     try:
         parts: list[str] = []
+        # max_tokens must leave room for gpt-oss's INTERNAL reasoning tokens —
+        # at max_tokens=4 the live gateway returns an EMPTY string (the budget is
+        # consumed before the label is emitted) and every triage silently became
+        # the STATS default. 400 verified live: reasoning fits, label comes back.
         async for delta in aiter_sync(lambda: ctx.gateway.stream_chat(
-                messages, temperature=0.0, max_tokens=4)):
+                messages, temperature=0.0, max_tokens=400)):
             parts.append(delta)
         out = "".join(parts).strip().upper()
     except Exception:

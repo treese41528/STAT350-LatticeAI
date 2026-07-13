@@ -63,11 +63,24 @@ def test_route_frustration_vs_real_question(resolver):
 def test_affect_prefilter_flags_concept_for_triage(resolver):
     # venting dressed in course words stays a concept_question but is FLAGGED, so
     # the pipeline confirms tone with one cheap classify (keywords can't read it).
-    for msg in ["Statistics is crap!", "this whole subject is garbage",
+    # simple "X is crap" venting is caught FREE by the regex now
+    assert route("Statistics is crap!", resolver).intent == "frustration"
+    # tangled phrasings the regex can't anchor still get flagged for the classify
+    for msg in ["this whole subject is garbage",
                 "I'm so frustrated with regression",
-                "the way they teach hypothesis testing is ridiculous"]:
+                "the way they teach hypothesis testing is ridiculous",
+                "honestly the homework this week felt pointless to me"]:
         rt = route(msg, resolver)
         assert rt.intent == "concept_question" and rt.maybe_emotional, msg
+    # career/life aspirations carry NO negative affect but are personal, and they
+    # retrieve stats vocabulary — the prefilter must flag them for the classify
+    for msg in ["I think I would like to be a biostatistician.",
+                "I think I should get a job as a construction worker.",
+                "should I major in statistics?"]:
+        rt = route(msg, resolver)
+        assert rt.maybe_emotional, msg
+    # "total bull crap" phrasing is caught free by the frustration regex
+    assert route("This course is total bull crap!", resolver).intent == "frustration"
     # ordinary questions are never flagged -> they never pay for a classify
     for msg in ["how do I compute the variance?", "what is a p-value?",
                 "explain the central limit theorem",

@@ -45,8 +45,9 @@ _FRUSTRATION_RE = re.compile(
     r"|this|it|stat(?:s|istics)?|everything|my\s+life)"
     r"|(?:this|that|the|these|those|my|it|stat(?:s|istics)?|everything)"
     rf"(?:\s+(?:{_ACAD}))?"
-    r"\s+(?:is\s+|are\s+)?(?:so\s+|really\s+|too\s+)?"
-    r"(?:hard|stupid|dumb|confusing|impossible|awful|terrible|pointless|the\s+worst|sucks?|useless|boring|killing\s+me)"
+    r"\s+(?:is\s+|are\s+)?(?:so\s+|really\s+|too\s+|total(?:ly)?\s+|complete(?:ly)?\s+|absolute(?:ly)?\s+|utter(?:ly)?\s+|such\s+)?"
+    r"(?:hard|stupid|dumb|confusing|impossible|awful|terrible|pointless|the\s+worst|sucks?|useless|boring|killing\s+me"
+    r"|bull\W?(?:crap|shit)|crap+|garbage|trash|a\s+joke|\bbs\b)"
     r"|i\s+(?:give\s+up|quit|can'?t\s+do\s+this|can'?t\s+even|give\s+up\s+on\s+this)"
     r"|i'?m\s+(?:so\s+)?(?:done|lost|overwhelmed|stressed(?:\s+out)?|frustrated|struggling|dying|drowning)"
     r")[\s!.?]*$", re.I)
@@ -118,7 +119,13 @@ _AFFECT_RE = re.compile(
     r"drop(?:ping)?\s+out|can'?t\s+(?:do|take|handle|stand|even)|too\s+hard|"
     r"so\s+(?:hard|lost|confused)|killing\s+me|wanna\s+cry|depress\w*|anxi\w*|"
     r"stressed|panic\w*|struggl\w*)\b"
-    r"|f+u+c+k+|sh+i+t+|\bwtf\b|\bfml\b|\bdamn", re.I)
+    r"|f+u+c+k+|sh+i+t+|\bwtf\b|\bfml\b|\bdamn"
+    # personal/career-aspiration tokens: no negative affect, but they signal a
+    # life question ("should I get a job...", "I'd like to be a biostatistician")
+    # that retrieves stats vocabulary — let the classify make the call.
+    r"|\b(?:career|jobs?|profession|internship|major(?:ing)?\s+in|"
+    r"becom(?:e|ing)\s+a|want(?:ed)?\s+to\s+(?:be|become)|"
+    r"would\s+like\s+to\s+(?:be|become)|grow\s+up)\b", re.I)
 
 
 @dataclass
