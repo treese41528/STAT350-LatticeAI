@@ -333,10 +333,12 @@ def build(prompt_text: str) -> dict:
         catalog.append({"code": cm.group(2), "title": cm.group(3),
                         "url": cm.group(4), "topics": topics})
     # STAT 41800 (Tim's course) isn't in the legacy system_prompt.txt GO-DEEPER
-    # block; add it explicitly so a regenerated map keeps it. STAT 350 is a direct
-    # prerequisite, so it's the natural next course. Its number is also hard-coded
-    # in grounding/citations.py:_CATALOG_CODE_RE — keep the two in sync.
-    catalog.insert(0, {
+    # block; add it explicitly so a regenerated map keeps it. It's the computational
+    # / data-science option — NOT the immediate next course (it also requires a
+    # probability course, STAT 41600, first; 416/417 are the natural next steps).
+    # Its number is also hard-coded in grounding/citations.py:_CATALOG_CODE_RE —
+    # keep the two in sync.
+    catalog.append({
         "code": "STAT 41800",
         "title": "Computational Methods in Data Science",
         "url": "https://treese41528.github.io/ComputationalDataScience/Website/index.html",
