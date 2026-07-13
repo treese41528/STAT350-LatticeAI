@@ -221,7 +221,8 @@ def _persist_assistant(ctx: TurnContext, seq: int, *, content: str,
 
 
 def _persist_retrieval(ctx: TurnContext, rr: RetrievalResult,
-                       raw_query: str, rewritten: str) -> str:
+                       raw_query: str, rewritten: str,
+                       content_gap: bool = True) -> str:
     rid = str(uuid.uuid4())
     ctx.deps.recorder.emit(m.RetrievalEvent(
         id=rid, request_id=ctx.request_id,
@@ -240,9 +241,11 @@ def _persist_retrieval(ctx: TurnContext, rr: RetrievalResult,
         } for p in rr.passages],
         top_score=rr.top_distance, mean_score=rr.mean_distance,
         retrieval_latency_ms=rr.latency_ms, tier=rr.tier,
-        weak=rr.tier != "strong",
-        weak_reason=(rr.error or ("no_results" if not rr.passages else
-                                  "low_top_score" if rr.tier == "no_evidence" else None)),
+        # a triage reroute (venting/off-topic) is NOT a KB content gap
+        weak=(rr.tier != "strong") and content_gap,
+        weak_reason=((rr.error or ("no_results" if not rr.passages else
+                                   "low_top_score" if rr.tier == "no_evidence"
+                                   else None)) if content_gap else "triage_reroute"),
     ))
     return rid
 
@@ -610,34 +613,36 @@ async def _grounded_answer(ctx: TurnContext, r: Route, seq: int,
         rr = await run_sync(
             retrieve, ctx.retrieval_gateway, deps.resolver, rewritten, cfg,
             shrink=ctx.shrink, single_call=getattr(cfg, "single_call", False))
-    rid = _persist_retrieval(ctx, rr, raw_query, rewritten)
+    # Classify a no-evidence, non-syllabus message BEFORE recording retrieval, so
+    # a vent/off-topic reroute is NOT logged as a knowledge-base content gap (the
+    # weak-retrievals report is for real coverage holes, not "stats sucks").
+    triage_label = None
+    if rr.tier == "no_evidence" and not syllabus_mode:
+        triage_label = await _triage_weak(ctx)
+    rid = _persist_retrieval(ctx, rr, raw_query, rewritten,
+                             content_gap=triage_label in (None, "STATS"))
 
     if rr.error and not rr.passages:
         deps.recorder.emit(m.ErrorEvent(
             scope="gateway_retrieval", error_type=rr.error[:64],
             request_id=ctx.request_id, user_id=ctx.user_row_id))
 
-    # ---- weak retrieval → honest refusal, LLM call skipped -------------------
+    # ---- weak retrieval → triage-routed warm reply, or an honest refusal ------
     if rr.tier == "no_evidence":
-        # Weak retrieval isn't always an off-syllabus stats question — it's often
-        # venting or a personal/off-topic question. A cheap one-shot triage (only
-        # HERE, only because retrieval already failed) routes those to a warm
-        # reply instead of a robotic "rephrase with the course terms" refusal.
-        # Syllabus questions skip triage — they get the authoritative-PDF fallback.
-        if not syllabus_mode:
-            label = await _triage_weak(ctx)
-            if label == "VENTING":
-                async for ev in _adaptive_reply(
-                        ctx, r, seq, t_start, system_prompt=EMPATHY_PROMPT,
-                        fallback=FRUSTRATION_REPLY, intent="venting"):
-                    yield ev
-                return
-            if label == "OFFTOPIC":
-                async for ev in _adaptive_reply(
-                        ctx, r, seq, t_start, system_prompt=OFFTOPIC_PROMPT,
-                        fallback=OFFTOPIC_REPLY, intent="offtopic"):
-                    yield ev
-                return
+        # Venting or a personal/off-topic question gets a warm reply instead of a
+        # robotic refusal; a real (off-syllabus) stats question still refuses.
+        if triage_label == "VENTING":
+            async for ev in _adaptive_reply(
+                    ctx, r, seq, t_start, system_prompt=EMPATHY_PROMPT,
+                    fallback=FRUSTRATION_REPLY, intent="venting"):
+                yield ev
+            return
+        if triage_label == "OFFTOPIC":
+            async for ev in _adaptive_reply(
+                    ctx, r, seq, t_start, system_prompt=OFFTOPIC_PROMPT,
+                    fallback=OFFTOPIC_REPLY, intent="offtopic"):
+                yield ev
+            return
         # STATS (or a syllabus question): honest refusal, LLM generation skipped.
         # DON'T attach "closest sections" — random cards on an off-topic message
         # are noise; only the syllabus fallback (authoritative PDF) earns a card.

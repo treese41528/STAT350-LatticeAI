@@ -142,6 +142,9 @@ async def test_weak_retrieval_refuses_without_llm_call(deps):
         assistant = session.scalar(select(m.Message)
                                    .where(m.Message.role == "assistant"))
         assert assistant.answer_kind == "refusal"
+        rev = session.scalar(select(m.RetrievalEvent))
+        assert rev is not None and rev.weak   # a real off-syllabus gap IS logged
+    await deps.recorder.start()
 
 
 async def test_weak_retrieval_offtopic_redirects(deps):
@@ -161,8 +164,44 @@ async def test_weak_retrieval_offtopic_redirects(deps):
         assistant = session.scalar(select(m.Message)
                                    .where(m.Message.role == "assistant"))
         assert assistant.intent == "offtopic"
+
+
+async def test_weak_retrieval_venting_empathy(deps):
+    # venting that retrieves nothing -> warm empathy reply, no cards, AND the weak
+    # RetrievalEvent is NOT flagged as a content gap (would pollute the report).
+    deps.gateway = FakeGateway(
+        retrieval_payloads={"kb-web": webbook_payload(("7-3-clt.rst", "x", 0.58))},
+        stream_chunks=["VENTING"])   # triage -> VENTING; reply reuses same fake
+    ctx = _ctx(deps, "honestly this class is crushing me")
+    events = await _collect(run_turn(ctx, seq=0))
+    names = [e for e, _ in events]
+    assert "refusal" not in names
+    assert "resources" not in names and "citations" not in names
+    assert "token" in names and names[-1] == "done"
+    await deps.recorder.stop()
+    with deps.session_factory() as session:
+        assistant = session.scalar(select(m.Message)
+                                   .where(m.Message.role == "assistant"))
+        assert assistant.intent == "venting"
         rev = session.scalar(select(m.RetrievalEvent))
-        assert rev.weak and rev.tier == "no_evidence"
+        assert rev is not None and rev.weak is False   # not a content gap
+
+
+async def test_frustration_short_circuits_before_retrieval(deps):
+    # a regex-detected vent gets a live adaptive reply WITHOUT touching retrieval
+    deps.gateway = FakeGateway(stream_chunks=["I hear you — that's rough."])
+    ctx = _ctx(deps, "this is so hard")
+    events = await _collect(run_turn(ctx, seq=0))
+    names = [e for e, _ in events]
+    assert deps.gateway.retrieval_calls == []       # never hit retrieval
+    assert len(deps.gateway.chat_calls) == 1        # one adaptive reply
+    assert "resources" not in names and "citations" not in names
+    assert "token" in names and names[-1] == "done"
+    await deps.recorder.stop()
+    with deps.session_factory() as session:
+        a = session.scalar(select(m.Message).where(m.Message.role == "assistant"))
+        assert a.intent == "frustration"
+        assert session.scalar(select(m.RetrievalEvent)) is None  # never retrieved
     await deps.recorder.start()
 
 
