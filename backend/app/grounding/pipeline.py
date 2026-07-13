@@ -583,6 +583,28 @@ async def _grounded_answer(ctx: TurnContext, r: Route, seq: int,
     term = resolve_current_term(deps.settings)
     syllabus_cards = _syllabus_cards(deps, ctx.modality) if syllabus_mode else []
 
+    # The router flagged a possible vent/off-topic dressed in course words
+    # ("statistics is crap") — one that WILL retrieve real material, so weak
+    # retrieval can't catch it. Confirm with one cheap classify BEFORE searching;
+    # if it's venting/off-topic we reply warmly and never touch retrieval/cards.
+    pre_triaged = False
+    if (r.maybe_emotional and not syllabus_mode
+            and deps.gateway_ready and not ctx.reject):
+        label = await _triage_weak(ctx)
+        if label == "VENTING":
+            async for ev in _adaptive_reply(
+                    ctx, r, seq, t_start, system_prompt=EMPATHY_PROMPT,
+                    fallback=FRUSTRATION_REPLY, intent="venting"):
+                yield ev
+            return
+        if label == "OFFTOPIC":
+            async for ev in _adaptive_reply(
+                    ctx, r, seq, t_start, system_prompt=OFFTOPIC_PROMPT,
+                    fallback=OFFTOPIC_REPLY, intent="offtopic"):
+                yield ev
+            return
+        pre_triaged = True   # STATS -> answer normally; don't re-classify below
+
     if syllabus_mode:
         yield "status", {"stage": "retrieving", "label": "Checking your syllabus…"}
     else:
@@ -617,7 +639,7 @@ async def _grounded_answer(ctx: TurnContext, r: Route, seq: int,
     # a vent/off-topic reroute is NOT logged as a knowledge-base content gap (the
     # weak-retrievals report is for real coverage holes, not "stats sucks").
     triage_label = None
-    if rr.tier == "no_evidence" and not syllabus_mode:
+    if rr.tier == "no_evidence" and not syllabus_mode and not pre_triaged:
         triage_label = await _triage_weak(ctx)
     rid = _persist_retrieval(ctx, rr, raw_query, rewritten,
                              content_gap=triage_label in (None, "STATS"))

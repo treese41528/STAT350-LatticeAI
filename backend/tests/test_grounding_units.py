@@ -60,6 +60,22 @@ def test_route_frustration_vs_real_question(resolver):
         assert route(msg, resolver).intent != "frustration", msg
 
 
+def test_affect_prefilter_flags_concept_for_triage(resolver):
+    # venting dressed in course words stays a concept_question but is FLAGGED, so
+    # the pipeline confirms tone with one cheap classify (keywords can't read it).
+    for msg in ["Statistics is crap!", "this whole subject is garbage",
+                "I'm so frustrated with regression",
+                "the way they teach hypothesis testing is ridiculous"]:
+        rt = route(msg, resolver)
+        assert rt.intent == "concept_question" and rt.maybe_emotional, msg
+    # ordinary questions are never flagged -> they never pay for a classify
+    for msg in ["how do I compute the variance?", "what is a p-value?",
+                "explain the central limit theorem",
+                "when do I use a t-test vs a z-test?",
+                "how do I handle outliers?"]:
+        assert not route(msg, resolver).maybe_emotional, msg
+
+
 async def test_triage_weak_parsing():
     # the weak-retrieval triage extracts one label and DEFAULTS TO STATS on any
     # error or ambiguity (so a hiccup never turns a real question into a brush-off)

@@ -104,6 +104,23 @@ _QUESTION_WORDS_RE = re.compile(
     r"help me|solve|compute|calculate|interpret|prove)\b", re.I)
 
 
+# High-RECALL affect prefilter — precision doesn't matter, the LLM triage makes
+# the final call. Any negative-affect / burnout token flags a concept question
+# for ONE cheap classify, so venting dressed in course words ("statistics is
+# crap") is caught even though it retrieves real material. Questions with none of
+# these tokens never pay for a classify. Keywords alone can't read tone; this
+# just decides *when to ask the model*.
+_AFFECT_RE = re.compile(
+    r"\b(?:sucks?|crap+y?|garbage|trash|stupid|dumb|pointless|useless|worthless|"
+    r"worst|awful|terrible|horrible|hate|hating|despise|loathe|boring|"
+    r"ridiculous|nonsense|screwed|hopeless|overwhelm\w*|frustrat\w*|miserable|"
+    r"exhaust\w*|burn(?:t|ed)?\s*out|giv(?:e|ing)\s+up|quit(?:ting|s)?|"
+    r"drop(?:ping)?\s+out|can'?t\s+(?:do|take|handle|stand|even)|too\s+hard|"
+    r"so\s+(?:hard|lost|confused)|killing\s+me|wanna\s+cry|depress\w*|anxi\w*|"
+    r"stressed|panic\w*|struggl\w*)\b"
+    r"|f+u+c+k+|sh+i+t+|\bwtf\b|\bfml\b|\bdamn", re.I)
+
+
 @dataclass
 class Route:
     intent: str
@@ -114,6 +131,7 @@ class Route:
     wants_video: bool = False
     wants_simulation: bool = False
     needs_modality: bool = False
+    maybe_emotional: bool = False   # affect prefilter tripped -> confirm via triage
 
 
 def route(message: str, resolver: CourseMapResolver,
@@ -169,4 +187,5 @@ def route(message: str, resolver: CourseMapResolver,
         )
 
     return Route(intent="concept_question", sections=sections,
-                 worksheet=int(ws_m.group(1)) if ws_m else None)
+                 worksheet=int(ws_m.group(1)) if ws_m else None,
+                 maybe_emotional=bool(_AFFECT_RE.search(msg)))

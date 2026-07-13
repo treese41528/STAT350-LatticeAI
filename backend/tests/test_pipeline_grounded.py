@@ -205,6 +205,43 @@ async def test_frustration_short_circuits_before_retrieval(deps):
     await deps.recorder.start()
 
 
+async def test_affect_flagged_venting_pre_triaged(deps):
+    # "statistics is crap" retrieves real material, but the affect prefilter + a
+    # pre-retrieval classify catch it BEFORE searching -> warm reply, no cards,
+    # and retrieval is never even called (the cheap "middle ground").
+    deps.gateway = FakeGateway(
+        retrieval_payloads={"kb-web": webbook_payload(("7-1.rst", "stats", 0.90))},
+        stream_chunks=["VENTING"])   # pre-triage -> VENTING; reply reuses the fake
+    ctx = _ctx(deps, "honestly statistics is crap")
+    events = await _collect(run_turn(ctx, seq=0))
+    names = [e for e, _ in events]
+    assert deps.gateway.retrieval_calls == []       # never searched
+    assert "refusal" not in names and "resources" not in names
+    assert "token" in names and names[-1] == "done"
+    await deps.recorder.stop()
+    with deps.session_factory() as session:
+        a = session.scalar(select(m.Message).where(m.Message.role == "assistant"))
+        assert a.intent == "venting"
+        assert session.scalar(select(m.RetrievalEvent)) is None  # no wasted search
+    await deps.recorder.start()
+
+
+async def test_affect_flagged_stats_still_answers(deps):
+    # a real question that merely CONTAINS an affect word ("this stupid formula")
+    # is flagged, classified STATS by the pre-triage, then answered normally.
+    deps.gateway = FakeGateway(
+        retrieval_payloads={"kb-web": webbook_payload(("4-2.rst", "probability", 0.90))},
+        stream_chunks=["STATS"])   # pre-triage -> STATS; grounded answer reuses fake
+    ctx = _ctx(deps, "why does this stupid formula use n minus 1?")
+    events = await _collect(run_turn(ctx, seq=0))
+    names = [e for e, _ in events]
+    assert deps.gateway.retrieval_calls != []       # DID search
+    assert "refusal" not in names
+    assert "citations" in names                     # a real grounded answer
+    assert len(deps.gateway.chat_calls) == 2        # pre-triage + generation
+    await deps.recorder.start()
+
+
 async def test_gateway_stream_error_yields_retryable_error(deps):
     deps.gateway = FakeGateway(
         retrieval_payloads={"kb-web": webbook_payload(
