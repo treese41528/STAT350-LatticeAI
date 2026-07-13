@@ -8,6 +8,8 @@ Intents:
   exam_info         "what's on exam 2"                          -> course-map
                     template, NO LLM call
   smalltalk         greetings/thanks                            -> canned reply
+  frustration       pure venting, no question ("this sucks")    -> empathetic
+                    canned reply, NO retrieval, NO resource cards
   concept_question  everything else                             -> full pipeline
 """
 
@@ -23,6 +25,21 @@ _SMALLTALK_RE = re.compile(
     r"^\s*((hi|hello|hey|yo)( there| everyone| bot)?|thanks?( a lot| so much)?|"
     r"thank you|ty|good (morning|afternoon|evening)|"
     r"who are you|what can you do|help)\s*[!.?]*\s*$", re.I)
+
+# Pure venting / frustration with NO real question. Anchored to the whole
+# message so a profanity-laced actual question ("why the hell do we divide by
+# n-1?") still falls through to concept_question and gets answered.
+_FRUSTRATION_RE = re.compile(
+    r"^\s*(?:"
+    r"(?:f+u+c+k+|f\W?u\W?c\W?k|sh+i+t+|damn+|god\s*damn|wtf|screw|crap|hell|bull\W?shit)"
+    r"(?:\s+(?:this|that|it|stat(?:s|istics)?|everything|off|man))?"
+    r"|u+g+h+|a+r+g+h+|f+m+l+|bruh"
+    r"|(?:i\s+)?(?:hate|despise|can'?t\s+stand|loathe)\s+(?:this|it|stat(?:s|istics)?|everything|my\s+life)"
+    r"|(?:this|that|it|stat(?:s|istics)?|everything)\s+(?:is\s+)?(?:so\s+|really\s+|too\s+)?(?:hard|stupid|dumb|confusing|impossible|awful|terrible|pointless|the\s+worst|sucks?|killing\s+me)"
+    r"|(?:this|it|stat(?:s|istics)?)\s+sucks?"
+    r"|i\s+(?:give\s+up|quit|can'?t\s+do\s+this|can'?t\s+even|give\s+up\s+on\s+this)"
+    r"|i'?m\s+(?:so\s+)?(?:done|lost|overwhelmed|stressed(?:\s+out)?|frustrated|struggling|dying|drowning)"
+    r")[\s!.?]*$", re.I)
 
 _SYLLABUS_RE = re.compile(
     r"\b(syllabus|schedule|deadline|due date|office hours?|grading|grade breakdown|"
@@ -80,6 +97,10 @@ def route(message: str, resolver: CourseMapResolver,
 
     if _SMALLTALK_RE.match(msg):
         return Route(intent="smalltalk")
+
+    # Venting with no question -> empathetic canned reply, no retrieval/resources.
+    if _FRUSTRATION_RE.match(msg):
+        return Route(intent="frustration")
 
     exam_m = _EXAM_RE.search(msg)
     if exam_m:

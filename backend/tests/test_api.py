@@ -87,6 +87,18 @@ def test_chat_syllabus_asks_modality_then_answers(client, device_id):
     assert "Winter" in r2.text and "Syllabus%20Winter" in r2.text
 
 
+def test_chat_frustration_no_sources(client, device_id):
+    # "Fuck STATS" must get an empathetic reply with NO resource/citation cards
+    # (it used to vector-match a section above threshold and attach §2.2 cards).
+    r = client.post("/api/chat", headers=_h(device_id),
+                    json={"conversationId": None, "message": "Fuck STATS"})
+    names = [e for e, _ in _events(r.text)]
+    assert "resources" not in names
+    assert "citations" not in names
+    assert names[-1] == "done"
+    assert "hear you" in r.text.lower()
+
+
 def test_chat_concept_degrades_without_gateway(client, device_id):
     r = client.post("/api/chat", headers=_h(device_id),
                     json={"conversationId": None,

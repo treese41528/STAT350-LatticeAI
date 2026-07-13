@@ -31,6 +31,12 @@ SMALLTALK_REPLY = (
     "in and we'll work through it step by step."
 )
 
+FRUSTRATION_REPLY = (
+    "I hear you — statistics can be genuinely frustrating, and hitting a wall is "
+    "part of learning it. Tell me what you're working on or which idea isn't "
+    "clicking, and we'll take it one step at a time."
+)
+
 REFUSAL_MESSAGE = (
     "I couldn't find anything in the STAT 350 course materials that covers "
     "this, so I won't guess. If you think it should be covered, try rephrasing "
@@ -222,11 +228,16 @@ async def run_turn(ctx: TurnContext, seq: int) -> AsyncIterator[tuple[str, dict]
                   needs_modality=True)
 
     # ---- deterministic branches (no LLM, no queue) ---------------------------
-    if r.intent == "smalltalk":
-        yield "token", {"text": SMALLTALK_REPLY}
+    # Greetings and pure venting/frustration both get a canned reply with NO
+    # retrieval and NO resource cards — attaching "Tools for Categorical Data"
+    # to "this is so hard" is a non-sequitur (and junk text vector-matches a
+    # section above threshold, so this must short-circuit before retrieval).
+    if r.intent in ("smalltalk", "frustration"):
+        reply = FRUSTRATION_REPLY if r.intent == "frustration" else SMALLTALK_REPLY
+        yield "token", {"text": reply}
         yield "done", {"messageId": ctx.assistant_msg_id, "finishReason": "stop",
-                       "finalText": SMALLTALK_REPLY, "flags": {}}
-        _persist_assistant(ctx, seq, content=SMALLTALK_REPLY,
+                       "finalText": reply, "flags": {}}
+        _persist_assistant(ctx, seq, content=reply,
                            answer_kind="smalltalk", intent=r.intent,
                            latency_ms=int((time.monotonic() - t_start) * 1000))
         return

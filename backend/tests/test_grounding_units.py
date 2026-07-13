@@ -17,6 +17,18 @@ from .conftest import FakeGateway, webbook_payload
 
 def test_router_intents(resolver):
     assert route("hi there!", resolver).intent == "smalltalk"
+
+
+def test_route_frustration_vs_real_question(resolver):
+    # pure venting -> frustration (empathetic reply, no retrieval/resources)
+    for msg in ["Fuck STATS", "stats sucks", "this is so hard", "ugh",
+                "i give up", "I'm so lost", "this is stupid", "I hate stats"]:
+        assert route(msg, resolver).intent == "frustration", msg
+    # a profanity-laced ACTUAL question must NOT be swallowed — it gets answered
+    for msg in ["why the hell do we divide by n-1?",
+                "what the heck is a p-value?",
+                "how do I compute the variance?"]:
+        assert route(msg, resolver).intent == "concept_question", msg
     assert route("what's on exam 2?", resolver).intent == "exam_info"
     assert route("give me the link to worksheet 5", resolver).intent == "resource_lookup"
     assert route("where is the CLT video", resolver).intent == "resource_lookup"
