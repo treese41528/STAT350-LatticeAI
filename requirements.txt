@@ -1,3 +1,9 @@
+# ⚠️ LEGACY — dependencies for the OLD Flask app (genaiStudio_app_database.py),
+# kept only for the rollback path. The MODERN tutor does NOT use this file; its
+# dependencies live in backend/pyproject.toml (install with `pip install -e backend`,
+# or see README.md / DEPLOY.md). Do not `pip install -r requirements.txt` for the
+# modern app — it would install the wrong (Flask) stack.
+
 # Core Flask dependencies
 Flask==3.0.0
 Flask-CORS==4.0.0

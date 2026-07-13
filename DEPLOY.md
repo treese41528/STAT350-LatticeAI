@@ -19,7 +19,7 @@ frontend host, no database server.
 # Python venv + backend deps + the SDK (see README for dev-vs-pinned install)
 python3 -m venv ~/venvs/stat350-tutor
 ~/venvs/stat350-tutor/bin/pip install fastapi 'uvicorn[standard]' 'sqlalchemy>=2' \
-    alembic pydantic-settings itsdangerous pyyaml
+    pydantic-settings itsdangerous pyyaml httpx
 ~/venvs/stat350-tutor/bin/pip install -e ../genai-studio-sdk   # or the pinned git SDK
 
 # Node is needed only to BUILD the SPA (run.sh serve does this for you)

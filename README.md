@@ -45,7 +45,7 @@ Retrieval quality, refusals, and citations are all logged so the tool improves.
 #    — not `pip install -e backend`, which would pull the git-pinned SDK.
 python3 -m venv ~/venvs/stat350-tutor
 ~/venvs/stat350-tutor/bin/pip install fastapi 'uvicorn[standard]' 'sqlalchemy>=2' \
-    alembic pydantic-settings itsdangerous pyyaml pytest pytest-asyncio httpx
+    pydantic-settings itsdangerous pyyaml httpx pytest pytest-asyncio
 ~/venvs/stat350-tutor/bin/pip install -e ../genai-studio-sdk    # dev: local SDK checkout
 cd frontend && npm ci && cd ..
 # (Production/CI: `pip install -e backend` uses the pinned git SDK from pyproject.)
