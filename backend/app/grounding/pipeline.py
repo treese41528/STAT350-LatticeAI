@@ -37,6 +37,19 @@ FRUSTRATION_REPLY = (
     "clicking, and we'll take it one step at a time."
 )
 
+# Used for an ADAPTIVE (non-canned) reply to venting; FRUSTRATION_REPLY is the
+# graceful fallback when the gateway is down or the app is shedding load.
+EMPATHY_PROMPT = (
+    "You are a warm, encouraging STAT 350 tutor. The student is venting "
+    "frustration, not asking a specific question. Reply in 2-3 sentences: "
+    "acknowledge how they feel genuinely and specifically (do NOT sound scripted "
+    "or generic), reassure them that getting stuck is a normal part of learning "
+    "statistics, and gently invite them to tell you what they're working on or "
+    "which idea isn't clicking so you can help. Do NOT explain statistics "
+    "unprompted, do NOT lecture, and do NOT include any links, citations, or "
+    "bracketed numbers."
+)
+
 REFUSAL_MESSAGE = (
     "I couldn't find anything in the STAT 350 course materials that covers "
     "this, so I won't guess. If you think it should be covered, try rephrasing "
@@ -212,6 +225,72 @@ def _persist_citations(ctx: TurnContext, rr: RetrievalResult, rid: str,
             resolved=False))
 
 
+async def _empathy_answer(ctx: TurnContext, r: Route, seq: int, t_start: float):
+    """A short, ADAPTIVE empathetic reply to venting: one small LLM call, NO
+    retrieval and NO resource cards. Falls back to the canned line when the
+    gateway is unavailable or the app is shedding load."""
+    deps = ctx.deps
+    if not deps.gateway_ready or ctx.reject:
+        yield "token", {"text": FRUSTRATION_REPLY}
+        yield "done", {"messageId": ctx.assistant_msg_id, "finishReason": "stop",
+                       "finalText": FRUSTRATION_REPLY, "flags": {}}
+        _persist_assistant(ctx, seq, content=FRUSTRATION_REPLY,
+                           answer_kind="smalltalk", intent=r.intent,
+                           latency_ms=int((time.monotonic() - t_start) * 1000))
+        return
+
+    messages = [{"role": "system", "content": EMPATHY_PROMPT}]
+    for h in ctx.history[-4:]:
+        messages.append({"role": h["role"], "content": h["content"]})
+    messages.append({"role": "user", "content": ctx.message})
+
+    chunks: list[str] = []
+    ttft_ms: int | None = None
+    finish_reason = "stop"
+    t_llm = time.monotonic()
+    try:
+        async for delta in aiter_sync(lambda: ctx.gateway.stream_chat(
+                messages, max_tokens=200)):
+            if ttft_ms is None:
+                ttft_ms = int((time.monotonic() - t_llm) * 1000)
+            chunks.append(delta)
+            yield "token", {"text": delta}
+    except GeneratorExit:
+        finish_reason = "aborted"
+        raise
+    except Exception as exc:
+        deps.recorder.emit(m.ErrorEvent(
+            scope="gateway_chat", error_type=f"{type(exc).__name__}"[:64],
+            detail=str(exc)[:500], request_id=ctx.request_id,
+            user_id=ctx.user_row_id, conversation_id=ctx.conversation_id))
+        if not chunks:
+            yield "token", {"text": FRUSTRATION_REPLY}
+        text = "".join(chunks) or FRUSTRATION_REPLY
+        yield "done", {"messageId": ctx.assistant_msg_id, "finishReason": "error",
+                       "finalText": text, "flags": {}}
+        _persist_assistant(ctx, seq, content=text, answer_kind="smalltalk",
+                           intent=r.intent, finish_reason="error",
+                           latency_ms=int((time.monotonic() - t_start) * 1000))
+        return
+    finally:
+        if finish_reason == "aborted":
+            _persist_assistant(ctx, seq, content="".join(chunks),
+                               answer_kind="smalltalk", intent=r.intent,
+                               finish_reason="aborted",
+                               latency_ms=int((time.monotonic() - t_start) * 1000),
+                               ttft_ms=ttft_ms)
+
+    # safety net: strip any URL the model typed; fall back if it said nothing
+    final_text, removed = lint_links("".join(chunks), deps.resolver)
+    if not final_text.strip():
+        final_text = FRUSTRATION_REPLY
+    latency_ms = int((time.monotonic() - t_start) * 1000)
+    yield "done", {"messageId": ctx.assistant_msg_id, "finishReason": "stop",
+                   "finalText": final_text, "flags": {"linted": bool(removed)}}
+    _persist_assistant(ctx, seq, content=final_text, answer_kind="smalltalk",
+                       intent=r.intent, latency_ms=latency_ms, ttft_ms=ttft_ms)
+
+
 async def run_turn(ctx: TurnContext, seq: int) -> AsyncIterator[tuple[str, dict]]:
     deps = ctx.deps
     t_start = time.monotonic()
@@ -228,18 +307,22 @@ async def run_turn(ctx: TurnContext, seq: int) -> AsyncIterator[tuple[str, dict]
                   needs_modality=True)
 
     # ---- deterministic branches (no LLM, no queue) ---------------------------
-    # Greetings and pure venting/frustration both get a canned reply with NO
-    # retrieval and NO resource cards — attaching "Tools for Categorical Data"
-    # to "this is so hard" is a non-sequitur (and junk text vector-matches a
-    # section above threshold, so this must short-circuit before retrieval).
-    if r.intent in ("smalltalk", "frustration"):
-        reply = FRUSTRATION_REPLY if r.intent == "frustration" else SMALLTALK_REPLY
-        yield "token", {"text": reply}
+    if r.intent == "smalltalk":
+        yield "token", {"text": SMALLTALK_REPLY}
         yield "done", {"messageId": ctx.assistant_msg_id, "finishReason": "stop",
-                       "finalText": reply, "flags": {}}
-        _persist_assistant(ctx, seq, content=reply,
+                       "finalText": SMALLTALK_REPLY, "flags": {}}
+        _persist_assistant(ctx, seq, content=SMALLTALK_REPLY,
                            answer_kind="smalltalk", intent=r.intent,
                            latency_ms=int((time.monotonic() - t_start) * 1000))
+        return
+
+    # Pure venting: a warm, ADAPTIVE reply (no retrieval, no resource cards —
+    # attaching "Tools for Categorical Data" to "this is so hard" is a non-
+    # sequitur, and junk text vector-matches a section above threshold, so this
+    # must short-circuit before retrieval).
+    if r.intent == "frustration":
+        async for ev in _empathy_answer(ctx, r, seq, t_start):
+            yield ev
         return
 
     if r.intent in ("resource_lookup", "exam_info", "syllabus_schedule"):

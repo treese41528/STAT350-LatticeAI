@@ -8,8 +8,9 @@ Intents:
   exam_info         "what's on exam 2"                          -> course-map
                     template, NO LLM call
   smalltalk         greetings/thanks                            -> canned reply
-  frustration       pure venting, no question ("this sucks")    -> empathetic
-                    canned reply, NO retrieval, NO resource cards
+  frustration       pure venting, no question ("this sucks")    -> short adaptive
+                    empathetic LLM reply, NO retrieval, NO resource cards
+                    (canned fallback if the gateway is down)
   concept_question  everything else                             -> full pipeline
 """
 
