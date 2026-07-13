@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { useChatStore } from "../../stores/chatStore";
 import { TopBar } from "./TopBar";
@@ -8,37 +8,67 @@ import { Announcer } from "../a11y/Announcer";
 import styles from "./AppShell.module.css";
 
 const MOBILE_BREAKPOINT = 900;
+const COLLAPSE_KEY = "stat350.sidebarCollapsed";
 
 function isMobile() {
   return typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT;
 }
 
+function loadCollapsed(): boolean {
+  try {
+    return localStorage.getItem(COLLAPSE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 /**
- * App layout: black topbar, sidebar | main grid. Below 900px the sidebar
- * becomes an overlay drawer with a scrim and body scroll lock.
+ * App layout: black topbar, sidebar | main grid.
  *
- * Global keys: Esc stops the stream (dialogs consume Esc first via Radix),
+ * The sidebar has TWO independent states so that crossing the 900px breakpoint
+ * never carries the wrong one over (the old single flag made the overlay drawer
+ * pop open over the chat when you shrank the window, and hid the desktop rail
+ * when you grew it back):
+ *   - desktopCollapsed — the persisted rail preference on wide screens
+ *   - drawerOpen       — the ephemeral overlay on phones/tablets; always starts
+ *                        closed and re-closes whenever we enter mobile
+ * What's actually shown is derived: mobile ? drawerOpen : !desktopCollapsed.
+ *
+ * Global keys: Esc closes the mobile drawer, else stops the stream;
  * Ctrl/Cmd+Shift+O starts a new chat.
  */
 export function AppShell() {
-  const [sidebarOpen, setSidebarOpen] = useState(() => !isMobile());
   const [mobile, setMobile] = useState(isMobile);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [desktopCollapsed, setDesktopCollapsed] = useState(loadCollapsed);
+  const mobileRef = useRef(mobile);
 
   const stop = useChatStore((s) => s.stop);
   const newChat = useChatStore((s) => s.newChat);
 
+  const sidebarOpen = mobile ? drawerOpen : !desktopCollapsed;
+
+  // Only react when the viewport actually crosses the breakpoint (not on every
+  // resize pixel). Entering mobile force-closes the overlay so shrinking the
+  // window can't pop the menu open over the chat.
   useEffect(() => {
-    const onResize = () => setMobile(isMobile());
+    const onResize = () => {
+      const m = isMobile();
+      if (m === mobileRef.current) return;
+      mobileRef.current = m;
+      setMobile(m);
+      if (m) setDrawerOpen(false);
+    };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // Body scroll lock while the mobile drawer is open.
+  // Body scroll lock only while the mobile drawer is actually open.
   useEffect(() => {
-    const lock = mobile && sidebarOpen;
+    const lock = mobile && drawerOpen;
     document.body.classList.toggle("drawer-open", lock);
     return () => document.body.classList.remove("drawer-open");
-  }, [mobile, sidebarOpen]);
+  }, [mobile, drawerOpen]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -46,8 +76,8 @@ export function AppShell() {
       if (e.key === "Escape") {
         // Radix dialogs/popovers handle their own Esc and stop propagation
         // before this listener sees it, so this only fires "bare".
-        if (mobile && sidebarOpen) {
-          setSidebarOpen(false);
+        if (mobile && drawerOpen) {
+          setDrawerOpen(false);
         } else {
           stop();
         }
@@ -60,21 +90,39 @@ export function AppShell() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [stop, newChat, mobile, sidebarOpen]);
+  }, [stop, newChat, mobile, drawerOpen]);
+
+  // The one toggle button drives whichever state is live for this viewport.
+  const toggleSidebar = useCallback(() => {
+    if (isMobile()) {
+      setDrawerOpen((o) => !o);
+    } else {
+      setDesktopCollapsed((c) => {
+        const next = !c;
+        try {
+          localStorage.setItem(COLLAPSE_KEY, next ? "1" : "0");
+        } catch {
+          /* localStorage may be unavailable (private mode) — non-fatal */
+        }
+        return next;
+      });
+    }
+  }, []);
 
   const closeDrawer = useCallback(() => {
-    if (isMobile()) setSidebarOpen(false);
+    if (isMobile()) setDrawerOpen(false);
   }, []);
 
   return (
     <div className={clsx(styles.shell, !sidebarOpen && styles.sidebarClosed)}>
-      <TopBar onToggleSidebar={() => setSidebarOpen((o) => !o)} />
+      <TopBar onToggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
 
-      {mobile && sidebarOpen && (
-        <div className={styles.scrim} onClick={() => setSidebarOpen(false)} aria-hidden="true" />
+      {mobile && drawerOpen && (
+        <div className={styles.scrim} onClick={() => setDrawerOpen(false)} aria-hidden="true" />
       )}
 
       <aside
+        id="app-sidebar"
         className={clsx(styles.sidebar, mobile && styles.sidebarDrawer, {
           [styles.sidebarHidden]: !sidebarOpen,
         })}

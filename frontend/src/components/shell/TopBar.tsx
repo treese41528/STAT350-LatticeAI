@@ -6,7 +6,13 @@ import { ConnectionStatus } from "./ConnectionStatus";
 import { ThemeToggle } from "./ThemeToggle";
 import styles from "./TopBar.module.css";
 
-export function TopBar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
+export function TopBar({
+  onToggleSidebar,
+  sidebarOpen,
+}: {
+  onToggleSidebar: () => void;
+  sidebarOpen: boolean;
+}) {
   const config = useAppStore((s) => s.config);
   const newChat = useChatStore((s) => s.newChat);
 
@@ -15,9 +21,11 @@ export function TopBar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
       <div className={styles.left}>
         <IconButton
           variant="topbar"
-          label="Toggle sidebar"
+          label={sidebarOpen ? "Hide menu" : "Show menu"}
           onClick={onToggleSidebar}
           className={styles.sidebarBtn}
+          aria-expanded={sidebarOpen}
+          aria-controls="app-sidebar"
         >
           <SidebarIcon size={18} />
         </IconButton>
