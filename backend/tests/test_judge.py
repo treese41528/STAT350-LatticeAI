@@ -48,7 +48,10 @@ def test_generate_answer_refuses_on_no_evidence(settings, resolver):
 
     assert ar.refused is True and ar.tier == "no_evidence"
     assert ar.answer == REFUSAL_MESSAGE
-    assert not gw.chat_calls, "a refusal must SKIP the LLM call"
+    # weak retrieval runs a cheap triage (fake -> STATS); the refusal still skips
+    # the grounded generation call — only the one-word triage ran.
+    assert len(gw.chat_calls) == 1
+    assert "STATS, VENTING, or OFFTOPIC" in gw.chat_calls[0][0]["content"]
 
 
 # ---- pure scoring + aggregation -------------------------------------------

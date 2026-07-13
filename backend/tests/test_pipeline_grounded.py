@@ -132,12 +132,35 @@ async def test_weak_retrieval_refuses_without_llm_call(deps):
     names = [e for e, _ in events]
     assert "refusal" in names
     assert dict(events)["refusal"]["reason"] == "weak_retrieval"
-    assert deps.gateway.chat_calls == []          # LLM call skipped
+    # weak retrieval now runs a cheap one-shot triage (fake returns nothing ->
+    # STATS), which still refuses with NO grounded generation — only the triage.
+    assert len(deps.gateway.chat_calls) == 1
+    assert "STATS, VENTING, or OFFTOPIC" in deps.gateway.chat_calls[0][0]["content"]
+    assert "resources" not in names               # no stray "closest" cards
     await deps.recorder.stop()
     with deps.session_factory() as session:
         assistant = session.scalar(select(m.Message)
                                    .where(m.Message.role == "assistant"))
         assert assistant.answer_kind == "refusal"
+
+
+async def test_weak_retrieval_offtopic_redirects(deps):
+    # a personal/off-topic message that retrieves nothing is triaged to a warm
+    # redirect (a streamed reply), NOT a refusal and NOT resource cards.
+    deps.gateway = FakeGateway(
+        retrieval_payloads={"kb-web": webbook_payload(("7-3-clt.rst", "x", 0.58))},
+        stream_chunks=["OFFTOPIC"])   # triage -> OFFTOPIC; reply reuses same fake
+    ctx = _ctx(deps, "should I go work at McDonalds?")
+    events = await _collect(run_turn(ctx, seq=0))
+    names = [e for e, _ in events]
+    assert "refusal" not in names                 # no robotic refusal
+    assert "resources" not in names               # no stray cards
+    assert "token" in names and names[-1] == "done"
+    await deps.recorder.stop()
+    with deps.session_factory() as session:
+        assistant = session.scalar(select(m.Message)
+                                   .where(m.Message.role == "assistant"))
+        assert assistant.intent == "offtopic"
         rev = session.scalar(select(m.RetrievalEvent))
         assert rev.weak and rev.tier == "no_evidence"
     await deps.recorder.start()

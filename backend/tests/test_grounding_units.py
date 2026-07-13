@@ -17,6 +17,13 @@ from .conftest import FakeGateway, webbook_payload
 
 def test_router_intents(resolver):
     assert route("hi there!", resolver).intent == "smalltalk"
+    assert route("what's on exam 2?", resolver).intent == "exam_info"
+    assert route("give me the link to worksheet 5", resolver).intent == "resource_lookup"
+    assert route("where is the CLT video", resolver).intent == "resource_lookup"
+    assert route("why do we divide by n-1?", resolver).intent == "concept_question"
+    # question words override lookup phrasing
+    assert route("can you explain what section 10.2 says about power?",
+                 resolver).intent == "concept_question"
 
 
 def test_route_frustration_vs_real_question(resolver):
@@ -39,13 +46,32 @@ def test_route_frustration_vs_real_question(resolver):
     for msg in ["how do I quit R?", "should I drop outliers?",
                 "how do I drop my lowest quiz?"]:
         assert route(msg, resolver).intent != "frustration", msg
-    assert route("what's on exam 2?", resolver).intent == "exam_info"
-    assert route("give me the link to worksheet 5", resolver).intent == "resource_lookup"
-    assert route("where is the CLT video", resolver).intent == "resource_lookup"
-    assert route("why do we divide by n-1?", resolver).intent == "concept_question"
-    # question words override lookup phrasing
-    assert route("can you explain what section 10.2 says about power?",
-                 resolver).intent == "concept_question"
+
+
+async def test_triage_weak_parsing():
+    # the weak-retrieval triage extracts one label and DEFAULTS TO STATS on any
+    # error or ambiguity (so a hiccup never turns a real question into a brush-off)
+    from types import SimpleNamespace
+
+    from app.grounding.pipeline import _triage_weak
+
+    class _FakeGW:
+        def __init__(self, out):
+            self._out = out
+
+        def stream_chat(self, messages, **kw):
+            def _gen():
+                if self._out is None:
+                    raise RuntimeError("gateway boom")
+                yield self._out
+            return _gen()
+
+    cases = [("VENTING", "VENTING"), ("OFFTOPIC", "OFFTOPIC"),
+             ("off-topic", "OFFTOPIC"), ("STATS", "STATS"), ("stats", "STATS"),
+             ("  venting\n", "VENTING"), ("nonsense", "STATS"), (None, "STATS")]
+    for out, expected in cases:
+        ctx = SimpleNamespace(gateway=_FakeGW(out), message="whatever")
+        assert await _triage_weak(ctx) == expected, out
 
 
 def test_router_syllabus_link_vs_content(resolver):

@@ -59,6 +59,36 @@ EMPATHY_PROMPT = (
     "links, citations, or bracketed numbers."
 )
 
+# One-shot triage, run ONLY when retrieval already found nothing (so it costs a
+# tiny call only on the rare weird messages, never on real stats questions).
+TRIAGE_PROMPT = (
+    "You route a student's message for a STAT 350 (intro statistics) tutor. The "
+    "course search already found NO relevant material. Classify the message into "
+    "exactly one label:\n"
+    "STATS — a statistics or STAT 350 question (even if oddly phrased, advanced, "
+    "or beyond this course's materials).\n"
+    "VENTING — expressing frustration, discouragement, or that they might quit or "
+    "leave school; not really a question.\n"
+    "OFFTOPIC — a personal, life, or unrelated question that isn't about "
+    "statistics (e.g. career or life advice).\n"
+    "Answer with ONLY one word: STATS, VENTING, or OFFTOPIC."
+)
+
+OFFTOPIC_PROMPT = (
+    "The student asked something outside STAT 350 — a personal, life, or "
+    "off-subject question, not statistics. You are the STAT 350 tutor. In 1-3 "
+    "warm, brief sentences: gently let them know that's outside what you can help "
+    "with as their stats tutor, without being cold or preachy, and offer to help "
+    "if any part of it touches the course. Do NOT answer the off-topic question, "
+    "do NOT give life or career advice, and include no links or citations."
+)
+
+OFFTOPIC_REPLY = (
+    "That's a bit outside what I can help with — I'm just the STAT 350 tutor. But "
+    "if any part of what's on your mind touches the course, tell me and I'm glad "
+    "to help."
+)
+
 REFUSAL_MESSAGE = (
     "I couldn't find anything in the STAT 350 course materials that covers "
     "this, so I won't guess. If you think it should be covered, try rephrasing "
@@ -234,21 +264,49 @@ def _persist_citations(ctx: TurnContext, rr: RetrievalResult, rid: str,
             resolved=False))
 
 
-async def _empathy_answer(ctx: TurnContext, r: Route, seq: int, t_start: float):
-    """A short, ADAPTIVE empathetic reply to venting: one small LLM call, NO
-    retrieval and NO resource cards. Falls back to the canned line when the
-    gateway is unavailable or the app is shedding load."""
+async def _triage_weak(ctx: TurnContext) -> str:
+    """Classify a message that retrieved NO relevant course material:
+    STATS | VENTING | OFFTOPIC. One tiny LLM call (temp 0, ~1 word). Defaults to
+    STATS (-> the normal refusal) on any error or ambiguity, so a failure never
+    turns a real stats question into a brush-off."""
+    messages = [{"role": "system", "content": TRIAGE_PROMPT},
+                {"role": "user", "content": ctx.message[:1000]}]
+    try:
+        parts: list[str] = []
+        async for delta in aiter_sync(lambda: ctx.gateway.stream_chat(
+                messages, temperature=0.0, max_tokens=4)):
+            parts.append(delta)
+        out = "".join(parts).strip().upper()
+    except Exception:
+        return "STATS"
+    # Prefix match on the (trimmed) reply, not a substring anywhere — so a stray
+    # "event"/"inventory"/"prevent" in a longer reply can't be read as VENTING.
+    if out.startswith("VENT") or "VENTING" in out:
+        return "VENTING"
+    if out.startswith("OFF") or "OFFTOPIC" in out or "OFF-TOPIC" in out:
+        return "OFFTOPIC"
+    return "STATS"
+
+
+async def _adaptive_reply(ctx: TurnContext, r: Route, seq: int, t_start: float,
+                          *, system_prompt: str, fallback: str,
+                          intent: str | None = None):
+    """A short, ADAPTIVE non-grounded reply (venting empathy or off-topic
+    redirect): one small LLM call, NO retrieval and NO resource cards. Falls back
+    to a canned line when the gateway is unavailable or the app is shedding
+    load."""
     deps = ctx.deps
+    intent = intent or r.intent
     if not deps.gateway_ready or ctx.reject:
-        yield "token", {"text": FRUSTRATION_REPLY}
+        yield "token", {"text": fallback}
         yield "done", {"messageId": ctx.assistant_msg_id, "finishReason": "stop",
-                       "finalText": FRUSTRATION_REPLY, "flags": {}}
-        _persist_assistant(ctx, seq, content=FRUSTRATION_REPLY,
-                           answer_kind="smalltalk", intent=r.intent,
+                       "finalText": fallback, "flags": {}}
+        _persist_assistant(ctx, seq, content=fallback,
+                           answer_kind="smalltalk", intent=intent,
                            latency_ms=int((time.monotonic() - t_start) * 1000))
         return
 
-    messages = [{"role": "system", "content": EMPATHY_PROMPT}]
+    messages = [{"role": "system", "content": system_prompt}]
     for h in ctx.history[-4:]:
         messages.append({"role": h["role"], "content": h["content"]})
     messages.append({"role": "user", "content": ctx.message})
@@ -259,7 +317,7 @@ async def _empathy_answer(ctx: TurnContext, r: Route, seq: int, t_start: float):
     t_llm = time.monotonic()
     try:
         async for delta in aiter_sync(lambda: ctx.gateway.stream_chat(
-                messages, max_tokens=200)):
+                messages, max_tokens=220)):
             if ttft_ms is None:
                 ttft_ms = int((time.monotonic() - t_llm) * 1000)
             chunks.append(delta)
@@ -273,18 +331,18 @@ async def _empathy_answer(ctx: TurnContext, r: Route, seq: int, t_start: float):
             detail=str(exc)[:500], request_id=ctx.request_id,
             user_id=ctx.user_row_id, conversation_id=ctx.conversation_id))
         if not chunks:
-            yield "token", {"text": FRUSTRATION_REPLY}
-        text = "".join(chunks) or FRUSTRATION_REPLY
+            yield "token", {"text": fallback}
+        text = "".join(chunks) or fallback
         yield "done", {"messageId": ctx.assistant_msg_id, "finishReason": "error",
                        "finalText": text, "flags": {}}
         _persist_assistant(ctx, seq, content=text, answer_kind="smalltalk",
-                           intent=r.intent, finish_reason="error",
+                           intent=intent, finish_reason="error",
                            latency_ms=int((time.monotonic() - t_start) * 1000))
         return
     finally:
         if finish_reason == "aborted":
             _persist_assistant(ctx, seq, content="".join(chunks),
-                               answer_kind="smalltalk", intent=r.intent,
+                               answer_kind="smalltalk", intent=intent,
                                finish_reason="aborted",
                                latency_ms=int((time.monotonic() - t_start) * 1000),
                                ttft_ms=ttft_ms)
@@ -292,12 +350,12 @@ async def _empathy_answer(ctx: TurnContext, r: Route, seq: int, t_start: float):
     # safety net: strip any URL the model typed; fall back if it said nothing
     final_text, removed = lint_links("".join(chunks), deps.resolver)
     if not final_text.strip():
-        final_text = FRUSTRATION_REPLY
+        final_text = fallback
     latency_ms = int((time.monotonic() - t_start) * 1000)
     yield "done", {"messageId": ctx.assistant_msg_id, "finishReason": "stop",
                    "finalText": final_text, "flags": {"linted": bool(removed)}}
     _persist_assistant(ctx, seq, content=final_text, answer_kind="smalltalk",
-                       intent=r.intent, latency_ms=latency_ms, ttft_ms=ttft_ms)
+                       intent=intent, latency_ms=latency_ms, ttft_ms=ttft_ms)
 
 
 async def run_turn(ctx: TurnContext, seq: int) -> AsyncIterator[tuple[str, dict]]:
@@ -330,7 +388,10 @@ async def run_turn(ctx: TurnContext, seq: int) -> AsyncIterator[tuple[str, dict]
     # sequitur, and junk text vector-matches a section above threshold, so this
     # must short-circuit before retrieval).
     if r.intent == "frustration":
-        async for ev in _empathy_answer(ctx, r, seq, t_start):
+        async for ev in _adaptive_reply(ctx, r, seq, t_start,
+                                        system_prompt=EMPATHY_PROMPT,
+                                        fallback=FRUSTRATION_REPLY,
+                                        intent="frustration"):
             yield ev
         return
 
@@ -558,14 +619,30 @@ async def _grounded_answer(ctx: TurnContext, r: Route, seq: int,
 
     # ---- weak retrieval → honest refusal, LLM call skipped -------------------
     if rr.tier == "no_evidence":
-        # Nothing relevant was found, so DON'T attach "closest sections" — random
-        # cards on an off-topic or emotional message ("should I work at
-        # McDonald's?") are noise. Only the syllabus fallback (authoritative PDF)
-        # earns a card.
+        # Weak retrieval isn't always an off-syllabus stats question — it's often
+        # venting or a personal/off-topic question. A cheap one-shot triage (only
+        # HERE, only because retrieval already failed) routes those to a warm
+        # reply instead of a robotic "rephrase with the course terms" refusal.
+        # Syllabus questions skip triage — they get the authoritative-PDF fallback.
+        if not syllabus_mode:
+            label = await _triage_weak(ctx)
+            if label == "VENTING":
+                async for ev in _adaptive_reply(
+                        ctx, r, seq, t_start, system_prompt=EMPATHY_PROMPT,
+                        fallback=FRUSTRATION_REPLY, intent="venting"):
+                    yield ev
+                return
+            if label == "OFFTOPIC":
+                async for ev in _adaptive_reply(
+                        ctx, r, seq, t_start, system_prompt=OFFTOPIC_PROMPT,
+                        fallback=OFFTOPIC_REPLY, intent="offtopic"):
+                    yield ev
+                return
+        # STATS (or a syllabus question): honest refusal, LLM generation skipped.
+        # DON'T attach "closest sections" — random cards on an off-topic message
+        # are noise; only the syllabus fallback (authoritative PDF) earns a card.
         if syllabus_cards:
             yield "resources", {"resources": syllabus_cards}
-        # for syllabus questions, point them at the authoritative PDF rather
-        # than a bare refusal
         msg = (SYLLABUS_FALLBACK if syllabus_mode and syllabus_cards
                else REFUSAL_MESSAGE)
         yield "refusal", {"reason": "weak_retrieval", "message": msg}
