@@ -30,14 +30,23 @@ _SMALLTALK_RE = re.compile(
 # Pure venting / frustration with NO real question. Anchored to the whole
 # message so a profanity-laced actual question ("why the hell do we divide by
 # n-1?") still falls through to concept_question and gets answered.
+# An optional academic noun can sit between the subject and the sentiment word
+# ("this COURSE sucks", "the LECTURES are useless") — still venting, and it
+# retrieves real course vocabulary, so it must be caught at the router.
+_ACAD = (r"course|class|subject|material|lectures?|homework|hw|assignment"
+         r"|prof(?:essor)?|teacher|stuff|semester|exams?|quizzes|quiz")
 _FRUSTRATION_RE = re.compile(
     r"^\s*(?:"
     r"(?:f+u+c+k+|f\W?u\W?c\W?k|sh+i+t+|damn+|god\s*damn|wtf|screw|crap|hell|bull\W?shit)"
-    r"(?:\s+(?:this|that|it|stat(?:s|istics)?|everything|off|man))?"
+    rf"(?:\s+(?:this|that|it|stat(?:s|istics)?|everything|off|man|{_ACAD}))?"
     r"|u+g+h+|a+r+g+h+|f+m+l+|bruh"
-    r"|(?:i\s+)?(?:hate|despise|can'?t\s+stand|loathe)\s+(?:this|it|stat(?:s|istics)?|everything|my\s+life)"
-    r"|(?:this|that|it|stat(?:s|istics)?|everything)\s+(?:is\s+)?(?:so\s+|really\s+|too\s+)?(?:hard|stupid|dumb|confusing|impossible|awful|terrible|pointless|the\s+worst|sucks?|killing\s+me)"
-    r"|(?:this|it|stat(?:s|istics)?)\s+sucks?"
+    r"|(?:i\s+)?(?:hate|despise|can'?t\s+stand|loathe)\s+"
+    rf"(?:(?:this|that|the|my|these|those)\s+(?:{_ACAD})"
+    r"|this|it|stat(?:s|istics)?|everything|my\s+life)"
+    r"|(?:this|that|the|these|those|my|it|stat(?:s|istics)?|everything)"
+    rf"(?:\s+(?:{_ACAD}))?"
+    r"\s+(?:is\s+|are\s+)?(?:so\s+|really\s+|too\s+)?"
+    r"(?:hard|stupid|dumb|confusing|impossible|awful|terrible|pointless|the\s+worst|sucks?|useless|boring|killing\s+me)"
     r"|i\s+(?:give\s+up|quit|can'?t\s+do\s+this|can'?t\s+even|give\s+up\s+on\s+this)"
     r"|i'?m\s+(?:so\s+)?(?:done|lost|overwhelmed|stressed(?:\s+out)?|frustrated|struggling|dying|drowning)"
     r")[\s!.?]*$", re.I)

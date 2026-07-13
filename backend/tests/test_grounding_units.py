@@ -47,6 +47,18 @@ def test_route_frustration_vs_real_question(resolver):
                 "how do I drop my lowest quiz?"]:
         assert route(msg, resolver).intent != "frustration", msg
 
+    # venting with an academic noun between the subject and the sentiment word
+    # (these vector-match course vocabulary, so they MUST be caught at the router)
+    for msg in ["This course sucks!", "this class is confusing",
+                "the lectures are useless", "I hate this course",
+                "this homework is impossible", "the exams are impossible"]:
+        assert route(msg, resolver).intent == "frustration", msg
+    # real questions that MENTION those nouns must still route normally
+    for msg in ["explain the material in chapter 5", "is this course curved?",
+                "what course topics are on exam 2?",
+                "can you explain the lectures on CLT?"]:
+        assert route(msg, resolver).intent != "frustration", msg
+
 
 async def test_triage_weak_parsing():
     # the weak-retrieval triage extracts one label and DEFAULTS TO STATS on any
